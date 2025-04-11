@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+.side-bar-menu  a{
+
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+
+body{
+    padding: 0px;
+    margin: 0px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+input , select, textarea{
+    font-weight: 500;
+}
