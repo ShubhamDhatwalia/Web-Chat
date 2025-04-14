@@ -15,6 +15,10 @@ function ManageTemplates() {
   const handleFormModel = () => {
     setIsOpen(!isOpen);
 
+    if (isOpen) {
+      setEditingTemplate(null);
+    }
+
   }
   const handleEdit = (template) => {
     setEditingTemplate(template); 
@@ -33,7 +37,7 @@ function ManageTemplates() {
 
 
           <div className='flex justify-between items-center '>
-            <h2 className='font-bold text-xl'>Message Templates</h2>
+            <h2 className='font-bold text-xl'>Message Template</h2>
 
             { !isOpen && <button type='button' className='bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-semibold py-[5px] px-[12px] rounded' on onClick={handleFormModel}>Create Template</button> }
 
@@ -46,8 +50,6 @@ function ManageTemplates() {
           {isOpen && <CreateTemplarte  templateData={editingTemplate} onSuccess={() => setIsOpen(false)}/>}
 
 
-          {/* <CreateTemplarte /> */}
-
 
           {!isOpen && <MessageTemplateList onSuccess={handleEdit}/>}
 
@@ -56,7 +58,7 @@ function ManageTemplates() {
 
 
         <div className='bg-white p-[15px] rounded-md flex-[33%]'>
-          <h2 className='font-bold text-xl'>Message Content</h2>
+          <h2 className='font-bold text-xl'>Your Template</h2>
           <p className='font-semibold text-md mt-[5px] text-gray-600'>
             Here you can see the selected message content body
           </p>

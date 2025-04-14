@@ -30,7 +30,7 @@ function MessageTemplateList({ onSuccess }) {
     setTemplateList(updated.filter((t) => !t.deleted)); // hide deleted in UI
     toast.success('Template Deleted Successfully!');
   };
-  
+
 
 
   const handleEditTemplate = (template) => {
@@ -41,39 +41,39 @@ function MessageTemplateList({ onSuccess }) {
   const fetchTemplates = async () => {
     try {
       setLoading(true);
-  
+
       const queryParams = new URLSearchParams({
         access_token: accessToken,
-        limit: '1000', 
+        limit: '1000',
       });
-  
+
       const response = await axios.get(
         `https://graph.facebook.com/v19.0/${businessId}/message_templates?${queryParams}`
       );
-  
+
       const apiTemplates = response.data.data;
       const existing = JSON.parse(localStorage.getItem('whatsappTemplates') || '[]');
-  
+
       const updated = existing.map((e) => {
         const latest = apiTemplates.find((t) => t.id === e.id);
         return latest ? { ...e, ...latest } : e;
       });
-  
+
       const onlyNew = apiTemplates.filter((t) => !existing.some((e) => e.id === t.id));
       const finalTemplates = [...updated, ...onlyNew];
-  
+
 
       const visibleTemplates = finalTemplates.filter((t) => !t.deleted);
-  
-      localStorage.setItem('whatsappTemplates', JSON.stringify(finalTemplates)); 
-      setTemplateList(visibleTemplates); 
+
+      localStorage.setItem('whatsappTemplates', JSON.stringify(finalTemplates));
+      setTemplateList(visibleTemplates);
     } catch (error) {
       console.error('Error fetching templates:', error);
     } finally {
       setLoading(false);
     }
   };
-  
+
 
 
   useEffect(() => {
@@ -125,27 +125,36 @@ function MessageTemplateList({ onSuccess }) {
 
                 <tr
                   key={template.id || index}
-                  className="group border-b border-gray-200 hover:bg-gray-50 text-md font-medium cursor-pointer"
+                  className="group border-b border-gray-200 hover:bg-gray-50 text-md font-semibold cursor-pointer text-sm"
                 >
                   <td className="px-4 py-3">{template.id}</td>
                   <td className="px-4 py-3">{template.name}</td>
                   <td className="px-4 py-3">{template.category}</td>
                   <td className="px-4 py-3">{languageMap[template.language] || template.language}</td>
-                  <td className="px-4 py-3">{template.status}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`rounded-2xl p-1 text-white text-center  
+                               ${template.status.toLowerCase() === 'approved' ? 'bg-green-500' :
+                          template.status === 'pending' ? 'bg-orange-400' :
+                            template.status === 'rejected' ? 'bg-red-500' : 'bg-gray-300'}`}
+                    >
+                      {template.status}
+                    </span>
+                  </td>
+
                   <td className="px-4 py-3 text-gray-400 italic relative">
 
-                    <span className="group-hover:hidden">
+                    <span className="group-hover:hidden text-nowrap">
                       {template.createdAt
                         ? new Intl.DateTimeFormat('en-US', {
                           dateStyle: 'medium',
-                          timeStyle: 'short',
                         }).format(new Date(template.createdAt))
                         : 'N/A'}
                     </span>
 
-                    <div className="hidden group-hover:flex gap-4 items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                      <i className="fa-solid text-blue-500 fa-pen-to-square hover:text-blue-600 cursor-pointer" onClick={() => handleEditTemplate(template)}></i>
-                      <i className="fa-solid text-red-400 fa-trash hover:text-red-500 cursor-pointer" onClick={() => handleDeleteTemplate(template)}></i>
+                    <div className="hidden group-hover:flex gap-6 justify-start items-center ">
+                      <i className="fa-solid text-blue-500 fa-pen-to-square hover:text-blue-600 cursor-pointer text-lg" onClick={() => handleEditTemplate(template)}></i>
+                      <i className="fa-solid text-red-400 fa-trash hover:text-red-500 cursor-pointer text-lg" onClick={() => handleDeleteTemplate(template)}></i>
                     </div>
                   </td>
                 </tr>
