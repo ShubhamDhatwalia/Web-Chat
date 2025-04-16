@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
 
-function CreateTemplate({ onSuccess, templateData }) {
+function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
     const [formInput, setFormInput] = useState({
         templateName: '',
         category: '',
@@ -25,15 +25,94 @@ function CreateTemplate({ onSuccess, templateData }) {
 
 
 
+
+
+
+    useEffect(() => {
+        if (onTemplateChange) {
+            const {
+                templateName,
+                category,
+                language,
+                headerOption,
+                headerText,
+                headerImage,
+                footerText,
+                messageContent
+            } = formInput;
+
+            const liveComponents = [];
+
+            if (headerOption === 'TEXT' && headerText.trim()) {
+                liveComponents.push({
+                    type: 'HEADER',
+                    format: 'TEXT',
+                    text: headerText
+                });
+            } else if (headerOption === 'IMAGE' && headerImage) {
+                let imagePreview = '';
+
+                if (typeof headerImage === 'string') {
+                    // Already a URL (from existing data)
+                    imagePreview = headerImage;
+                } else {
+                    // New file selected
+                    imagePreview = URL.createObjectURL(headerImage);
+                }
+
+                liveComponents.push({
+                    type: 'HEADER',
+                    format: 'IMAGE',
+                    imagePreview,
+                });
+            }
+
+
+            liveComponents.push({
+                type: 'BODY',
+                text: messageContent
+            });
+
+            if (footerText?.trim()) {
+                liveComponents.push({
+                    type: 'FOOTER',
+                    text: footerText
+                });
+            }
+
+            if (buttons.length > 0) {
+                liveComponents.push({
+                    type: 'BUTTONS',
+                    buttons: buttons
+                });
+            }
+
+            const livePreviewData = {
+                name: templateName,
+                category,
+                language,
+                components: liveComponents
+            };
+
+            onTemplateChange(livePreviewData);
+        }
+    }, [formInput, buttons]);
+
+
+
+
     useEffect(() => {
         if (templateData) {
+
+
+
             setFormInput({
                 templateName: templateData?.name || '',
                 category: templateData?.category || '',
                 language: templateData?.language || '',
                 headerOption: templateData?.components?.find(c => c.type === 'HEADER')?.format || '',
                 headerText: templateData?.components?.find(c => c.type === 'HEADER')?.text || '',
-                headerImage: null,
+                headerImage: templateData?.components?.find(c => c.type === 'HEADER')?.example?.header_handle?.[0] || '',
                 footerText: templateData?.components?.find(c => c.type === 'FOOTER')?.text || '',
                 messageContent: templateData?.components?.find(c => c.type === 'BODY')?.text || '',
             });
@@ -88,7 +167,6 @@ function CreateTemplate({ onSuccess, templateData }) {
         const updated = [...buttons];
         updated[index][key] = value;
 
-        // Reset fields for CTA when type changes
         if (key === 'type') {
             if (value === 'QUICK_REPLY') {
                 updated[index] = { type: 'QUICK_REPLY', text: '' };
@@ -107,6 +185,8 @@ function CreateTemplate({ onSuccess, templateData }) {
         updated.splice(index, 1);
         setButtons(updated);
     };
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -131,7 +211,8 @@ function CreateTemplate({ onSuccess, templateData }) {
             });
         }
 
-        const phoneNumberId = '524584690749082';
+
+        const phone_id = 637230059476897;
 
         if (headerOption === "IMAGE" && headerImage) {
             try {
@@ -141,7 +222,7 @@ function CreateTemplate({ onSuccess, templateData }) {
                 formData.append('messaging_product', 'whatsapp');
 
                 const uploadResponse = await axios.post(
-                    `https://graph.facebook.com/v19.0/${phoneNumberId}/media`,
+                    `https://graph.facebook.com/v22.0/${phone_id}/media`,
                     formData,
                     {
                         headers: {
@@ -153,9 +234,8 @@ function CreateTemplate({ onSuccess, templateData }) {
 
                 const mediaId = uploadResponse.data.id;
 
-                console.log(mediaId);
-
                 if (!mediaId) {
+                    console.log("Image upload failed. Media ID not received.");
                     toast.error("Image upload failed. Media ID not received.");
                     return;
                 }
@@ -167,11 +247,14 @@ function CreateTemplate({ onSuccess, templateData }) {
                         header_handle: [mediaId]
                     }
                 });
-            } catch {
+
+            } catch (error) {
+                console.log(error.response);
                 toast.error("Image upload failed. Please try again.");
                 return;
             }
         }
+
 
         components.push({
             type: "BODY",
@@ -196,12 +279,18 @@ function CreateTemplate({ onSuccess, templateData }) {
             name: templateName.toLowerCase().replace(/\s+/g, '_'),
             language,
             category,
+            messaging_product: "whatsapp",
             components
         };
 
+
+        console.log(payload)
+
+
+
         try {
             const response = await axios.post(
-                `https://graph.facebook.com/v19.0/${businessId}/message_templates`,
+                `https://graph.facebook.com/v22.0/${businessId}/message_templates`,
                 payload,
                 {
                     headers: {
@@ -247,11 +336,8 @@ function CreateTemplate({ onSuccess, templateData }) {
             messageContent: '',
         });
         setButtons([]);
+        onTemplateChange();
     };
-
-
-
-
 
 
 
@@ -259,7 +345,7 @@ function CreateTemplate({ onSuccess, templateData }) {
 
     return (
         <form onSubmit={handleSubmit}>
-           
+
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[50px] text-md'>
                 <input type="text" name="templateName" value={formInput.templateName} onChange={handleChange}
                     placeholder='Template Name *' required
@@ -309,18 +395,26 @@ function CreateTemplate({ onSuccess, templateData }) {
                 <div className='w-full mt-[20px]'>
                     <input type="file" name="headerImage" onChange={handleImageChange} accept="image/*"
                         className='border-b py-[5px] w-full' />
+                   
                     {formInput.headerImage && (
-                        <p className="text-sm text-gray-600 mt-1">{formInput.headerImage.name}</p>
+                        <p className="text-sm text-gray-600 mt-1">
+                            {formInput.headerImage instanceof File
+                                ? formInput.headerImage.name
+                                : 'Existing Image'}
+                        </p>
                     )}
+
+
                 </div>
             )}
+
 
             {/* Body */}
             <h3 className="font-semibold mt-[40px] pt-[10px]">Body</h3>
             <p className="text-sm font-semibold text-gray-600">Enter the text for your message</p>
             <textarea name="messageContent" required value={formInput.messageContent} onChange={handleChange}
                 placeholder="Message Content (1024 Characters)"
-                className="border-b bg-gray-100 py-[5px] w-full placeholder-gray-500 resize-none outline-none mt-4"
+                className="border-b bg-gray-50 py-[5px] px-3 w-full placeholder-gray-500 rounded-sm resize-none outline-none mt-4"
                 rows="8" />
 
 
@@ -330,10 +424,10 @@ function CreateTemplate({ onSuccess, templateData }) {
 
             {/* Buttons */}
             <h3 className="font-semibold mt-[40px] pt-[10px]">Buttons (Optional)</h3>
-            <p className="text-sm font-semibold text-gray-600">Add Quick Reply or Call To Action buttons</p>
+            <p className="text-sm font-semibold text-gray-600 mb-6">Add Quick Reply or Call To Action buttons</p>
 
             {buttons.map((btn, i) => (
-                <div key={i} className="flex gap-2 items-center my-2">
+                <div key={i} className="flex gap-2 items-center text-gray-700 text-sm my-2">
                     <select value={btn.type} onChange={(e) => handleButtonChange(i, 'type', e.target.value)}
                         className="border p-2 rounded-md focus:outline-none">
                         <option value="QUICK_REPLY">Quick Reply</option>
@@ -342,12 +436,12 @@ function CreateTemplate({ onSuccess, templateData }) {
                     </select>
 
                     <input type="text" placeholder="Button Text" value={btn.text}
-                        onChange={(e) => handleButtonChange(i, 'text', e.target.value)} className="border focus:outline-none rounded-md p-2 w-50" />
+                        onChange={(e) => handleButtonChange(i, 'text', e.target.value)} className="border  focus:outline-none rounded-md p-2 w-50" />
 
                     {btn.type === 'PHONE_NUMBER' && (
-                        <input type="text" placeholder="Phone Number" value={btn.phone_number || ''}
+                        <input type="text" placeholder="Phone Number with country code" value={btn.phone_number || ''}
                             onChange={(e) => handleButtonChange(i, 'phone_number', e.target.value)}
-                            className="border focus:outline-none rounded-md p-2 w-50" />
+                            className="border focus:outline-none rounded-md p-2 w-70" />
                     )}
 
                     {btn.type === 'URL' && (
@@ -356,9 +450,9 @@ function CreateTemplate({ onSuccess, templateData }) {
                             className="border focus:outline-none rounded-md p-2 w-50" />
                     )}
 
-                
 
-                    <i className="fa-solid fa-xmark text-3xl "  onClick={() => handleRemoveButton(i)}></i>
+
+                    <i className="fa-solid fa-xmark text-2xl text-red-400 cursor-pointer hover:text-red-500 hover:scale-110 " onClick={() => handleRemoveButton(i)}></i>
                 </div>
             ))}
 
@@ -366,12 +460,6 @@ function CreateTemplate({ onSuccess, templateData }) {
                 className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
                 + Add Button
             </button>
-
-
-
-
-
-
 
 
 
