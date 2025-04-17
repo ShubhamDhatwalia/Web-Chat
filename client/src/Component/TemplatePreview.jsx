@@ -3,18 +3,43 @@ import React, { useEffect, useState } from 'react';
 function TemplatePreview({ templateId, liveTemplateData }) {
     const [template, setTemplate] = useState(null);
 
+
+
+    console.log(liveTemplateData);
+
     const sampleTemplate = {
+        parameter_format: 'POSITIONAL',
         components: [
-            { type: 'HEADER', format: 'TEXT', text: 'Sample Header' },
-            { type: 'BODY', text: 'This is a sample body text for your WhatsApp template.\nHere is the second line.' },
-            { type: 'FOOTER', text: 'Sample footer text.' },
+            {
+                type: 'HEADER',
+                format: 'TEXT',
+                text: 'Hi {{1}}, welcome to our service!',
+                example: {
+                    header_text: [['Shubham']]
+                }
+            },
+            {
+                type: 'BODY',
+                text: 'Hello {{1}},\nThanks for choosing {{2}}!',
+                example: {
+                    body_text: [['Shubham', 'OpenAI']]
+                }
+            },
+            {
+                type: 'FOOTER',
+                text: 'This is an example footer.'
+            },
             {
                 type: 'BUTTONS',
                 buttons: [
-                    { type: 'PHONE_NUMBER', text: 'Call Now', phone_number: '+911234567890' },
-                ],
-            },
-        ],
+                    {
+                        type: 'PHONE_NUMBER',
+                        text: 'Call Support',
+                        phone_number: '+911234567890'
+                    }
+                ]
+            }
+        ]
     };
 
     useEffect(() => {
@@ -32,12 +57,37 @@ function TemplatePreview({ templateId, liveTemplateData }) {
         }
     }, [templateId, liveTemplateData]);
 
+    const replaceVariables = (text, component, parameterFormat) => {
+        if (!text || !component.example) return text;
+
+        if (parameterFormat === 'POSITIONAL') {
+            let values = [];
+
+            if (component.type === 'HEADER') {
+                const headerValues = component.example?.header_text;
+                values = Array.isArray(headerValues[0]) ? headerValues[0] : headerValues;
+            } else if (component.type === 'BODY') {
+                const bodyValues = component.example?.body_text;
+                values = Array.isArray(bodyValues[0]) ? bodyValues[0] : bodyValues;
+            }
+
+            return text.replace(/{{(\d+)}}/g, (match, index) => values?.[parseInt(index) - 1] || match);
+        }
+
+        if (parameterFormat === 'NAMED') {
+            const namedValues = component.example?.body_text_named_params || [];
+            return text.replace(/{{(\w+)}}/g, (match, key) => {
+                const param = namedValues.find((p) => p.param_name === key);
+                return param?.example || match;
+            });
+        }
+
+        return text;
+    };
+
+
     if (!template || !template.components) {
-        return (
-            <p className="text-gray-500 mt-5">
-                Loading template preview...
-            </p>
-        );
+        return <p className="text-gray-500 mt-5">Loading template preview...</p>;
     }
 
     const header = template.components.find((comp) => comp.type === 'HEADER');
@@ -46,7 +96,6 @@ function TemplatePreview({ templateId, liveTemplateData }) {
     const buttonComponent = template.components.find((comp) => comp.type === 'BUTTONS');
     const buttons = buttonComponent?.buttons || [];
 
-    // Helper function to render text with line breaks
     const renderTextWithNewlines = (text) => {
         return text.split('\n').map((line, index) => (
             <React.Fragment key={index}>
@@ -62,12 +111,14 @@ function TemplatePreview({ templateId, liveTemplateData }) {
 
                 {/* Header */}
                 {header && header.format === 'TEXT' && (
-                    <h2 className='font-bold text-md mb-2'>{header.text}</h2>
+                    <h2 className='font-bold text-md mb-2'>
+                        {replaceVariables(header.text, header, template.parameter_format)}
+                    </h2>
                 )}
                 {header && header.format === 'IMAGE' && (
                     <div className='max-h-[140px] overflow-hidden mb-2'>
                         <img
-                            src={header.imagePreview || header.example?.header_handle?.[0] || ''} // fallback
+                            src={header.imagePreview || header.example?.header_handle?.[0] || ''}
                             alt="Header"
                             className="w-full object-cover"
                         />
@@ -77,7 +128,9 @@ function TemplatePreview({ templateId, liveTemplateData }) {
                 {/* Body */}
                 {body && (
                     <p className='mb-2 text-sm text-black'>
-                        {renderTextWithNewlines(body.text)}
+                        {renderTextWithNewlines(
+                            replaceVariables(body.text, body, template.parameter_format)
+                        )}
                     </p>
                 )}
 

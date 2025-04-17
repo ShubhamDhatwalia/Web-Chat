@@ -1,11 +1,8 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
-
-
 
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
@@ -20,12 +17,116 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         headerImage: null,
         footerText: '',
         messageContent: '',
+        parameter_format: 'POSITIONAL',
     });
+
+
+    const [sampleValues, setSampleValues] = useState({
+        header_text: [],
+        body_text: []
+    });
+
 
     const [buttons, setButtons] = useState([]);
     const [isDropupOpen, setIsDropupOpen] = useState(false);
     const dropupRef = useRef(null);
     const buttonRef = useRef(null);
+
+
+
+
+    const extractVariableList = (text, format) => {
+        if (format === 'POSITIONAL') {
+            const regex = /\{\{(\d+)\}\}/g;
+            const matches = Array.from(text.matchAll(regex)).map(match => match[1]);
+            return [...new Set(matches)].sort((a, b) => Number(a) - Number(b));
+        } else {
+            const regex = /\{\{([a-zA-Z0-9_]+)\}\}/g;
+            const matches = Array.from(text.matchAll(regex)).map(match => match[1]);
+            return [...new Set(matches)];
+        }
+    };
+
+
+
+
+    const insertAtCursor = (name, insertText) => {
+        const textarea = document.querySelector(`textarea[name="${name}"]`);
+        if (!textarea) return;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const value = textarea.value;
+
+        const newText = value.slice(0, start) + insertText + value.slice(end);
+        setFormInput(prev => ({
+            ...prev,
+            [name]: newText
+        }));
+    };
+
+
+    const getNextVariableNumber = (text) => {
+        const regex = /\{\{(\d+)\}\}/g;
+        const matches = Array.from(text.matchAll(regex)).map(match => parseInt(match[1]));
+        let next = 1;
+        while (matches.includes(next)) next++;
+        return next;
+    };
+
+    const getNextVariableName = (text, section = 'body') => {
+        const regex = /\{\{([a-zA-Z0-9_]+)\}\}/g;
+        const matches = Array.from(text.matchAll(regex)).map(match => match[1]);
+        let i = 1;
+        let name = `${section}_var${i}`;
+        while (matches.includes(name)) {
+            i++;
+            name = `${section}_var${i}`;
+        }
+        return name;
+    };
+
+
+
+
+    const handleHeaderVariable = () => {
+        const currentText = formInput.headerText || '';
+        if (formInput.parameter_format === 'POSITIONAL') {
+            const nextVar = getNextVariableNumber(currentText);
+            insertAtCursor('headerText', `{{${nextVar}}}`);
+        } else {
+            const nextVar = getNextVariableName(currentText, 'header');
+            insertAtCursor('headerText', `{{${nextVar}}}`);
+        }
+    };
+
+    const handleBodyVariable = () => {
+        const currentText = formInput.messageContent || '';
+        if (formInput.parameter_format === 'POSITIONAL') {
+            const nextVar = getNextVariableNumber(currentText);
+            insertAtCursor('messageContent', `{{${nextVar}}}`);
+        } else {
+            const nextVar = getNextVariableName(currentText, 'body');
+            insertAtCursor('messageContent', `{{${nextVar}}}`);
+        }
+    };
+
+
+
+    useEffect(() => {
+        const { headerText, messageContent, parameter_format } = formInput;
+
+        const headerVars = extractVariableList(headerText, parameter_format);
+        const bodyVars = extractVariableList(messageContent, parameter_format);
+
+        setSampleValues(prev => ({
+            header_text: headerVars.map((v, i) => prev.header_text?.[i] ?? ''),
+            body_text: bodyVars.map((v, i) => prev.body_text?.[i] ?? '')
+        }));
+    }, [formInput.headerText, formInput.messageContent, formInput.parameter_format]);
+
+
+
 
     useEffect(() => {
         if (onTemplateChange) {
@@ -37,25 +138,28 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 headerText,
                 headerImage,
                 footerText,
-                messageContent
+                messageContent,
+                parameter_format,
             } = formInput;
 
             const liveComponents = [];
 
+            // Handle HEADER (TEXT or IMAGE)
             if (headerOption === 'TEXT' && headerText.trim()) {
                 liveComponents.push({
                     type: 'HEADER',
                     format: 'TEXT',
-                    text: headerText
+                    text: headerText,
+                    example: {
+                        header_text: sampleValues.header_text // Ensure sample values for header text
+                    }
                 });
             } else if (headerOption === 'IMAGE' && headerImage) {
                 let imagePreview = '';
 
                 if (typeof headerImage === 'string') {
-                    // Already a URL (from existing data)
                     imagePreview = headerImage;
                 } else {
-                    // New file selected
                     imagePreview = URL.createObjectURL(headerImage);
                 }
 
@@ -66,11 +170,16 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 });
             }
 
+            // Handle BODY
             liveComponents.push({
                 type: 'BODY',
-                text: messageContent
+                text: messageContent,
+                example: {
+                    body_text: sampleValues.body_text // Ensure sample values for body text
+                }
             });
 
+            // Handle FOOTER (if exists)
             if (footerText?.trim()) {
                 liveComponents.push({
                     type: 'FOOTER',
@@ -78,6 +187,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 });
             }
 
+            // Handle BUTTONS (if any)
             if (buttons.length > 0) {
                 liveComponents.push({
                     type: 'BUTTONS',
@@ -89,24 +199,36 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 name: templateName,
                 category,
                 language,
+                parameter_format,
                 components: liveComponents
             };
 
-            onTemplateChange(livePreviewData);
+            onTemplateChange(livePreviewData); // Update the live preview with the new data
         }
-    }, [formInput, buttons]);
+    }, [formInput, buttons, sampleValues]); // Ensure to watch for sampleValues changes as well
+
 
     useEffect(() => {
         if (templateData) {
+            const headerComponent = templateData.components?.find(c => c.type === 'HEADER');
+            const bodyComponent = templateData.components?.find(c => c.type === 'BODY');
+
             setFormInput({
                 templateName: templateData?.name || '',
                 category: templateData?.category || '',
                 language: templateData?.language || '',
-                headerOption: templateData?.components?.find(c => c.type === 'HEADER')?.format || '',
-                headerText: templateData?.components?.find(c => c.type === 'HEADER')?.text || '',
-                headerImage: templateData?.components?.find(c => c.type === 'HEADER')?.example?.header_handle?.[0] || '',
+                headerOption: headerComponent?.format || '',
+                headerText: headerComponent?.text || '',
+                headerImage: headerComponent?.example?.header_handle?.[0] || '',
                 footerText: templateData?.components?.find(c => c.type === 'FOOTER')?.text || '',
-                messageContent: templateData?.components?.find(c => c.type === 'BODY')?.text || '',
+                messageContent: bodyComponent?.text || '',
+                parameter_format: templateData?.parameter_format || 'POSITIONAL',
+            });
+
+            // 💡 NEW: Restore sample values
+            setSampleValues({
+                header_text: headerComponent?.example?.header_text || [],
+                body_text: bodyComponent?.example?.body_text || []
             });
 
             const buttonComp = templateData?.components?.find(c => c.type === 'BUTTONS');
@@ -115,6 +237,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             }
         }
     }, [templateData]);
+
+
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -186,21 +311,30 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             headerText,
             headerImage,
             footerText,
-            messageContent
+            messageContent,
+            parameter_format
         } = formInput;
 
         const components = [];
 
+        // Handle HEADER (TEXT)
         if (headerOption === "TEXT" && headerText.trim()) {
-            components.push({
+            const headerComponent = {
                 type: "HEADER",
                 format: "TEXT",
                 text: headerText
-            });
+            };
+
+            if (sampleValues.header_text.length > 0) {
+                headerComponent.example = {
+                    header_text: sampleValues.header_text
+                };
+            }
+
+            components.push(headerComponent);
         }
 
-        const phone_id = 637230059476897;
-
+        // Handle HEADER (IMAGE)
         if (headerOption === "IMAGE" && headerImage) {
             try {
                 const formData = new FormData();
@@ -222,7 +356,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 const mediaId = uploadResponse.data.id;
 
                 if (!mediaId) {
-                    console.log("Image upload failed. Media ID not received.");
                     toast.error("Image upload failed. Media ID not received.");
                     return;
                 }
@@ -236,17 +369,30 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 });
 
             } catch (error) {
-                console.log(error.response);
                 toast.error("Image upload failed. Please try again.");
                 return;
             }
         }
 
-        components.push({
-            type: "BODY",
-            text: messageContent
-        });
+        // Handle BODY
+        if (messageContent.trim()) {
+            const bodyComponent = {
+                type: "BODY",
+                text: messageContent
+            };
 
+            // Ensure sample values for body text, similar to header example check
+            if (sampleValues.body_text.length > 0) {
+                bodyComponent.example = {
+                    body_text: sampleValues.body_text
+                };
+            }
+
+            components.push(bodyComponent);
+        }
+
+
+        // Handle FOOTER (if exists)
         if (footerText?.trim()) {
             components.push({
                 type: "FOOTER",
@@ -254,6 +400,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             });
         }
 
+        // Handle BUTTONS (if any)
         if (buttons.length > 0) {
             components.push({
                 type: "BUTTONS",
@@ -266,10 +413,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             language,
             category,
             messaging_product: "whatsapp",
+            parameter_format,
             components
         };
-
-        console.log(payload);
 
         try {
             const response = await axios.post(
@@ -283,28 +429,26 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 }
             );
 
-            console.log(payload);
-
             const existingTemplates = JSON.parse(localStorage.getItem('whatsappTemplates')) || [];
             const newTemplate = {
                 id: response.data.id || Date.now(),
                 name: payload.name,
                 category: payload.category,
                 language: payload.language,
+                parameter_format: payload.parameter_format,
                 components: payload.components,
                 createdAt: new Date().toISOString()
             };
-            console.log(newTemplate);
             localStorage.setItem('whatsappTemplates', JSON.stringify([...existingTemplates, newTemplate]));
 
             toast.success("Template created successfully!");
             onSuccess();
         } catch (error) {
             console.log(error.response);
-            toast.error(error.response?.data?.error?.error_user_msg
-                || "Error creating template. Please try again.");
+            toast.error(error.response?.data?.error?.error_user_msg || "Error creating template. Please try again.");
         }
     };
+
 
     const handleReset = () => {
         setFormInput({
@@ -316,6 +460,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             headerImage: null,
             footerText: '',
             messageContent: '',
+            parameter_format: 'POSITIONAL',
         });
         setButtons([]);
         onTemplateChange();
@@ -323,6 +468,10 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
     const canAddPhoneButton = buttons.filter(button => button.type === 'PHONE_NUMBER').length < 1;
     const canAddUrlButton = buttons.filter(button => button.type === 'URL').length < 2;
+
+
+
+
 
     return (
         <form onSubmit={handleSubmit}>
@@ -398,8 +547,31 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             <h3 className="font-semibold mt-[20px] pt-[20px]">Header/Footer (Optional)</h3>
             <p className="text-sm font-semibold text-gray-700">Add a title or select media type for the header</p>
 
+
+
+
+            <div className='mt-6'>
+                <FormControl fullWidth size="small">
+                    <InputLabel id="variable-type-label">Variable</InputLabel>
+                    <Select
+                        labelId="variable-type-label"
+                        id="parameter_format"
+                        name="parameter_format"
+                        value={formInput.parameter_format}
+                        label=" Variable"
+                        onChange={handleChange}
+                        variant='outlined'
+                    >
+                        <MenuItem value="POSITIONAL">Number</MenuItem>
+                        <MenuItem value="NAMED">Name</MenuItem>
+                    </Select>
+                </FormControl>
+            </div>
+
+
+
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[30px] text-md'>
-                <FormControl fullWidth required size="small">
+                <FormControl fullWidth size="small">
                     <InputLabel id="header-option-label">Header Option</InputLabel>
                     <Select
                         labelId="header-option-label"
@@ -432,18 +604,45 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             </div>
 
             {formInput.headerOption === 'TEXT' && (
-                <TextField
-                    fullWidth
-                    name="headerText"
-                    label="Header Text"
-                    value={formInput.headerText}
-                    onChange={handleChange}
-                    size="small"
-                    placeholder="Header Text (60 Characters)"
-                    variant="outlined"
-                    sx={{ width: 'calc(50% - 10px)', mt: 2 }}
-                    inputProps={{ maxLength: 60 }}
-                />
+
+                <div className='w-[49%]'>
+                    <TextField
+                        fullWidth
+                        name="headerText"
+                        label="Header Text"
+                        value={formInput.headerText}
+                        onChange={handleChange}
+                        multiline
+                        rows={1}
+                        size="small"
+                        placeholder="Header Text (60 Characters)"
+                        variant="outlined"
+                        sx={{ width: 'calc(100%)', mt: 2 }}
+                        inputProps={{ maxLength: 60 }}
+                    />
+
+
+                    <Button
+                        type="button"
+                        onClick={handleHeaderVariable}
+
+                        variant="outlined"
+                        color="primary"
+                        sx={{
+                            fontWeight: 600,
+                            fontSize: '14px',
+                            py: '2px',
+                            float: 'right',
+                            px: '10px',
+                            borderRadius: '4px',
+                            textTransform: 'none',
+
+                        }}
+                    >
+                        + Add variable
+                    </Button>
+                </div>
+
 
             )}
 
@@ -478,7 +677,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             )}
 
 
-            {/* Body */}
             <h3 className="font-semibold mt-[40px] pt-[10px]">Body</h3>
             <p className="text-sm font-semibold text-gray-600">Enter the text for your message</p>
             <TextField
@@ -495,11 +693,75 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 variant="outlined"
                 sx={{
                     mt: 2,
-                    backgroundColor: '#f9fafb', // equivalent to bg-gray-50
+                    backgroundColor: '#f9fafb',
                     borderRadius: '4px',
                 }}
                 inputProps={{ maxLength: 1024 }}
             />
+
+            <Button
+                type="button"
+                onClick={handleBodyVariable}
+
+                variant="outlined"
+                color="primary"
+                sx={{
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    py: '2px',
+                    float: 'right',
+                    px: '10px',
+                    borderRadius: '4px',
+                    textTransform: 'none',
+
+                }}
+            >
+                + Add variable
+            </Button>
+
+            {sampleValues.body_text.length > 0 && (
+                <div className='mt-6'>
+                    <h4 className='font-semibold'>Body Variable Examples</h4>
+                    {sampleValues.body_text.map((val, i) => (
+                        <TextField
+                            key={`body_var_${i}`}
+                            size="small"
+                            label={`Body {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.messageContent, formInput.parameter_format)[i]}}}`}
+                            value={val}
+                            onChange={(e) => {
+                                const updated = [...sampleValues.body_text];
+                                updated[i] = e.target.value;
+                                setSampleValues(prev => ({ ...prev, body_text: updated }));
+                            }}
+                            fullWidth
+                            margin="normal"
+                        />
+                    ))}
+                </div>
+            )}
+
+
+
+            {sampleValues.header_text.length > 0 && (
+                <div className='mt-6'>
+                    <h4 className='font-semibold'>Header Variable Examples</h4>
+                    {sampleValues.header_text.map((val, i) => (
+                        <TextField
+                            key={`header_var_${i}`}
+                            size="small"
+                            label={`Header {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.headerText, formInput.parameter_format)[i]}}}`}
+                            value={val}
+                            onChange={(e) => {
+                                const updated = [...sampleValues.header_text];
+                                updated[i] = e.target.value;
+                                setSampleValues(prev => ({ ...prev, header_text: updated }));
+                            }}
+                            fullWidth
+                            margin="normal"
+                        />
+                    ))}
+                </div>
+            )}
 
 
             {/* Buttons */}
@@ -579,9 +841,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     textTransform: 'none',
                     fontWeight: 600,
                     fontSize: '16px',
-                    backgroundColor: '#2563eb', 
+                    backgroundColor: '#2563eb',
                     '&:hover': {
-                        backgroundColor: '#1d4ed8', 
+                        backgroundColor: '#1d4ed8',
                     },
                 }}
             >
