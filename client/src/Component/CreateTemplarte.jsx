@@ -1,7 +1,11 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
+
+
 
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
@@ -22,11 +26,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
     const [isDropupOpen, setIsDropupOpen] = useState(false);
     const dropupRef = useRef(null);
     const buttonRef = useRef(null);
-
-
-
-
-
 
     useEffect(() => {
         if (onTemplateChange) {
@@ -67,7 +66,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 });
             }
 
-
             liveComponents.push({
                 type: 'BODY',
                 text: messageContent
@@ -98,14 +96,8 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         }
     }, [formInput, buttons]);
 
-
-
-
     useEffect(() => {
         if (templateData) {
-
-
-
             setFormInput({
                 templateName: templateData?.name || '',
                 category: templateData?.category || '',
@@ -161,8 +153,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         setButtons([...buttons, { type: 'QUICK_REPLY', text: '' }]);
     };
 
-
-
     const handleButtonChange = (index, key, value) => {
         const updated = [...buttons];
         updated[index][key] = value;
@@ -186,8 +176,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         setButtons(updated);
     };
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const {
@@ -210,7 +198,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 text: headerText
             });
         }
-
 
         const phone_id = 637230059476897;
 
@@ -255,7 +242,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             }
         }
 
-
         components.push({
             type: "BODY",
             text: messageContent
@@ -283,10 +269,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             components
         };
 
-
-        console.log(payload)
-
-
+        console.log(payload);
 
         try {
             const response = await axios.post(
@@ -300,7 +283,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 }
             );
 
-            console.log(payload)
+            console.log(payload);
 
             const existingTemplates = JSON.parse(localStorage.getItem('whatsappTemplates')) || [];
             const newTemplate = {
@@ -317,9 +300,8 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             toast.success("Template created successfully!");
             onSuccess();
         } catch (error) {
-
-            console.log(error.response)
-            toast.error(error.response?.data?.error?.error_user_title
+            console.log(error.response);
+            toast.error(error.response?.data?.error?.error_user_msg
                 || "Error creating template. Please try again.");
         }
     };
@@ -339,65 +321,152 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         onTemplateChange();
     };
 
-
-
-
+    const canAddPhoneButton = buttons.filter(button => button.type === 'PHONE_NUMBER').length < 1;
+    const canAddUrlButton = buttons.filter(button => button.type === 'URL').length < 2;
 
     return (
         <form onSubmit={handleSubmit}>
-
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[50px] text-md'>
-                <input type="text" name="templateName" value={formInput.templateName} onChange={handleChange}
-                    placeholder='Template Name *' required
-                    className='border-b py-[5px] w-full placeholder-gray-500 placeholder:font-semibold focus:outline-none' />
+                <div className="flex-1">
+                    <TextField
+                        required
+                        id="outlined-required"
+                        name="templateName"
+                        label="Template Name"
+                        size="small"
+                        fullWidth
+                        placeholder='Template Name'
+                        value={formInput.templateName}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                <select name="category" value={formInput.category} required onChange={handleChange}
-                    className='border-b py-[5px] w-full text-gray-500 bg-transparent outline-none'>
-                    <option value="" disabled>Category</option>
-                    <option value="UTILITY">Utility</option>
-                    <option value="MARKETING">Marketing</option>
-                    <option value="AUTHENTICATION">Authentication</option>
-                </select>
+                <div className="flex-1">
 
-                <select name="language" required value={formInput.language} onChange={handleChange}
-                    className='border-b py-[5px] w-full text-gray-500 bg-transparent outline-none'>
-                    <option value="" disabled>Language</option>
-                    <option value="en">English</option>
-                    <option value="hi">Hindi</option>
-                </select>
+
+
+                    <FormControl fullWidth required size="small">
+                        <InputLabel id="category-label">Category</InputLabel>
+                        <Select
+                            labelId="category-label"
+                            id="category"
+                            name="category"
+                            value={formInput.category}
+                            label="Category"
+                            onChange={handleChange}
+                        >
+
+                            <MenuItem value="UTILITY">Utility</MenuItem>
+                            <MenuItem value="MARKETING">Marketing</MenuItem>
+                            <MenuItem value="AUTHENTICATION">Authentication</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                </div>
+
+                <div className="flex-1">
+
+
+
+
+                    <FormControl fullWidth required size='small'>
+                        <InputLabel id="language-label">Language</InputLabel>
+                        <Select
+                            labelId='language-label'
+                            id='language'
+                            name="language"
+                            label="Language"
+                            value={formInput.language}
+                            onChange={handleChange}
+                        >
+
+                            <MenuItem value="en">English</MenuItem>
+                            <MenuItem value="hi">Hindi</MenuItem>
+
+                        </Select>
+
+                    </FormControl>
+
+
+
+
+                </div>
             </div>
 
+
             {/* Header/Footer */}
-            <h3 className="font-semibold mt-[40px] pt-[30px]">Header/Footer (Optional)</h3>
+            <h3 className="font-semibold mt-[20px] pt-[20px]">Header/Footer (Optional)</h3>
             <p className="text-sm font-semibold text-gray-700">Add a title or select media type for the header</p>
 
-            <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[20px] text-md'>
-                <select name="headerOption" value={formInput.headerOption} onChange={handleChange}
-                    className='border-b py-[5px] w-full text-gray-500 bg-transparent outline-none'>
-                    <option value="">Choose Header Option</option>
-                    <option value="TEXT">Text</option>
-                    <option value="IMAGE">Image</option>
-                </select>
+            <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[30px] text-md'>
+                <FormControl fullWidth required size="small">
+                    <InputLabel id="header-option-label">Header Option</InputLabel>
+                    <Select
+                        labelId="header-option-label"
+                        id="headerOption"
+                        name="headerOption"
+                        value={formInput.headerOption}
+                        label="Header Option"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="None">None</MenuItem>
 
-                <textarea name="footerText" value={formInput.footerText} onChange={handleChange}
+                        <MenuItem value="TEXT">Text</MenuItem>
+                        <MenuItem value="IMAGE">Image</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <TextField
+                    name="footerText"
+                    value={formInput.footerText}
+                    onChange={handleChange}
                     placeholder="Footer Text (60 Characters)"
-                    className='border-b py-[5px] w-full placeholder-gray-500 placeholder:font-semibold resize-none outline-none'
-                    rows="1" />
+                    label="Footer Text"
+                    multiline
+                    rows={1}
+                    fullWidth
+                    size="small"
+                    inputProps={{ maxLength: 60 }}
+                />
+
             </div>
 
             {formInput.headerOption === 'TEXT' && (
-                <input type="text" name="headerText" value={formInput.headerText} onChange={handleChange}
-                    placeholder='Header Text'
-                    className='border-b py-[5px] w-full mt-[20px] placeholder-gray-500 placeholder:font-semibold focus:outline-none' />
+                <TextField
+                    fullWidth
+                    name="headerText"
+                    label="Header Text"
+                    value={formInput.headerText}
+                    onChange={handleChange}
+                    size="small"
+                    placeholder="Header Text (60 Characters)"
+                    variant="outlined"
+                    sx={{ width: 'calc(50% - 10px)', mt: 2 }}
+                    inputProps={{ maxLength: 60 }}
+                />
+
             )}
 
             {formInput.headerOption === 'IMAGE' && (
-                <div className='w-full mt-[20px]'>
-                    <input type="file" name="headerImage" onChange={handleImageChange} accept="image/*"
-                        className='border-b py-[5px] w-full' />
-                   
+                <div className='w-full flex gap-4 mt-[20px]'>
+                    <Button
+                        variant="outlined"
+                        component="label"
+                        // sx={{ width: 'calc(50% - 10px)' }}
+                        size="small"
+                    >
+                        Upload Header Image
+                        <input
+                            type="file"
+                            name="headerImage"
+                            accept="image/*"
+                            hidden
+                            onChange={handleImageChange}
+                        />
+                    </Button>
+
                     {formInput.headerImage && (
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-md font-semibold text-gray-600 mt-1">
                             {formInput.headerImage instanceof File
                                 ? formInput.headerImage.name
                                 : 'Existing Image'}
@@ -412,14 +481,25 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             {/* Body */}
             <h3 className="font-semibold mt-[40px] pt-[10px]">Body</h3>
             <p className="text-sm font-semibold text-gray-600">Enter the text for your message</p>
-            <textarea name="messageContent" required value={formInput.messageContent} onChange={handleChange}
+            <TextField
+                required
+                name="messageContent"
+                label="Message Content"
                 placeholder="Message Content (1024 Characters)"
-                className="border-b bg-gray-50 py-[5px] px-3 w-full placeholder-gray-500 rounded-sm resize-none outline-none mt-4"
-                rows="8" />
-
-
-
-
+                value={formInput.messageContent}
+                onChange={handleChange}
+                multiline
+                rows={7}
+                fullWidth
+                size="small"
+                variant="outlined"
+                sx={{
+                    mt: 2,
+                    backgroundColor: '#f9fafb', // equivalent to bg-gray-50
+                    borderRadius: '4px',
+                }}
+                inputProps={{ maxLength: 1024 }}
+            />
 
 
             {/* Buttons */}
@@ -428,53 +508,128 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
             {buttons.map((btn, i) => (
                 <div key={i} className="flex gap-2 items-center text-gray-700 text-sm my-2">
-                    <select value={btn.type} onChange={(e) => handleButtonChange(i, 'type', e.target.value)}
-                        className="border p-2 rounded-md focus:outline-none">
-                        <option value="QUICK_REPLY">Quick Reply</option>
-                        <option value="PHONE_NUMBER">Call Phone</option>
-                        <option value="URL">Visit URL</option>
-                    </select>
+                    <FormControl size="small" sx={{ width: '150px', mr: 2 }}>
+                        <InputLabel id={`button-type-label-${i}`}>Button Type</InputLabel>
+                        <Select
+                            labelId={`button-type-label-${i}`}
+                            id={`button-type-${i}`}
+                            value={btn.type}
+                            label="Button Type"
+                            onChange={(e) => handleButtonChange(i, 'type', e.target.value)}
+                        >
+                            <MenuItem value="QUICK_REPLY">Quick Reply</MenuItem>
+                            <MenuItem value="PHONE_NUMBER" disabled={!canAddPhoneButton}>
+                                Call Phone
+                            </MenuItem>
+                            <MenuItem value="URL" disabled={!canAddUrlButton}>
+                                Visit URL
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
 
-                    <input type="text" placeholder="Button Text" value={btn.text}
-                        onChange={(e) => handleButtonChange(i, 'text', e.target.value)} className="border  focus:outline-none rounded-md p-2 w-50" />
+                    <TextField
+                        label="Button Text"
+                        placeholder="Button Text"
+                        variant="outlined"
+                        size="small"
+                        value={btn.text}
+                        onChange={(e) => handleButtonChange(i, 'text', e.target.value)}
+                        sx={{ width: 200 }}
+                    />
 
                     {btn.type === 'PHONE_NUMBER' && (
-                        <input type="text" placeholder="Phone Number with country code" value={btn.phone_number || ''}
+                        <TextField
+                            label="Phone Number"
+                            placeholder="Phone Number with country code"
+                            variant="outlined"
+                            size="small"
+                            value={btn.phone_number || ''}
                             onChange={(e) => handleButtonChange(i, 'phone_number', e.target.value)}
-                            className="border focus:outline-none rounded-md p-2 w-70" />
+                            sx={{ width: 280 }} // Adjust width as needed
+                        />
                     )}
 
                     {btn.type === 'URL' && (
-                        <input type="text" placeholder="URL" value={btn.url || ''}
+                        <TextField
+                            label="URL"
+                            placeholder="URL"
+                            variant="outlined"
+                            size="small"
+                            value={btn.url || ''}
                             onChange={(e) => handleButtonChange(i, 'url', e.target.value)}
-                            className="border focus:outline-none rounded-md p-2 w-50" />
+                            sx={{ width: 200 }}
+                        />
                     )}
-
-
 
                     <i className="fa-solid fa-xmark text-2xl text-red-400 cursor-pointer hover:text-red-500 hover:scale-110 " onClick={() => handleRemoveButton(i)}></i>
                 </div>
             ))}
 
-            <button type="button" onClick={handleAddButton}
-                className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+            <Button
+                type="button"
+                onClick={handleAddButton}
+                variant="contained"
+                color="primary"
+                size="small"
+                sx={{
+                    mt: 2,
+                    py: '5px',
+                    px: '12px',
+                    borderRadius: '4px',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    fontSize: '16px',
+                    backgroundColor: '#2563eb', 
+                    '&:hover': {
+                        backgroundColor: '#1d4ed8', 
+                    },
+                }}
+            >
                 + Add Button
-            </button>
+            </Button>
 
 
 
-
-            {/* Submit/Reset */}
+            {/* Submit/Reset buttons */}
             <div className='mt-[30px] flex gap-[20px]'>
-                <button type='submit'
-                    className='bg-green-600 hover:bg-green-700 text-white font-semibold py-[5px] px-[12px] rounded'>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="success"
+                    sx={{
+                        fontWeight: 600,
+                        fontSize: '16px',
+                        py: '5px',
+                        px: '12px',
+                        borderRadius: '4px',
+                        textTransform: 'none',
+                        '&:hover': {
+                            backgroundColor: '#2e7d32', // darker green
+                        },
+                    }}
+                >
                     Save Template
-                </button>
+                </Button>
 
-                <button type='button' onClick={handleReset}
-                    className='bg-red-500 hover:bg-red-600 text-white font-semibold py-[5px] px-[12px] rounded'>
-                    Cancel
-                </button>
+                <Button
+                    type="button"
+                    onClick={handleReset}
+                    variant="contained"
+                    color="error"
+                    sx={{
+                        fontWeight: 600,
+                        fontSize: '16px',
+                        py: '5px',
+                        px: '20px',
+                        borderRadius: '4px',
+                        textTransform: 'none',
+                        '&:hover': {
+                            backgroundColor: '#c62828', // darker red on hover
+                        },
+                    }}
+                >
+                    Reset
+                </Button>
             </div>
         </form>
     );

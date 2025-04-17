@@ -148,11 +148,9 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                   <tr
                     key={template.id || index}
                     className={`group border-b border-gray-200 hover:bg-blue-100 text-md font-semibold cursor-pointer text-sm text-center
-                    ${selectedTemplateId === template.id ? 'bg-blue-100 ' : ''}
-                  `}
+        ${selectedTemplateId === template.id ? 'bg-blue-100' : ''}`}
                     onClick={() => onSelectTemplateId?.(template.id)}
                   >
-
                     <td className="px-4 py-3 text-left">{template.id}</td>
                     <td className="px-4 py-3">{template.name}</td>
                     <td className="px-4 py-3">{template.category}</td>
@@ -160,7 +158,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                     <td className="px-4 py-3">
                       <span
                         className={`rounded-2xl px-2 py-1 text-white text-center  
-                        ${template.status.toLowerCase() === 'approved'
+            ${template.status.toLowerCase() === 'approved'
                             ? 'bg-green-100 !text-green-700'
                             : template.status.toLowerCase() === 'pending'
                               ? 'bg-orange-100 !text-orange-500'
@@ -173,27 +171,39 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                       </span>
                     </td>
                     <td className="px-4 py-3 text-gray-400 italic relative">
-                      <span className="group-hover:hidden text-nowrap">
+                      <span className={`group-hover:hidden ${selectedTemplateId === template.id ? 'hidden' : 'text-nowrap'}`}>
                         {template.createdAt
                           ? new Intl.DateTimeFormat('en-US', {
                             dateStyle: 'medium',
                           }).format(new Date(template.createdAt))
                           : 'N/A'}
                       </span>
-                      <div className="hidden group-hover:flex gap-6 justify-center items-center">
+                      <div
+                        className={`gap-6 justify-center items-center absolute top-1/2 transform -translate-y-1/2 left-0 right-0
+            ${selectedTemplateId === template.id ? 'flex' : 'hidden group-hover:flex'}`}
+                      >
                         <i
-                          className="fa-solid text-blue-500 fa-pen-to-square hover:text-blue-600 cursor-pointer text-lg"
-                          onClick={() => handleEditTemplate(template)}
+                          className="fa-solid text-blue-500 fa-pen-to-square hover:text-blue-600 cursor-pointer text-lg bg-white p-2 rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent row click event
+                            handleEditTemplate(template);
+                          }}
                         ></i>
                         <i
-                          className="fa-solid text-red-400 fa-trash hover:text-red-500 cursor-pointer text-lg"
-                          onClick={() => handleDeleteTemplate(template)}
+                          className="fa-solid text-red-400 fa-trash hover:text-red-500 cursor-pointer text-lg bg-white p-2 rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent row click event
+                            handleDeleteTemplate(template);
+                          }}
                         ></i>
                       </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
+
+
+
             </table>
           </div>
 
