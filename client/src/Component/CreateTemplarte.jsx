@@ -726,6 +726,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         <TextField
                             key={`body_var_${i}`}
                             size="small"
+                            required
                             label={`Body {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.messageContent, formInput.parameter_format)[i]}}}`}
                             value={val}
                             onChange={(e) => {
@@ -749,6 +750,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         <TextField
                             key={`header_var_${i}`}
                             size="small"
+                            required
                             label={`Header {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.headerText, formInput.parameter_format)[i]}}}`}
                             value={val}
                             onChange={(e) => {
