@@ -35,6 +35,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
 
+
+
+
     const extractVariableList = (text, format) => {
         if (format === 'POSITIONAL') {
             const regex = /\{\{(\d+)\}\}/g;
@@ -58,12 +61,40 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         const end = textarea.selectionEnd;
         const value = textarea.value;
 
+        const isPosition = formInput.parameter_format === 'POSITIONAL';
+        const numberRegex = /\{\{\d+\}\}/;
+        const namedRegex = /\{\{[a-zA-Z_]+\d*\}\}/;
+
+        const otherFieldValue =
+            name === 'headerText' ? formInput.messageContent : formInput.headerText;
+
+        // Combined check: current and other field
+        const combinedValue = value + ' ' + otherFieldValue;
+
+        if (isPosition && namedRegex.test(combinedValue)) {
+            toast.warn("You can't mix named variables with number variables ");
+            return;
+        }
+
+        if (!isPosition && numberRegex.test(combinedValue)) {
+            toast.warn("You can't mix number variables with named variables");
+            return;
+        }
+
+        const existingVariables = extractVariableList(value, formInput.parameter_format);
+
+        // Skip if variable already exists
+        if (existingVariables.includes(insertText.replace(/[{}]/g, ''))) return;
+
         const newText = value.slice(0, start) + insertText + value.slice(end);
+
         setFormInput(prev => ({
             ...prev,
             [name]: newText
         }));
     };
+
+
 
 
     const getNextVariableNumber = (text) => {
@@ -94,22 +125,48 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         if (formInput.parameter_format === 'POSITIONAL') {
             const nextVar = getNextVariableNumber(currentText);
             insertAtCursor('headerText', `{{${nextVar}}}`);
+
+            // Update sample values
+            setSampleValues(prev => ({
+                ...prev,
+                header_text: [...prev.header_text, '']
+            }));
         } else {
             const nextVar = getNextVariableName(currentText, 'header');
             insertAtCursor('headerText', `{{${nextVar}}}`);
+
+            // Update sample values
+            setSampleValues(prev => ({
+                ...prev,
+                header_text: [...prev.header_text, '']
+            }));
         }
     };
+
 
     const handleBodyVariable = () => {
         const currentText = formInput.messageContent || '';
         if (formInput.parameter_format === 'POSITIONAL') {
             const nextVar = getNextVariableNumber(currentText);
             insertAtCursor('messageContent', `{{${nextVar}}}`);
+
+            // Update sample values
+            setSampleValues(prev => ({
+                ...prev,
+                body_text: [...prev.body_text, '']
+            }));
         } else {
             const nextVar = getNextVariableName(currentText, 'body');
             insertAtCursor('messageContent', `{{${nextVar}}}`);
+
+            // Update sample values
+            setSampleValues(prev => ({
+                ...prev,
+                body_text: [...prev.body_text, '']
+            }));
         }
     };
+
 
 
 
@@ -120,8 +177,8 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         const bodyVars = extractVariableList(messageContent, parameter_format);
 
         setSampleValues(prev => ({
-            header_text: headerVars.map((v, i) => prev.header_text?.[i] ?? ''),
-            body_text: bodyVars.map((v, i) => prev.body_text?.[i] ?? '')
+            header_text: headerVars.map((_, i) => prev.header_text?.[i] || ''),
+            body_text: bodyVars.map((_, i) => prev.body_text?.[i] || '')
         }));
     }, [formInput.headerText, formInput.messageContent, formInput.parameter_format]);
 
@@ -150,11 +207,19 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     type: 'HEADER',
                     format: 'TEXT',
                     text: headerText,
-                    example: {
-                        header_text: sampleValues.header_text // Ensure sample values for header text
-                    }
+                    example: parameter_format === 'NAMED'
+                        ? {
+                            header_text_named_params: extractVariableList(headerText, parameter_format).map((param, i) => ({
+                                param_name: param,
+                                example: sampleValues.header_text[i]?.example || ''
+                            }))
+                        }
+                        : {
+                            header_text: sampleValues.header_text.map(p => p.example || '')
+                        }
                 });
-            } else if (headerOption === 'IMAGE' && headerImage) {
+            }
+            else if (headerOption === 'IMAGE' && headerImage) {
                 let imagePreview = '';
 
                 if (typeof headerImage === 'string') {
@@ -171,13 +236,26 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             }
 
             // Handle BODY
-            liveComponents.push({
-                type: 'BODY',
-                text: messageContent,
-                example: {
-                    body_text: sampleValues.body_text // Ensure sample values for body text
-                }
-            });
+            if (messageContent.trim()) {
+                const bodyExample =
+                    parameter_format === 'NAMED'
+                        ? {
+                            body_text_named_params: extractVariableList(messageContent, parameter_format).map((param, i) => ({
+                                param_name: param,
+                                example: sampleValues.body_text[i]?.example || ''
+                            }))
+                        }
+                        : {
+                            body_text: sampleValues.body_text.map(p => p.example || '')
+                        };
+
+                liveComponents.push({
+                    type: 'BODY',
+                    text: messageContent,
+                    example: bodyExample
+                });
+            }
+
 
             // Handle FOOTER (if exists)
             if (footerText?.trim()) {
@@ -210,6 +288,8 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
     useEffect(() => {
         if (templateData) {
+            console.log("editing template: ", JSON.stringify(templateData, null, 2));
+
             const headerComponent = templateData.components?.find(c => c.type === 'HEADER');
             const bodyComponent = templateData.components?.find(c => c.type === 'BODY');
 
@@ -225,11 +305,34 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 parameter_format: templateData?.parameter_format || 'POSITIONAL',
             });
 
-            // 💡 NEW: Restore sample values
-            setSampleValues({
-                header_text: headerComponent?.example?.header_text || [],
-                body_text: bodyComponent?.example?.body_text || []
-            });
+            // Handle named and positional parameters based on the parameter_format
+            if (templateData.parameter_format === "NAMED") {
+
+                console.log(headerComponent?.example?.header_text_named_params[0].example)
+                // Extract named parameters
+                setSampleValues({
+                    header_text: headerComponent?.example?.header_text_named_params?.map(param => ({
+                        param_name: param.param_name,
+                        example: param.example,
+                    })) || [],
+                    body_text: bodyComponent?.example?.body_text_named_params?.map(param => ({
+                        param_name: param.param_name,
+                        example: param.example,
+                    })) || [],
+                });
+            } else if (templateData.parameter_format === "POSITIONAL") {
+                // Extract positional parameters
+                setSampleValues({
+                    header_text: headerComponent?.example?.header_text?.map((text, index) => ({
+                        param_name: `{{${index + 1}}}`,
+                        example: text,
+                    })) || [],
+                    body_text: bodyComponent?.example?.body_text?.map((text, index) => ({
+                        param_name: `{{${index + 1}}}`,
+                        example: text,
+                    })) || [],
+                });
+            }
 
             const buttonComp = templateData?.components?.find(c => c.type === 'BUTTONS');
             if (buttonComp?.buttons) {
@@ -319,20 +422,42 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
         // Handle HEADER (TEXT)
         if (headerOption === "TEXT" && headerText.trim()) {
+            const headerVars = extractVariableList(headerText, parameter_format);
+
             const headerComponent = {
                 type: "HEADER",
                 format: "TEXT",
-                text: headerText
+                text: headerText,
             };
 
-            if (sampleValues.header_text.length > 0) {
-                headerComponent.example = {
-                    header_text: sampleValues.header_text
-                };
+            if (headerVars.length > 0) {
+                if (parameter_format === 'POSITIONAL') {
+                    const headerExamples = sampleValues.header_text?.map(v => v?.example).filter(Boolean) || [];
+
+                    if (headerExamples.length !== headerVars.length) {
+                        return toast.error("Please provide example values for all HEADER variables.");
+                    }
+
+                    headerComponent.example = {
+                        header_text: headerExamples[0] // only one variable is allowed in header
+                    };
+                } else {
+                    headerComponent.example = {
+                        header_text_named_params: headerVars.map((param, i) => ({
+                            param_name: param,
+                            example: sampleValues.header_text[i]?.example || ""
+                        }))
+                    };
+                }
             }
 
             components.push(headerComponent);
         }
+
+
+
+        const phone_id = 637230059476897;
+
 
         // Handle HEADER (IMAGE)
         if (headerOption === "IMAGE" && headerImage) {
@@ -369,6 +494,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 });
 
             } catch (error) {
+                console.log(error.response);
                 toast.error("Image upload failed. Please try again.");
                 return;
             }
@@ -376,20 +502,37 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
         // Handle BODY
         if (messageContent.trim()) {
+            const bodyVars = extractVariableList(messageContent, parameter_format);
+
             const bodyComponent = {
                 type: "BODY",
                 text: messageContent
             };
 
-            // Ensure sample values for body text, similar to header example check
-            if (sampleValues.body_text.length > 0) {
-                bodyComponent.example = {
-                    body_text: sampleValues.body_text
-                };
+            if (bodyVars.length > 0) {
+                if (parameter_format === 'POSITIONAL') {
+                    const bodyExamples = sampleValues.body_text?.map(v => v?.example).filter(Boolean) || [];
+
+                    if (bodyExamples.length !== bodyVars.length) {
+                        return toast.error("Please provide example values for all BODY variables.");
+                    }
+
+                    bodyComponent.example = {
+                        body_text: bodyExamples
+                    };
+                } else {
+                    bodyComponent.example = {
+                        body_text_named_params: bodyVars.map((param, i) => ({
+                            param_name: param,
+                            example: sampleValues.body_text[i]?.example || ""
+                        }))
+                    };
+                }
             }
 
             components.push(bodyComponent);
         }
+
 
 
         // Handle FOOTER (if exists)
@@ -416,6 +559,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             parameter_format,
             components
         };
+
+
+        console.log(payload);
 
         try {
             const response = await axios.post(
@@ -719,51 +865,43 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 + Add variable
             </Button>
 
-            {sampleValues.body_text.length > 0 && (
-                <div className='mt-6'>
-                    <h4 className='font-semibold'>Body Variable Examples</h4>
-                    {sampleValues.body_text.map((val, i) => (
-                        <TextField
-                            key={`body_var_${i}`}
-                            size="small"
-                            required
-                            label={`Body {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.messageContent, formInput.parameter_format)[i]}}}`}
-                            value={val}
-                            onChange={(e) => {
-                                const updated = [...sampleValues.body_text];
-                                updated[i] = e.target.value;
-                                setSampleValues(prev => ({ ...prev, body_text: updated }));
-                            }}
-                            fullWidth
-                            margin="normal"
-                        />
-                    ))}
-                </div>
-            )}
+            {sampleValues.body_text.map((val, i) => (
+                <TextField
+                    key={`body_var_${i}`}
+                    size="small"
+                    required
+                    label={`Body {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.messageContent, formInput.parameter_format)[i]}}}`}
+                    value={val.example} // ✅ FIX HERE
+                    onChange={(e) => {
+                        const updated = [...sampleValues.body_text];
+                        updated[i] = { ...updated[i], example: e.target.value }; // ✅ FIX HERE
+                        setSampleValues(prev => ({ ...prev, body_text: updated }));
+                    }}
+                    fullWidth
+                    margin="normal"
+                />
+            ))}
 
 
 
-            {sampleValues.header_text.length > 0 && (
-                <div className='mt-6'>
-                    <h4 className='font-semibold'>Header Variable Examples</h4>
-                    {sampleValues.header_text.map((val, i) => (
-                        <TextField
-                            key={`header_var_${i}`}
-                            size="small"
-                            required
-                            label={`Header {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.headerText, formInput.parameter_format)[i]}}}`}
-                            value={val}
-                            onChange={(e) => {
-                                const updated = [...sampleValues.header_text];
-                                updated[i] = e.target.value;
-                                setSampleValues(prev => ({ ...prev, header_text: updated }));
-                            }}
-                            fullWidth
-                            margin="normal"
-                        />
-                    ))}
-                </div>
-            )}
+
+            {sampleValues.header_text.map((val, i) => (
+                <TextField
+                    key={`header_var_${i}`}
+                    size="small"
+                    required
+                    label={`Header {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.headerText, formInput.parameter_format)[i]}}}`}
+                    value={val.example} // ✅ FIX HERE
+                    onChange={(e) => {
+                        const updated = [...sampleValues.header_text];
+                        updated[i] = { ...updated[i], example: e.target.value }; // ✅ FIX HERE
+                        setSampleValues(prev => ({ ...prev, header_text: updated }));
+                    }}
+                    fullWidth
+                    margin="normal"
+                />
+            ))}
+
 
 
             {/* Buttons */}
@@ -793,12 +931,13 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                     <TextField
                         label="Button Text"
-                        placeholder="Button Text"
+                        placeholder="Button Text (25 Characters)"
                         variant="outlined"
                         size="small"
                         value={btn.text}
                         onChange={(e) => handleButtonChange(i, 'text', e.target.value)}
                         sx={{ width: 200 }}
+                        inputProps={{ maxLength: 25 }}
                     />
 
                     {btn.type === 'PHONE_NUMBER' && (
@@ -809,7 +948,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             size="small"
                             value={btn.phone_number || ''}
                             onChange={(e) => handleButtonChange(i, 'phone_number', e.target.value)}
-                            sx={{ width: 280 }} // Adjust width as needed
+                            sx={{ width: 280 }}
+                            inputProps={{ maxLength: 15 }}
+
                         />
                     )}
 

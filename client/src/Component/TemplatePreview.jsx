@@ -5,7 +5,6 @@ function TemplatePreview({ templateId, liveTemplateData }) {
 
 
 
-    console.log(liveTemplateData);
 
     const sampleTemplate = {
         parameter_format: 'POSITIONAL',
@@ -59,10 +58,10 @@ function TemplatePreview({ templateId, liveTemplateData }) {
 
     const replaceVariables = (text, component, parameterFormat) => {
         if (!text || !component.example) return text;
-
+    
         if (parameterFormat === 'POSITIONAL') {
             let values = [];
-
+    
             if (component.type === 'HEADER') {
                 const headerValues = component.example?.header_text;
                 values = Array.isArray(headerValues[0]) ? headerValues[0] : headerValues;
@@ -70,20 +69,29 @@ function TemplatePreview({ templateId, liveTemplateData }) {
                 const bodyValues = component.example?.body_text;
                 values = Array.isArray(bodyValues[0]) ? bodyValues[0] : bodyValues;
             }
-
+    
             return text.replace(/{{(\d+)}}/g, (match, index) => values?.[parseInt(index) - 1] || match);
         }
-
+    
         if (parameterFormat === 'NAMED') {
-            const namedValues = component.example?.body_text_named_params || [];
+            let namedValues = [];
+    
+            // Support both header and body
+            if (component.type === 'HEADER') {
+                namedValues = component.example?.header_text_named_params || [];
+            } else if (component.type === 'BODY') {
+                namedValues = component.example?.body_text_named_params || [];
+            }
+    
             return text.replace(/{{(\w+)}}/g, (match, key) => {
                 const param = namedValues.find((p) => p.param_name === key);
                 return param?.example || match;
             });
         }
-
+    
         return text;
     };
+    
 
 
     if (!template || !template.components) {
@@ -111,7 +119,7 @@ function TemplatePreview({ templateId, liveTemplateData }) {
 
                 {/* Header */}
                 {header && header.format === 'TEXT' && (
-                    <h2 className='font-bold text-md mb-2'>
+                    <h2 className='font-bold text-md mb-2 break-words  '>
                         {replaceVariables(header.text, header, template.parameter_format)}
                     </h2>
                 )}
@@ -127,7 +135,7 @@ function TemplatePreview({ templateId, liveTemplateData }) {
 
                 {/* Body */}
                 {body && (
-                    <p className='mb-2 text-sm text-black'>
+                    <p className='mb-2 text-sm text-black break-words'>
                         {renderTextWithNewlines(
                             replaceVariables(body.text, body, template.parameter_format)
                         )}
@@ -135,7 +143,7 @@ function TemplatePreview({ templateId, liveTemplateData }) {
                 )}
 
                 {/* Footer */}
-                {footer && <p className='text-gray-500 text-xs'>{footer.text}</p>}
+                {footer && <p className='text-gray-500 text-xs break-words'>{footer.text}</p>}
 
                 {/* Buttons */}
                 {buttons.length > 0 && (

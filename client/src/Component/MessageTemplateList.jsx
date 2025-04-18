@@ -42,7 +42,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
 
   const handleEditTemplate = (template) => {
     onSuccess(template);
-    console.log(template);
+    
   };
 
   const fetchTemplates = async () => {
@@ -111,7 +111,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
   };
 
   return (
-    <div className="mt-[20px] rounded-md bg-white min-h-[calc(100vh-180px)] flex flex-col justify-between">
+    <div className="mt-[20px] rounded-md min-h-[82vh] flex flex-col justify-between">
 
 
       {loading ? (
@@ -119,7 +119,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
       ) : (
         <>
 
-          <div>
+          <div className=''>
             <div className="pb-2">
               <input
                 type="text"
@@ -130,86 +130,89 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
               />
             </div>
 
-            <table className="table-auto w-full ">
+            <div className='overflow-auto max-h-[70vh]'>
+              <table className="table-auto w-full ">
 
 
-              <thead>
-                <tr className="bg-blue-600 text-white text-center ">
-                  <th className="px-4 py-4 text-left">Template Id</th>
-                  <th className="px-4 py-4">Template Name</th>
-                  <th className="px-4 py-4">Category</th>
-                  <th className="px-4 py-4">Language</th>
-                  <th className="px-4 py-4">Status</th>
-                  <th className="px-4 py-4 text-right">Last Edited</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentData.map((template, index) => (
-                  <tr
-                    key={template.id || index}
-                    className={`group border-b border-gray-200 hover:bg-blue-100 text-md font-semibold cursor-pointer text-sm text-center
-        ${selectedTemplateId === template.id ? 'bg-blue-100' : ''}`}
-                    onClick={() => onSelectTemplateId?.(template.id)}
-                  >
-                    <td className="px-4 py-3 text-left">{template.id}</td>
-                    <td className="px-4 py-3">{template.name}</td>
-                    <td className="px-4 py-3">{template.category}</td>
-                    <td className="px-4 py-3">{languageMap[template.language] || template.language}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`rounded-2xl px-2 py-1 text-white text-center  
-            ${template.status.toLowerCase() === 'approved'
-                            ? 'bg-green-100 !text-green-700'
-                            : template.status.toLowerCase() === 'pending'
-                              ? 'bg-orange-100 !text-orange-500'
-                              : template.status.toLowerCase() === 'rejected'
-                                ? 'bg-red-100 !text-red-700'
-                                : 'bg-gray-300'
-                          }`}
-                      >
-                        {template.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-400 italic relative">
-                      <span className={`group-hover:hidden ${selectedTemplateId === template.id ? 'hidden' : 'text-nowrap'}`}>
-                        {template.createdAt
-                          ? new Intl.DateTimeFormat('en-US', {
-                            dateStyle: 'medium',
-                          }).format(new Date(template.createdAt))
-                          : 'N/A'}
-                      </span>
-                      <div
-                        className={`gap-6 justify-center items-center absolute top-1/2 transform -translate-y-1/2 left-0 right-0
-            ${selectedTemplateId === template.id ? 'flex' : 'hidden group-hover:flex'}`}
-                      >
-                        <i
-                          className="fa-solid text-blue-500 fa-pen-to-square hover:text-blue-600 cursor-pointer text-lg bg-white p-2 rounded-full"
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent row click event
-                            handleEditTemplate(template);
-                          }}
-                        ></i>
-                        <i
-                          className="fa-solid text-red-400 fa-trash hover:text-red-500 cursor-pointer text-lg bg-white p-2 rounded-full"
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent row click event
-                            handleDeleteTemplate(template);
-                          }}
-                        ></i>
-                      </div>
-                    </td>
+                <thead>
+                  <tr className="sticky top-0 z-10 bg-blue-600 text-white text-center text-nowrap">
+                    <th className="px-4 py-4 text-left">Template Id</th>
+                    <th className="px-4 py-4">Template Name</th>
+                    <th className="px-4 py-4">Category</th>
+                    <th className="px-4 py-4">Language</th>
+                    <th className="px-4 py-4">Status</th>
+                    <th className="px-4 py-4 text-right">Last Edited</th>
                   </tr>
-                ))}
-              </tbody>
+                </thead>
+                <tbody>
+                  {currentData.map((template, index) => (
+                    <tr
+                      key={template.id || index}
+                      className={`group border-b border-gray-200 hover:bg-blue-100 text-md font-semibold cursor-pointer text-sm text-center
+                                      ${selectedTemplateId === template.id ? 'bg-blue-100' : ''}`}
+                      onClick={() => onSelectTemplateId?.(template.id)}
+                    >
+                      <td className="px-4 py-3 text-left">{template.id}</td>
+                      <td className="px-4 py-3">{template.name}</td>
+                      <td className="px-4 py-3">{template.category}</td>
+                      <td className="px-4 py-3">{languageMap[template.language] || template.language}</td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`rounded-2xl px-2 py-1 text-white text-center  
+                                  ${template.status.toLowerCase() === 'approved'
+                              ? 'bg-green-100 !text-green-700'
+                              : template.status.toLowerCase() === 'pending'
+                                ? 'bg-orange-100 !text-orange-500'
+                                : template.status.toLowerCase() === 'rejected'
+                                  ? 'bg-red-100 !text-red-700'
+                                  : 'bg-gray-300'
+                            }`}
+                        >
+                          {template.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-400 italic relative">
+                        <span className={`group-hover:hidden ${selectedTemplateId === template.id ? 'hidden' : 'text-nowrap'}`}>
+                          {template.createdAt
+                            ? new Intl.DateTimeFormat('en-US', {
+                              dateStyle: 'medium',
+                            }).format(new Date(template.createdAt))
+                            : 'N/A'}
+                        </span>
+                        <div
+                          className={`gap-6 justify-center items-center absolute top-1/2 transform -translate-y-1/2 left-0 right-0
+                                 ${selectedTemplateId === template.id ? 'flex' : 'hidden group-hover:flex'}`}
+                        >
+                          <i
+                            className="fa-solid text-blue-500 fa-pen-to-square hover:text-blue-600 cursor-pointer text-lg bg-white p-2 rounded-full hover:scale-105"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent row click event
+                              handleEditTemplate(template);
+                            }}
+                          ></i>
+                          <i
+                            className="fa-solid text-red-400 fa-trash hover:text-red-500 cursor-pointer text-lg bg-white p-2 rounded-full hover:scale-105"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent row click event
+                              handleDeleteTemplate(template);
+                            }}
+                          ></i>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
 
 
 
-            </table>
+              </table>
+            </div>
+
           </div>
 
 
           {/* Pagination Footer */}
-          <div className="flex items-center justify-between mt-4 px-4 py-2 text-sm text-gray-700">
+          <div className="flex items-center justify-between mt-1 px-4 py-2 text-sm text-gray-700">
             <div className="flex items-center gap-2">
               <span>Items per page:</span>
               <select

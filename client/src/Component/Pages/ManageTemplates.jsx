@@ -21,6 +21,7 @@ function ManageTemplates() {
   };
   
   const handleEdit = (template) => {
+    
     setEditingTemplate(template);
     setIsOpen(true);
   };
@@ -28,11 +29,11 @@ function ManageTemplates() {
 
 
   return (
-    <div className='bg-gray-100 px-[15px] py-[10px] min-h-full'>
-      <div className='flex justify-between gap-[20px] min-h-[calc(100vh-80px)] items-stretch'>
+    <div className='bg-gray-100 px-[15px] py-[10px] '>
+      <div className='flex justify-between gap-[20px] items-stretch'>
         <div className='bg-white p-[15px] rounded-md flex-[66%] '>
           <div className='flex justify-between items-center'>
-            <h2 className='font-bold text-xl'>Message Template</h2>
+            <h2 className='font-bold text-xl'>Message Templates</h2>
             {!isOpen && (
               <button
                 type='button'
