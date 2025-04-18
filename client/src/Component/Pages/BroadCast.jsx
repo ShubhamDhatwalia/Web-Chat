@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
-
-
-
+import { TextField, FormControl, Select, InputLabel, MenuItem, Checkbox, ListItemText, FormControlLabel } from '@mui/material';
 
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
 
-
-
-
-
-
-
 function BroadCast() {
   const [fileName, setFileName] = useState('No file chosen');
+
   const [formInput, setFormInput] = useState({
     campaignName: '',
     whatsappNumber: '',
     message: '',
-    template: '',
+    template: '', // Now a single value instead of an array
+    contactList: [], // Initialize as an array
   });
+
+  const [templates, setTemplates] = useState([
+    { id: 'template1', name: 'Welcome Message' },
+    { id: 'template2', name: 'Follow-up Reminder' },
+    { id: 'template3', name: 'Promotion Offer' },
+  ]);
+
+  const [contacts, setContacts] = useState([
+    { id: '1', name: 'John Doe', number: '7876054918' },
+    { id: '2', name: 'Jane Smith', number: '9876543210' },
+  ]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,7 +38,8 @@ function BroadCast() {
       campaignName: '',
       whatsappNumber: '',
       message: '',
-      template: '',
+      template: '', // Reset template selection to empty string
+      contactList: [], // Reset contact list
     });
     setFileName('No file chosen');
   };
@@ -45,14 +51,54 @@ function BroadCast() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormInput((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    // If template is selected, we store it as a single value
+    if (name === 'template') {
+      setFormInput((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else if (name === 'contactList') {
+      setFormInput((prev) => ({
+        ...prev,
+        [name]: Array.isArray(value) ? value : value.split(','),
+      }));
+    } else {
+      setFormInput((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
+  // Handle "Select All" checkbox
+  const handleSelectAll = () => {
+    if (formInput.contactList.length === contacts.length) {
+      setFormInput((prev) => ({
+        ...prev,
+        contactList: [], // Deselect all if all are selected
+      }));
+    } else {
+      setFormInput((prev) => ({
+        ...prev,
+        contactList: contacts.map((contact) => contact.number), // Select all contacts
+      }));
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
   return (
-    <div className='bg-gray-100 px-[15px] py-[10px] '>
+    <div className='bg-gray-100 px-[15px] py-[10px]'>
       <div className='flex justify-between gap-[20px] items-stretch'>
         <div className='bg-white p-[15px] rounded-md flex-[66%]'>
           <h2 className='font-bold text-xl'>Campaign/Broadcasting</h2>
@@ -62,41 +108,98 @@ function BroadCast() {
 
           <form onSubmit={handleSubmit} className='mt-[50px]'>
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px]'>
-              <input
-                type='text'
-                name='campaignName'
+              <TextField
+                label="Campaign Name"
+                name="campaignName"
                 value={formInput.campaignName}
                 onChange={handleChange}
-                placeholder='Campaign Name *'
+                placeholder="Campaign Name"
                 required
-                className='border-b p-[5px] w-full placeholder-gray-700 placeholder:font-semibold focus:outline-none'
+                fullWidth
+                size='small'
+                variant="outlined"
               />
 
-              <select
-                name='whatsappNumber'
-                value={formInput.whatsappNumber}
-                onChange={handleChange}
-                className='border-b p-[5px] w-full text-gray-700 font-semibold bg-transparent outline-none'
-              >
-                <option value='' disabled>
-                  Send Message From Whatsapp Number *
-                </option>
-                <option value='7876054918'>7876054918</option>
-                <option value='9876543210'>9876543210</option>
-              </select>
+              <FormControl fullWidth required size='small'>
+                <InputLabel id="whatsapp-number-label">Whatsapp Number</InputLabel>
+                <Select
+                  name="whatsappNumber"
+                  labelId='whatsapp-number-label'
+                  value={formInput.whatsappNumber}
+                  onChange={handleChange}
+                  label="Whatsapp Number"
+                  variant="outlined"
+                  placeholder="Send Message From Whatsapp Number"
+                >
+                  <MenuItem value="7876054918" disabled>Send Message From Whatsapp Number</MenuItem>
+                  <MenuItem value="7876054918">7876054918</MenuItem>
+                  <MenuItem value="9876543210">9876543210</MenuItem>
+                </Select>
+              </FormControl>
             </div>
 
-            <textarea
-              name='message'
-              value={formInput.message}
-              onChange={handleChange}
-              placeholder='Enter your message :'
-              className='border-b p-[5px] w-full mt-[80px] placeholder-gray-700 placeholder:font-semibold resize-none outline-none'
-              rows='1'
-            />
+            <div className='mt-6 flex lg:flex-nowrap flex-wrap gap-[20px]'>
+              {/* Template Selection using Select Menu */}
+              <FormControl fullWidth required size="small">
+                <InputLabel id="template-label">Select Template</InputLabel>
+                <Select
+                  labelId="template-label"
+                  id="template"
+                  name="template"
+                  value={formInput.template}
+                  onChange={handleChange}
+                  label="Select Template"
+                >
+                  {templates.map((template) => (
+                    <MenuItem key={template.id} value={template.id}>
+                      {template.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <div className='flex flex-wrap lg:flex-nowrap gap-[20px] mt-[80px] items-center'>
-              <div className='w-full lg:order-1 order-2 flex justify-center gap-[10px] items-center'>
+              {/* Contact List Selection using Select */}
+              <FormControl fullWidth required size="small">
+                <InputLabel id="contact-list-label">Select Contacts</InputLabel>
+                <Select
+                  labelId="contact-list-label"
+                  id="contact-list"
+                  name="contactList"
+                  multiple
+                  value={formInput.contactList} // Ensure it's an array
+                  onChange={handleChange}
+                  label="Select Contacts"
+                  renderValue={(selected) =>
+                    contacts
+                      .filter((c) => selected.includes(c.number))
+                      .map((c) => c.name)
+                      .join(', ')
+                  }
+                >
+                  <MenuItem>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={formInput.contactList.length === contacts.length}
+                          onChange={handleSelectAll}
+                        />
+                      }
+                      label="Select All"
+                    />
+                  </MenuItem>
+
+                  {contacts.map((contact) => (
+                    <MenuItem key={contact.id} value={contact.number}>
+                      <Checkbox checked={formInput.contactList.includes(contact.number)} />
+                      <ListItemText primary={contact.name} secondary={contact.number} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+
+            <div className='flex flex-wrap lg:flex-nowrap gap-[20px] mt-6 items-center'>
+              
                 <label
                   htmlFor='fileUpload'
                   className='cursor-pointer text-nowrap bg-blue-600 hover:bg-blue-700 text-white font-semibold py-[5px] px-[12px] rounded flex items-center gap-2'
@@ -111,23 +214,12 @@ function BroadCast() {
                   className='hidden'
                 />
                 <span className='text-sm text-nowrap text-gray-600 mt-1'>{fileName}</span>
-              </div>
-
-              <select
-                name='template'
-                value={formInput.template}
-                onChange={handleChange}
-                className='lg:order-2 order-1 border-b p-[5px] w-full text-gray-700 font-semibold bg-transparent outline-none'
-              >
-                <option value='' disabled>
-                  Choose Template
-                </option>
-                <option value='template1'>Template 1</option>
-                <option value='template2'>Template 2</option>
-              </select>
+                
+              
             </div>
+            
 
-            <div className='mt-[50px] flex gap-[20px] items-center'>
+            <div className='mt-18 flex gap-[20px] items-center'>
               <button
                 type='submit'
                 className='text-nowrap font-semibold bg-green-600 hover:bg-green-700 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
@@ -160,6 +252,9 @@ function BroadCast() {
           </p>
         </div>
       </div>
+
+
+
 
       <div className='mt-[20px] rounded-md p-[15px] bg-white'>
         <table className='table-auto w-full'>
@@ -209,6 +304,7 @@ function BroadCast() {
           </div>
         </div>
       </div>
+    
     </div>
   );
 }
