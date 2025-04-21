@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, FormControl, Select, InputLabel, MenuItem, Checkbox, ListItemText, FormControlLabel } from '@mui/material';
+import BroadcastTemplatePreview from '../BroadcastTemplatePreview';
 
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
@@ -10,9 +11,9 @@ function BroadCast() {
   const [formInput, setFormInput] = useState({
     campaignName: '',
     whatsappNumber: '',
-    message: '',
-    template: '', // Now a single value instead of an array
-    contactList: [], // Initialize as an array
+    
+    template: '', 
+    contactList: [], 
   });
 
   const [templates, setTemplates] = useState([
@@ -21,6 +22,7 @@ function BroadCast() {
     { id: 'template3', name: 'Promotion Offer' },
   ]);
 
+  
   const [contacts, setContacts] = useState([
     { id: '1', name: 'John Doe', number: '7876054918' },
     { id: '2', name: 'Jane Smith', number: '9876543210' },
@@ -32,14 +34,15 @@ function BroadCast() {
     // You can add API logic here to send data
   };
 
+
   const handleReset = (e) => {
     e.preventDefault();
     setFormInput({
       campaignName: '',
       whatsappNumber: '',
-      message: '',
-      template: '', // Reset template selection to empty string
-      contactList: [], // Reset contact list
+      
+      template: '', 
+      contactList: [], 
     });
     setFileName('No file chosen');
   };
@@ -76,24 +79,15 @@ function BroadCast() {
     if (formInput.contactList.length === contacts.length) {
       setFormInput((prev) => ({
         ...prev,
-        contactList: [], // Deselect all if all are selected
+        contactList: [], 
       }));
     } else {
       setFormInput((prev) => ({
         ...prev,
-        contactList: contacts.map((contact) => contact.number), // Select all contacts
+        contactList: contacts.map((contact) => contact.number), 
       }));
     }
   };
-
-
-
-
-
-
-
-
-
 
 
 
@@ -131,7 +125,7 @@ function BroadCast() {
                   variant="outlined"
                   placeholder="Send Message From Whatsapp Number"
                 >
-                  <MenuItem value="7876054918" disabled>Send Message From Whatsapp Number</MenuItem>
+                 
                   <MenuItem value="7876054918">7876054918</MenuItem>
                   <MenuItem value="9876543210">9876543210</MenuItem>
                 </Select>
@@ -249,7 +243,13 @@ function BroadCast() {
           <h2 className='font-bold text-xl'>Template Content</h2>
           <p className='font-semibold text-md mt-[5px] text-gray-600'>
             Here you can see the selected template content body
+
           </p>
+
+          
+          <div>
+              <BroadcastTemplatePreview />
+            </div>
         </div>
       </div>
 
