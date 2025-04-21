@@ -1,94 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTemplates, deleteTemplate } from '../redux/templateThunks.js';
 import { toast } from 'react-toastify';
 
-const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
-const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
-
 function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId }) {
-  const [templateList, setTemplateList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { templates, loading } = useSelector((state) => state.templates);
+
   const [limit, setLimit] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const languageMap = {
-    en: 'English',
-    hi: 'Hindi'
-  };
-
-  const handleDeleteTemplate = async (template) => {
-    const deleteUrl = `https://graph.facebook.com/v22.0/${businessId}/message_templates`;
-    const params = new URLSearchParams({
-      hsm_id: template.id,
-      name: template.name,
-      access_token: accessToken,
-    });
-
-    try {
-      const response = await axios.delete(`${deleteUrl}?${params.toString()}`);
-      if (response.data.success) {
-        toast.success('Template deleted successfully!');
-        const existing = JSON.parse(localStorage.getItem('whatsappTemplates') || '[]');
-        const updated = existing.filter((e) => e.id !== template.id);
-        localStorage.setItem('whatsappTemplates', JSON.stringify(updated));
-        setTemplateList(updated.filter((t) => !t.deleted));
-      }
-    } catch (error) {
-      console.error('Failed to delete template:', error?.response?.data || error.message);
-      toast.error('Failed to delete template. Check console for details.');
-    }
-  };
-
-  const handleEditTemplate = (template) => {
-    onSuccess(template);
-    
-  };
-
-  const fetchTemplates = async () => {
-    try {
-      setLoading(true);
-      const queryParams = new URLSearchParams({
-        access_token: accessToken,
-        limit: '1000',
-      });
-
-      const response = await axios.get(
-        `https://graph.facebook.com/v22.0/${businessId}/message_templates?${queryParams}`
-      );
-
-      const apiTemplates = response.data.data;
-      const existing = JSON.parse(localStorage.getItem('whatsappTemplates') || '[]');
-
-      const updated = existing.map((e) => {
-        const latest = apiTemplates.find((t) => t.id === e.id);
-        return latest ? { ...e, ...latest } : e;
-      });
-
-      const onlyNew = apiTemplates.filter((t) => !existing.some((e) => e.id === t.id));
-      const finalTemplates = [...onlyNew, ...updated];
-      const visibleTemplates = finalTemplates.filter((t) => !t.deleted);
-
-      localStorage.setItem('whatsappTemplates', JSON.stringify(finalTemplates));
-      setTemplateList(visibleTemplates);
-    } catch (error) {
-      console.error('Error fetching templates:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchTemplates();
-  }, []);
+    dispatch(fetchTemplates());
+  }, [dispatch]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [limit, searchTerm]);
 
-  const reversedTemplates = [...templateList].reverse();
+  const languageMap = {
+    en: 'English',
+    hi: 'Hindi',
+  };
 
-  const filteredTemplates = reversedTemplates.filter((template) => {
+  const filteredTemplates = [...templates].reverse().filter((template) => {
     const search = searchTerm.toLowerCase();
     return (
       template.name?.toLowerCase().includes(search) ||
@@ -102,24 +38,31 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
   const totalPages = Math.ceil(filteredTemplates.length / limit);
   const currentData = filteredTemplates.slice((currentPage - 1) * limit, currentPage * limit);
 
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  const handleNext = () => currentPage < totalPages && setCurrentPage((prev) => prev + 1);
+  const handlePrev = () => currentPage > 1 && setCurrentPage((prev) => prev - 1);
+
+  const handleDelete = (e, template) => {
+    e.stopPropagation();
+    dispatch(deleteTemplate(template));
   };
 
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  const handleEdit = (e, template) => {
+    e.stopPropagation();
+    onSuccess(template);
   };
+
+
+
+
+
 
   return (
     <div className="mt-[20px] rounded-md min-h-[82vh] flex flex-col justify-between">
-
-
       {loading ? (
         <div className="py-10 text-center text-gray-500 text-lg">Loading templates...</div>
       ) : (
         <>
-
-          <div className=''>
+          <div>
             <div className="pb-2">
               <input
                 type="text"
@@ -130,14 +73,12 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
               />
             </div>
 
-            <div className='overflow-auto max-h-[70vh]'>
-              <table className="table-auto w-full ">
-
-
+            <div className="overflow-auto max-h-[70vh]">
+              <table className="table-auto w-full">
                 <thead>
                   <tr className="sticky top-0 z-10 bg-blue-600 text-white text-center text-nowrap">
                     <th className="px-4 py-4 text-left">Template Id</th>
-                    <th className="px-4 py-4">Template Name</th>
+                    <th className="px-4 py-4">Name</th>
                     <th className="px-4 py-4">Category</th>
                     <th className="px-4 py-4">Language</th>
                     <th className="px-4 py-4">Status</th>
@@ -145,12 +86,12 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                   </tr>
                 </thead>
                 <tbody>
-                  {currentData.map((template, index) => (
+                  {currentData.map((template) => (
                     <tr
-                      key={template.id || index}
-                      className={`group border-b border-gray-200 hover:bg-blue-100 text-md font-semibold cursor-pointer text-sm text-center
-                                      ${selectedTemplateId === template.id ? 'bg-blue-100' : ''}`}
+                      key={template.id}
                       onClick={() => onSelectTemplateId?.(template.id)}
+                      className={`group text-center border-b border-gray-200 hover:bg-blue-100 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-blue-100' : ''
+                        }`}
                     >
                       <td className="px-4 py-3 text-left">{template.id}</td>
                       <td className="px-4 py-3">{template.name}</td>
@@ -159,13 +100,11 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                       <td className="px-4 py-3">
                         <span
                           className={`rounded-2xl px-2 py-1 text-white text-center  
-                                  ${template.status.toLowerCase() === 'approved'
+                            ${template.status === 'APPROVED'
                               ? 'bg-green-100 !text-green-700'
-                              : template.status.toLowerCase() === 'pending'
+                              : template.status === 'PENDING'
                                 ? 'bg-orange-100 !text-orange-500'
-                                : template.status.toLowerCase() === 'rejected'
-                                  ? 'bg-red-100 !text-red-700'
-                                  : 'bg-gray-300'
+                                : 'bg-red-100 !text-red-700'
                             }`}
                         >
                           {template.status}
@@ -174,75 +113,37 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                       <td className="px-4 py-3 text-gray-400 italic relative">
                         <span className={`group-hover:hidden ${selectedTemplateId === template.id ? 'hidden' : 'text-nowrap'}`}>
                           {template.createdAt
-                            ? new Intl.DateTimeFormat('en-US', {
-                              dateStyle: 'medium',
-                            }).format(new Date(template.createdAt))
+                            ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(new Date(template.createdAt))
                             : 'N/A'}
                         </span>
-                        <div
-                          className={`gap-6 justify-center items-center absolute top-1/2 transform -translate-y-1/2 left-0 right-0
-                                 ${selectedTemplateId === template.id ? 'flex' : 'hidden group-hover:flex'}`}
-                        >
-                          <i
-                            className="fa-solid text-blue-500 fa-pen-to-square hover:text-blue-600 cursor-pointer text-lg bg-white p-2 rounded-full hover:scale-105"
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent row click event
-                              handleEditTemplate(template);
-                            }}
-                          ></i>
-                          <i
-                            className="fa-solid text-red-400 fa-trash hover:text-red-500 cursor-pointer text-lg bg-white p-2 rounded-full hover:scale-105"
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent row click event
-                              handleDeleteTemplate(template);
-                            }}
-                          ></i>
+                        <div className={`absolute top-1/2 left-0 right-0 transform -translate-y-1/2 gap-6 justify-center items-center ${selectedTemplateId === template.id ? 'flex' : 'hidden group-hover:flex'}`}>
+                          <i className="fa-solid fa-pen-to-square text-blue-500 bg-white p-2 rounded-full text-lg cursor-pointer hover:scale-105"
+                            onClick={(e) => handleEdit(e, template)} />
+                          <i className="fa-solid fa-trash text-red-400 bg-white p-2 rounded-full text-lg cursor-pointer hover:scale-105"
+                            onClick={(e) => handleDelete(e, template)} />
                         </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-
-
-
               </table>
             </div>
-
           </div>
 
-
-          {/* Pagination Footer */}
-          <div className="flex items-center justify-between mt-1 px-4 py-2 text-sm text-gray-700">
+          {/* Pagination */}
+          <div className="flex justify-between mt-1 px-4 py-2 text-sm text-gray-700">
             <div className="flex items-center gap-2">
               <span>Items per page:</span>
-              <select
-                value={limit}
-                onChange={(e) => setLimit(Number(e.target.value))}
-                className="border border-gray-300 rounded px-2 py-1 focus:outline-none"
-              >
-                <option value={2}>2</option>
-                <option value={3}>3</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
+              <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="border px-2 py-1 rounded">
+                {[2, 3, 10, 20, 50].map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
               </select>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-gray-500">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button onClick={handlePrev} disabled={currentPage === 1} className="p-1">
-                <i
-                  className={`fas text-xl fa-angle-left ${currentPage === 1 ? 'text-gray-400' : 'text-gray-600'
-                    }`}
-                />
-              </button>
-              <button onClick={handleNext} disabled={currentPage === totalPages} className="p-1">
-                <i
-                  className={`fas text-xl fa-angle-right ${currentPage === totalPages ? 'text-gray-400' : 'text-gray-600'
-                    }`}
-                />
-              </button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button onClick={handlePrev} disabled={currentPage === 1}><i className={`fas fa-angle-left ${currentPage === 1 ? 'text-gray-400' : 'text-gray-600'}`} /></button>
+              <button onClick={handleNext} disabled={currentPage === totalPages}><i className={`fas fa-angle-right ${currentPage === totalPages ? 'text-gray-400' : 'text-gray-600'}`} /></button>
             </div>
           </div>
         </>

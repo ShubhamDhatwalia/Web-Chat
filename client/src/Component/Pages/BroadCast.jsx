@@ -1,28 +1,45 @@
-import React, { useState } from 'react';
-import { TextField, FormControl, Select, InputLabel, MenuItem, Checkbox, ListItemText, FormControlLabel } from '@mui/material';
-import BroadcastTemplatePreview from '../BroadcastTemplatePreview';
+import React, { useEffect, useState } from 'react';
+import { TextField, FormControl, Select, InputLabel, MenuItem, Checkbox, ListItemText, FormControlLabel, Autocomplete } from '@mui/material';
+import TemplatePreview from '../TemplatePreview';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchTemplates } from '../../redux/templateThunks';
+import { fetchPhoneNumbers } from '../../redux/phoneNumberThunks';
 
-const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
-const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
+
+
+
 
 function BroadCast() {
   const [fileName, setFileName] = useState('No file chosen');
 
+  const dispatch = useDispatch();
+
+
   const [formInput, setFormInput] = useState({
     campaignName: '',
     whatsappNumber: '',
-    
-    template: '', 
-    contactList: [], 
+    template: '',
+    contactList: [],
   });
 
-  const [templates, setTemplates] = useState([
-    { id: 'template1', name: 'Welcome Message' },
-    { id: 'template2', name: 'Follow-up Reminder' },
-    { id: 'template3', name: 'Promotion Offer' },
-  ]);
 
-  
+  const { phoneNumbers, loading: numbersLoading, error: numbersError } = useSelector(state => state.phoneNumbers);
+
+  useEffect(() => {
+    dispatch(fetchPhoneNumbers());
+  }, [dispatch]);
+
+
+
+
+  const { templates, loading, error } = useSelector((state) => state.templates);
+
+  useEffect(() => {
+    dispatch(fetchTemplates());
+  }, [dispatch]);
+
+
+
   const [contacts, setContacts] = useState([
     { id: '1', name: 'John Doe', number: '7876054918' },
     { id: '2', name: 'Jane Smith', number: '9876543210' },
@@ -31,7 +48,7 @@ function BroadCast() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form Submitted:', formInput);
-    // You can add API logic here to send data
+
   };
 
 
@@ -40,9 +57,8 @@ function BroadCast() {
     setFormInput({
       campaignName: '',
       whatsappNumber: '',
-      
-      template: '', 
-      contactList: [], 
+      template: '',
+      contactList: [],
     });
     setFileName('No file chosen');
   };
@@ -55,7 +71,7 @@ function BroadCast() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // If template is selected, we store it as a single value
+
     if (name === 'template') {
       setFormInput((prev) => ({
         ...prev,
@@ -79,12 +95,12 @@ function BroadCast() {
     if (formInput.contactList.length === contacts.length) {
       setFormInput((prev) => ({
         ...prev,
-        contactList: [], 
+        contactList: [],
       }));
     } else {
       setFormInput((prev) => ({
         ...prev,
-        contactList: contacts.map((contact) => contact.number), 
+        contactList: contacts.map((contact) => contact.number),
       }));
     }
   };
@@ -124,35 +140,56 @@ function BroadCast() {
                   label="Whatsapp Number"
                   variant="outlined"
                   placeholder="Send Message From Whatsapp Number"
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxWidth: 220,
+                      },
+                    },
+                  }}
                 >
-                 
-                  <MenuItem value="7876054918">7876054918</MenuItem>
-                  <MenuItem value="9876543210">9876543210</MenuItem>
+
+                  {phoneNumbers.map((num) => (
+                    <MenuItem key={num.id} value={num.id}>
+                      {num.display_phone_number}
+                    </MenuItem>
+                  ))}
+
                 </Select>
               </FormControl>
             </div>
 
-            <div className='mt-6 flex lg:flex-nowrap flex-wrap gap-[20px]'>
-              {/* Template Selection using Select Menu */}
-              <FormControl fullWidth required size="small">
-                <InputLabel id="template-label">Select Template</InputLabel>
-                <Select
-                  labelId="template-label"
-                  id="template"
-                  name="template"
-                  value={formInput.template}
-                  onChange={handleChange}
-                  label="Select Template"
-                >
-                  {templates.map((template) => (
-                    <MenuItem key={template.id} value={template.id}>
-                      {template.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
 
-              {/* Contact List Selection using Select */}
+            <div className='mt-6 flex lg:flex-nowrap flex-wrap gap-[20px]'>
+              <Autocomplete
+                size="small"
+                fullWidth
+                options={templates}
+                getOptionLabel={(option) => option.name}
+                value={templates.find(t => t.id === formInput.template) || null}
+                onChange={(event, newValue) => {
+                  handleChange({
+                    target: {
+                      name: 'template',
+                      value: newValue?.id || '',
+                    },
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select Template"
+                    required
+                  />
+                )}
+                ListboxProps={{
+                  style: {
+                    maxHeight: 220, 
+                  },
+                }}
+              />
+
+
               <FormControl fullWidth required size="small">
                 <InputLabel id="contact-list-label">Select Contacts</InputLabel>
                 <Select
@@ -160,7 +197,7 @@ function BroadCast() {
                   id="contact-list"
                   name="contactList"
                   multiple
-                  value={formInput.contactList} // Ensure it's an array
+                  value={formInput.contactList} 
                   onChange={handleChange}
                   label="Select Contacts"
                   renderValue={(selected) =>
@@ -192,26 +229,26 @@ function BroadCast() {
               </FormControl>
             </div>
 
-            <div className='flex flex-wrap lg:flex-nowrap gap-[20px] mt-6 items-center'>
-              
-                <label
-                  htmlFor='fileUpload'
-                  className='cursor-pointer text-nowrap bg-blue-600 hover:bg-blue-700 text-white font-semibold py-[5px] px-[12px] rounded flex items-center gap-2'
-                >
-                  <i className='fa-solid fa-upload'></i>
-                  Upload File
-                </label>
-                <input
-                  type='file'
-                  id='fileUpload'
-                  onChange={handleFileChange}
-                  className='hidden'
-                />
-                <span className='text-sm text-nowrap text-gray-600 mt-1'>{fileName}</span>
-                
-              
+            <div className='flex flex-wrap lg:flex-nowrap gap-[20px] mt-16 items-center'>
+
+              <label
+                htmlFor='fileUpload'
+                className='cursor-pointer text-nowrap bg-blue-600 hover:bg-blue-700 text-white font-semibold py-[5px] px-[12px] rounded flex items-center gap-2'
+              >
+                <i className='fa-solid fa-upload'></i>
+                Upload File
+              </label>
+              <input
+                type='file'
+                id='fileUpload'
+                onChange={handleFileChange}
+                className='hidden'
+              />
+              <span className='text-sm text-nowrap text-gray-600 mt-1'>{fileName}</span>
+
+
             </div>
-            
+
 
             <div className='mt-18 flex gap-[20px] items-center'>
               <button
@@ -246,10 +283,10 @@ function BroadCast() {
 
           </p>
 
-          
+
           <div>
-              <BroadcastTemplatePreview />
-            </div>
+            <TemplatePreview templateId={formInput.template} />
+          </div>
         </div>
       </div>
 
@@ -259,7 +296,7 @@ function BroadCast() {
       <div className='mt-[20px] rounded-md p-[15px] bg-white'>
         <table className='table-auto w-full'>
           <thead>
-            <tr className='bg-blue-600 text-white'>
+            <tr className='bg-blue-600 text-white text-nowrap'>
               <th className='px-4 py-4'>Campaign Name</th>
               <th className='px-4 py-4'>Operator Name</th>
               <th className='px-4 py-4'>Creation Date</th>
@@ -304,7 +341,7 @@ function BroadCast() {
           </div>
         </div>
       </div>
-    
+
     </div>
   );
 }
