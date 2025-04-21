@@ -1,0 +1,115 @@
+import dotenv from 'dotenv';
+dotenv.config();
+import axios from 'axios';
+
+
+
+
+
+export function verifyWebhook(req, res) {
+    console.log('Received verification request:', req.query);
+
+    
+    const mode = req.query['hub.mode'];
+    const token = req.query['hub.verify_token'];
+    const challenge = req.query['hub.challenge'];
+
+    console.log('Verification request:', { mode, token, challenge });
+
+    if (token === process.env.VERIFY_TOKEN) {
+        console.log('Webhook verified!');
+        return res.status(200).send(challenge);
+    } else {
+        console.error('Verification failed');
+        return res.status(403).send('Verification failed');  
+    }
+}
+
+
+
+
+
+
+
+function sendTextMessage(senderId, text) {
+    const url = `https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`;
+    const data = {
+        messaging_product: 'whatsapp',
+        to: senderId,
+        text: { body: text }
+    };
+
+    axios.post(url, data, {
+        headers: {
+            'Authorization': `Bearer ${process.env.ACCESS_TOKEN}`
+        }
+    })
+    .then(response => {
+        console.log('Message sent:', response.data);
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
+    });
+}
+
+// Function to get media URL using media ID
+async function getMediaUrl(mediaId) {
+    const url = `https://graph.facebook.com/v13.0/${mediaId}`;
+    try {
+        const response = await axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${process.env.WHATSAPP_API_TOKEN}`
+            }
+        });
+        return response.data.url;
+    } catch (error) {
+        console.error('Error retrieving media URL:', error);
+        return null;
+    }
+}
+
+// Function to handle the incoming webhook
+export async function handleWebhook(req, res) {
+    const body = req.body;
+    console.log('Incoming webhook data:', body);
+
+    if (!body.entry || !body.entry[0].changes) {
+        console.error('Invalid webhook structure:', body);
+        return res.sendStatus(400);
+    }
+
+    const change = body.entry[0].changes[0];
+    const message = change?.value?.messages?.[0];
+
+    if (message) {
+        console.log('New message received:', message);
+
+        const senderId = message.from;
+        const messageId = message.id;
+        const messageType = message.type;
+
+        if (messageType === 'text') {
+            const textContent = message.text.body;
+            console.log(`Received text message: ${textContent}`);
+            
+
+        } else if (messageType === 'audio') {
+            const audioId = message.audio.id;
+            console.log(`Received audio message with ID: ${audioId}`);
+
+            // Get the media URL for the audio message
+            const mediaUrl = await getMediaUrl(audioId);
+            if (mediaUrl) {
+                console.log(`Audio message URL: ${mediaUrl}`);
+             
+            }
+
+        } else {
+            console.log(`Received unsupported message type: ${messageType}`);
+        }
+    } else {
+        console.log('No messages found in webhook.');
+    }
+
+    res.sendStatus(200);
+}
