@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MessageTemplateList from '../MessageTemplateList.jsx';
 import CreateTemplate from '../CreateTemplarte.jsx';
 import TemplatePreview from '../TemplatePreview.jsx';
+import { useLocation } from 'react-router-dom';
 
 function ManageTemplates() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState(null);
   const [selectedTemplateId, setSelectedTemplateId] = useState(null);
   const [liveTemplateData, setLiveTemplateData] = useState({});
+  const location = useLocation();
 
 
   const handleFormModel = () => {
     if (isOpen) {
-      // If the form is currently open and we're closing it
+      
       setLiveTemplateData(null);
       setEditingTemplate(null);
       setSelectedTemplateId(null);
@@ -26,6 +28,13 @@ function ManageTemplates() {
     setIsOpen(true);
   };
 
+
+
+  useEffect(() => {
+    if (location.state?.openForm) {
+      setIsOpen(true);
+    }
+  }, [location.state]);
 
 
   return (

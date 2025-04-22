@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, FormControl, Select, InputLabel, MenuItem, Checkbox, ListItemText, FormControlLabel, Autocomplete } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { TextField, FormControl, Select, InputLabel, MenuItem, Checkbox, ListItemText, FormControlLabel, Autocomplete, Button } from '@mui/material';
 import TemplatePreview from '../TemplatePreview';
+import CampaignList from '../CampaignList';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTemplates } from '../../redux/templateThunks';
 import { fetchPhoneNumbers } from '../../redux/phoneNumberThunks';
@@ -11,8 +13,12 @@ import { fetchPhoneNumbers } from '../../redux/phoneNumberThunks';
 
 function BroadCast() {
   const [fileName, setFileName] = useState('No file chosen');
+  
+  
 
   const dispatch = useDispatch();
+  
+  const navigate = useNavigate();
 
 
   const [formInput, setFormInput] = useState({
@@ -41,8 +47,8 @@ function BroadCast() {
 
 
   const [contacts, setContacts] = useState([
-    { id: '1', name: 'John Doe', number: '7876054918' },
-    { id: '2', name: 'Jane Smith', number: '9876543210' },
+    { id: '1', name: 'John Doe', number: '+917876054918' },
+    { id: '2', name: 'Jane Smith', number: '+919876543210' },
   ]);
 
   const handleSubmit = (e) => {
@@ -63,16 +69,22 @@ function BroadCast() {
     setFileName('No file chosen');
   };
 
+
+
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFileName(file ? file.name : 'No file chosen');
   };
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
 
     if (name === 'template') {
+      console.log(value);
       setFormInput((prev) => ({
         ...prev,
         [name]: value,
@@ -161,72 +173,93 @@ function BroadCast() {
 
 
             <div className='mt-6 flex lg:flex-nowrap flex-wrap gap-[20px]'>
-              <Autocomplete
-                size="small"
-                fullWidth
-                options={templates}
-                getOptionLabel={(option) => option.name}
-                value={templates.find(t => t.id === formInput.template) || null}
-                onChange={(event, newValue) => {
-                  handleChange({
-                    target: {
-                      name: 'template',
-                      value: newValue?.id || '',
-                    },
-                  });
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select Template"
-                    required
-                  />
-                )}
-                ListboxProps={{
-                  style: {
-                    maxHeight: 220, 
-                  },
-                }}
-              />
 
+              <div className='flex-1/2'>
 
-              <FormControl fullWidth required size="small">
-                <InputLabel id="contact-list-label">Select Contacts</InputLabel>
-                <Select
-                  labelId="contact-list-label"
-                  id="contact-list"
-                  name="contactList"
-                  multiple
-                  value={formInput.contactList} 
-                  onChange={handleChange}
-                  label="Select Contacts"
-                  renderValue={(selected) =>
-                    contacts
-                      .filter((c) => selected.includes(c.number))
-                      .map((c) => c.name)
-                      .join(', ')
-                  }
-                >
-                  <MenuItem>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formInput.contactList.length === contacts.length}
-                          onChange={handleSelectAll}
-                        />
-                      }
-                      label="Select All"
+                <Autocomplete
+                  size="small"
+                  fullWidth
+                  options={templates}
+                  getOptionLabel={(option) => option.name}
+                  value={templates.find(t => t.id === formInput.template) || null}
+                  onChange={(event, newValue) => {
+                    handleChange({
+                      target: {
+                        name: 'template',
+                        value: newValue?.id || '',
+                      },
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select Template"
+                      required
                     />
-                  </MenuItem>
+                  )}
+                  ListboxProps={{
+                    style: {
+                      maxHeight: 220,
+                    },
+                  }}
+                />
 
-                  {contacts.map((contact) => (
-                    <MenuItem key={contact.id} value={contact.number}>
-                      <Checkbox checked={formInput.contactList.includes(contact.number)} />
-                      <ListItemText primary={contact.name} secondary={contact.number} />
+
+                <Button
+                  variant="outlined"
+                  size="small"
+                  className="mt-2 float-end !font-semibold "
+                  onClick={() => {
+                    navigate("/manageTemplates", { state: { openForm: true } });
+                  }}
+                >
+
+                  + Add New Template
+                </Button>
+              </div>
+
+
+              <div className='flex-1/2'>
+                <FormControl fullWidth required size="small">
+                  <InputLabel id="contact-list-label">Select Contacts</InputLabel>
+                  <Select
+                    labelId="contact-list-label"
+                    id="contact-list"
+                    name="contactList"
+                    multiple
+                    value={formInput.contactList}
+                    onChange={handleChange}
+                    label="Select Contacts"
+                    renderValue={(selected) =>
+                      contacts
+                        .filter((c) => selected.includes(c.number))
+                        .map((c) => c.name)
+                        .join(', ')
+                    }
+                  >
+                    <MenuItem>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={formInput.contactList.length === contacts.length}
+                            onChange={handleSelectAll}
+                          />
+                        }
+                        label="Select All"
+                      />
                     </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+
+                    {contacts.map((contact) => (
+                      <MenuItem key={contact.id} value={contact.number}>
+                        <Checkbox checked={formInput.contactList.includes(contact.number)} />
+                        <ListItemText primary={contact.name} secondary={contact.number} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+
+
             </div>
 
             <div className='flex flex-wrap lg:flex-nowrap gap-[20px] mt-16 items-center'>
@@ -293,54 +326,9 @@ function BroadCast() {
 
 
 
-      <div className='mt-[20px] rounded-md p-[15px] bg-white'>
-        <table className='table-auto w-full'>
-          <thead>
-            <tr className='bg-blue-600 text-white text-nowrap'>
-              <th className='px-4 py-4'>Campaign Name</th>
-              <th className='px-4 py-4'>Operator Name</th>
-              <th className='px-4 py-4'>Creation Date</th>
-              <th className='px-4 py-4'>Total Number Count</th>
-              <th className='px-4 py-4'>Sent Count</th>
-              <th className='px-4 py-4'>Delivered Count</th>
-              <th className='px-4 py-4'>Read Count</th>
-              <th className='px-4 py-4'>Failed Count</th>
-              <th className='px-4 py-4'>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* You can map campaign data here */}
-          </tbody>
-        </table>
+      <CampaignList />
 
-        <div className='flex items-center justify-between mt-4 px-4 py-2 text-sm text-gray-700'>
-          <div className='flex items-center gap-2'>
-            <span>Items per page:</span>
-            <select className='border border-gray-300 rounded px-2 py-1'>
-              <option>10</option>
-              <option selected>15</option>
-              <option>20</option>
-              <option>50</option>
-            </select>
-          </div>
 
-          <div className='flex items-center gap-2'>
-            <span>0 of 0</span>
-            <button className='p-1' disabled>
-              <i className='fas fa-angle-double-left text-gray-400' />
-            </button>
-            <button className='p-1' disabled>
-              <i className='fas fa-angle-left text-gray-400' />
-            </button>
-            <button className='p-1'>
-              <i className='fas fa-angle-right text-gray-600' />
-            </button>
-            <button className='p-1'>
-              <i className='fas fa-angle-double-right text-gray-600' />
-            </button>
-          </div>
-        </div>
-      </div>
 
     </div>
   );
