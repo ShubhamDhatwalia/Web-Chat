@@ -41,7 +41,7 @@ function sendTextMessage(senderId, text) {
 
     axios.post(url, data, {
         headers: {
-            'Authorization': `Bearer ${process.env.ACCESS_TOKEN}`
+            'Authorization': `Bearer ${process.env.WHATSAPP_API_TOKEN}`
         }
     })
     .then(response => {
@@ -51,6 +51,9 @@ function sendTextMessage(senderId, text) {
         console.error('Error sending message:', error);
     });
 }
+
+
+
 
 // Function to get media URL using media ID
 async function getMediaUrl(mediaId) {
