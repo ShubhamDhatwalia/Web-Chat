@@ -83,11 +83,11 @@ function BroadCast() {
       try {
         const response = await axios.post(`/sendMessage`, payload)
 
-        console.log(`Success for ${number}:`, response.data.messages[0].message_status);
+        console.log(`Success for ${number}:`, response.data);
 
       } catch (error) {
         console.error(`Error for ${number}:`, error);
-        toast.error(`Failed for ${number}: ${error.response?.data?.error?.message}`);
+        toast.error(`Failed for ${number}: ${error.response?.data?.error?.error?.message}`);
       }
     }
 

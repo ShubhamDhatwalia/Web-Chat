@@ -32,7 +32,7 @@ export function verifyWebhook(req, res) {
 export async function sendTextMessage(req, res) {
     const { to, template } = req.body;
 
-    const url = `https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`;
+    const url = `https://graph.facebook.com/v22.0/${process.env.PHONE_NUMBER_ID}/messages`;
 
     const data = {
         messaging_product: 'whatsapp',
@@ -76,21 +76,26 @@ async function getMediaUrl(mediaId) {
     }
 }
 
+
+
 // Function to handle the incoming webhook
 export async function handleWebhook(req, res) {
     const body = req.body;
-    console.log('Incoming webhook data:', body);
+    console.log('Incoming webhook data:', JSON.stringify(body, null, 2)); // Improved logging
 
+    // Check if entries and changes exist
     if (!body.entry || !body.entry[0].changes) {
         console.error('Invalid webhook structure:', body);
-        return res.sendStatus(400);
+        return res.sendStatus(400); // Bad request if the structure is wrong
     }
 
+    // Handle the incoming message
     const change = body.entry[0].changes[0];
     const message = change?.value?.messages?.[0];
+    const statusUpdate = change?.value?.statuses?.[0];
 
     if (message) {
-        console.log('New message received:', message);
+        console.log('New message received:', JSON.stringify(message, null, 2));
 
         const senderId = message.from;
         const messageId = message.id;
@@ -99,25 +104,37 @@ export async function handleWebhook(req, res) {
         if (messageType === 'text') {
             const textContent = message.text.body;
             console.log(`Received text message: ${textContent}`);
-
-
         } else if (messageType === 'audio') {
             const audioId = message.audio.id;
             console.log(`Received audio message with ID: ${audioId}`);
-
-            // Get the media URL for the audio message
+            // Fetch media URL
             const mediaUrl = await getMediaUrl(audioId);
             if (mediaUrl) {
                 console.log(`Audio message URL: ${mediaUrl}`);
-
             }
-
         } else {
             console.log(`Received unsupported message type: ${messageType}`);
         }
-    } else {
-        console.log('No messages found in webhook.');
     }
 
-    res.sendStatus(200);
+    // Handle message status updates
+    if (statusUpdate) {
+        console.log('Message status update:', JSON.stringify(statusUpdate, null, 2));
+
+        const { status, message_id, timestamp, recipient_id } = statusUpdate;
+        console.log(`Message ID: ${message_id}`);
+        console.log(`Status: ${status}`);  // Possible values: "sent", "delivered", "read"
+        console.log(`Timestamp: ${timestamp}`);
+        console.log(`Recipient: ${recipient_id}`);
+        
+        // Custom logic for message status (e.g., store status in database, notify user, etc.)
+        if (status === 'delivered') {
+            console.log('Message delivered successfully!');
+        } else if (status === 'read') {
+            console.log('Message was read!');
+        }
+    }
+
+    res.sendStatus(200); // Respond with success
 }
+
