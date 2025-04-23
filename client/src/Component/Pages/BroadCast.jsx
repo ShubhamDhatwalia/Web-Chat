@@ -63,6 +63,7 @@ function BroadCast() {
     e.preventDefault();
 
     const selectedTemplate = templates.find(t => t.id === formInput.template);
+    console.log(selectedTemplate);
 
     for (const number of formInput.contactList) {
       const payload = {
@@ -72,7 +73,7 @@ function BroadCast() {
         template: {
           name: selectedTemplate?.name || '',
           language: {
-            code: "en_US",
+            code: selectedTemplate?.language ,
           }
         }
       };
