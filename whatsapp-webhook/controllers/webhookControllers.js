@@ -81,15 +81,12 @@ async function getMediaUrl(mediaId) {
 // Function to handle the incoming webhook
 export async function handleWebhook(req, res) {
     const body = req.body;
-    console.log('Incoming webhook data:', JSON.stringify(body, null, 2)); // Improved logging
-
-    // Check if entries and changes exist
+    
     if (!body.entry || !body.entry[0].changes) {
         console.error('Invalid webhook structure:', body);
-        return res.sendStatus(400); // Bad request if the structure is wrong
+        return res.sendStatus(400); 
     }
 
-    // Handle the incoming message
     const change = body.entry[0].changes[0];
     const message = change?.value?.messages?.[0];
     const statusUpdate = change?.value?.statuses?.[0];
@@ -121,8 +118,9 @@ export async function handleWebhook(req, res) {
     if (statusUpdate) {
         console.log('Message status update:', JSON.stringify(statusUpdate, null, 2));
 
-        const { status, message_id, timestamp, recipient_id } = statusUpdate;
-        console.log(`Message ID: ${message_id}`);
+        const { status, id, timestamp, recipient_id } = statusUpdate;
+        console.log(statusUpdate);
+        console.log(`Message ID: ${id}`);
         console.log(`Status: ${status}`);  // Possible values: "sent", "delivered", "read"
         console.log(`Timestamp: ${timestamp}`);
         console.log(`Recipient: ${recipient_id}`);
