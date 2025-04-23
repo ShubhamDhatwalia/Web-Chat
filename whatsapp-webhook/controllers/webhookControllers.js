@@ -30,7 +30,7 @@ export function verifyWebhook(req, res) {
 
 
 export async function sendTextMessage() {
-    app.post('/webhook', async (req, res) => {
+    app.post('/sendMessage', async (req, res) => {
         const { to, template } = req.body;
 
         const url = `https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`;

@@ -81,7 +81,7 @@ function BroadCast() {
       console.log(payload);
 
       try {
-        const response = await axios.post(`/webhook`, payload)
+        const response = await axios.post(`/sendMessage`, payload)
 
         console.log(`Success for ${number}:`, response.data.messages[0].message_status);
 
