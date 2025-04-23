@@ -5,14 +5,14 @@ import cors from 'cors';
 
 
 
-app.use(cors());
-app.options('*', cors()); // Enable preflight requests for all routes
 
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use(cors());
+app.options('*', cors()); // Enable preflight requests for all routes
 
 
 
