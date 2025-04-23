@@ -29,8 +29,6 @@ export function verifyWebhook(req, res) {
 
 
 
-
-
 function sendTextMessage(senderId, text) {
     const url = `https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`;
     const data = {

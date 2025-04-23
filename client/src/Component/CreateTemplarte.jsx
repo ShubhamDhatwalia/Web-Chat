@@ -678,7 +678,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             onChange={handleChange}
                         >
 
-                            <MenuItem value="en">English</MenuItem>
+                            <MenuItem value="en_US">English</MenuItem>
                             <MenuItem value="hi">Hindi</MenuItem>
 
                         </Select>

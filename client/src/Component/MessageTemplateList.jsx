@@ -21,6 +21,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
 
   const languageMap = {
     en: 'English',
+    en_US: 'English (US)',
     hi: 'Hindi',
   };
 
@@ -90,7 +91,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                     <tr
                       key={template.id}
                       onClick={() => onSelectTemplateId?.(template.id)}
-                      className={`group text-center border-b border-gray-200 hover:bg-blue-100 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-blue-100' : ''
+                      className={`group text-nowrap text-center border-b border-gray-200 hover:bg-blue-100 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-blue-100' : ''
                         }`}
                     >
                       <td className="px-4 py-3 text-left">{template.id}</td>

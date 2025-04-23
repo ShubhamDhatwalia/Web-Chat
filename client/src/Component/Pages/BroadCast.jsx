@@ -6,18 +6,23 @@ import CampaignList from '../CampaignList';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTemplates } from '../../redux/templateThunks';
 import { fetchPhoneNumbers } from '../../redux/phoneNumberThunks';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
+const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
+const VITE_PHONE_NUMBER_ID = import.meta.env.VITE_PHONE_NUMBER_ID;
 
 
 function BroadCast() {
   const [fileName, setFileName] = useState('No file chosen');
-  
-  
+
+
 
   const dispatch = useDispatch();
-  
+
   const navigate = useNavigate();
 
 
@@ -45,17 +50,58 @@ function BroadCast() {
   }, [dispatch]);
 
 
-
   const [contacts, setContacts] = useState([
     { id: '1', name: 'John Doe', number: '+917876054918' },
     { id: '2', name: 'Jane Smith', number: '+919876543210' },
   ]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form Submitted:', formInput);
 
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const selectedTemplate = templates.find(t => t.id === formInput.template);
+  
+    for (const number of formInput.contactList) {
+      const payload = {
+        messaging_product: "whatsapp",
+        to: number, 
+        type: "template",
+        template: {
+          name: selectedTemplate?.name || '',
+          language: {
+            code: "en_US",
+          } 
+        }
+      };
+
+
+      console.log(payload);
+  
+      try {
+        const response = await axios.post(
+          `https://graph.facebook.com/v22.0/${VITE_PHONE_NUMBER_ID}/messages`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+  
+        console.log(`Success for ${number}:`, response.data.messages[0].message_status);
+  
+      } catch (error) {
+        console.error(`Error for ${number}:`, error);
+        toast.error(`Failed for ${number}: ${error.response?.data?.error?.message}`);
+      }
+    }
+  
+    toast.success("Broadcast attempt finished.");
   };
+  
 
 
   const handleReset = (e) => {
@@ -172,6 +218,7 @@ function BroadCast() {
             </div>
 
 
+
             <div className='mt-6 flex lg:flex-nowrap flex-wrap gap-[20px]'>
 
               <div className='flex-1/2'>
@@ -217,6 +264,7 @@ function BroadCast() {
                   + Add New Template
                 </Button>
               </div>
+
 
 
               <div className='flex-1/2'>
