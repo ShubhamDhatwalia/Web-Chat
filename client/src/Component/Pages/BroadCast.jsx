@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const VITE_PHONE_NUMBER_ID = import.meta.env.VITE_PHONE_NUMBER_ID;
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
 function BroadCast() {
@@ -60,48 +61,39 @@ function BroadCast() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const selectedTemplate = templates.find(t => t.id === formInput.template);
-  
+
     for (const number of formInput.contactList) {
       const payload = {
         messaging_product: "whatsapp",
-        to: number, 
+        to: number,
         type: "template",
         template: {
           name: selectedTemplate?.name || '',
           language: {
             code: "en_US",
-          } 
+          }
         }
       };
 
 
       console.log(payload);
-  
+
       try {
-        const response = await axios.post(
-          `https://graph.facebook.com/v22.0/${VITE_PHONE_NUMBER_ID}/messages`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-  
+        const response = await axios.post(`/webhook`, payload)
+
         console.log(`Success for ${number}:`, response.data.messages[0].message_status);
-  
+
       } catch (error) {
         console.error(`Error for ${number}:`, error);
         toast.error(`Failed for ${number}: ${error.response?.data?.error?.message}`);
       }
     }
-  
+
     toast.success("Broadcast attempt finished.");
   };
-  
+
 
 
   const handleReset = (e) => {

@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import webhookRoutes from './routes/webhookRoutes.js'; // Adjust path if necessary
+import webhookRoutes from './routes/webhookRoutes.js'; 
 
 
 dotenv.config();

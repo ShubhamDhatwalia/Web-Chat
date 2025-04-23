@@ -9,7 +9,7 @@ import axios from 'axios';
 export function verifyWebhook(req, res) {
     console.log('Received verification request:', req.query);
 
-    
+
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
@@ -21,7 +21,7 @@ export function verifyWebhook(req, res) {
         return res.status(200).send(challenge);
     } else {
         console.error('Verification failed');
-        return res.status(403).send('Verification failed');  
+        return res.status(403).send('Verification failed');
     }
 }
 
@@ -29,25 +29,35 @@ export function verifyWebhook(req, res) {
 
 
 
-function sendTextMessage(senderId, text) {
-    const url = `https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`;
-    const data = {
-        messaging_product: 'whatsapp',
-        to: senderId,
-        text: { body: text }
-    };
+export async function sendTextMessage() {
+    app.post('/webhook', async (req, res) => {
+        const { to, template } = req.body;
 
-    axios.post(url, data, {
-        headers: {
-            'Authorization': `Bearer ${process.env.WHATSAPP_API_TOKEN}`
+        const url = `https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`;
+
+        const data = {
+            messaging_product: 'whatsapp',
+            to,
+            type: 'template',
+            template
+        };
+
+        try {
+            const response = await axios.post(url, data, {
+                headers: {
+                    Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Template sent:', response.data);
+            res.status(200).json(response.data);
+        } catch (error) {
+            console.error('Failed to send template:', error.response?.data || error.message);
+            res.status(500).json({ error: error.response?.data || error.message });
         }
-    })
-    .then(response => {
-        console.log('Message sent:', response.data);
-    })
-    .catch(error => {
-        console.error('Error sending message:', error);
     });
+
 }
 
 
@@ -92,7 +102,7 @@ export async function handleWebhook(req, res) {
         if (messageType === 'text') {
             const textContent = message.text.body;
             console.log(`Received text message: ${textContent}`);
-            
+
 
         } else if (messageType === 'audio') {
             const audioId = message.audio.id;
@@ -102,7 +112,7 @@ export async function handleWebhook(req, res) {
             const mediaUrl = await getMediaUrl(audioId);
             if (mediaUrl) {
                 console.log(`Audio message URL: ${mediaUrl}`);
-             
+
             }
 
         } else {
