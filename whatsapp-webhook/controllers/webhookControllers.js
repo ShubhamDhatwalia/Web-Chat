@@ -119,11 +119,7 @@ export async function handleWebhook(req, res) {
         console.log('Message status update:', JSON.stringify(statusUpdate, null, 2));
 
         const { status, id, timestamp, recipient_id } = statusUpdate;
-        console.log(statusUpdate);
-        console.log(`Message ID: ${id}`);
-        console.log(`Status: ${status}`);  // Possible values: "sent", "delivered", "read"
-        console.log(`Timestamp: ${timestamp}`);
-        console.log(`Recipient: ${recipient_id}`);
+        
         
         // Custom logic for message status (e.g., store status in database, notify user, etc.)
         if (status === 'delivered') {
