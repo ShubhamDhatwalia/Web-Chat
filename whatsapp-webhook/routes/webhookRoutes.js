@@ -5,6 +5,6 @@ import { verifyWebhook, handleWebhook, sendTextMessage } from '../controllers/we
 // Define the routes for the webhook
 router.get('/webhook', verifyWebhook);  
 router.post('/webhook', handleWebhook); 
-router.post('webhook', sendTextMessage);
+router.post('/webhook', sendTextMessage);
 
 export default router;
