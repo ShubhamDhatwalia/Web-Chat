@@ -473,6 +473,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 formData.append('file', headerImage);
                 formData.append('type', headerImage.type);
                 formData.append('messaging_product', 'whatsapp');
+               
 
                 const uploadResponse = await axios.post(
                     `https://graph.facebook.com/v22.0/${phone_id}/media`,
@@ -486,6 +487,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 );
 
                 const mediaId = uploadResponse.data.id;
+                console.log(mediaId)
 
                 if (!mediaId) {
                     toast.error("Image upload failed. Media ID not received.");
@@ -607,7 +609,8 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             toast.success("Template created successfully!");
             onSuccess();
         } catch (error) {
-            console.log(error.response);
+            console.log(JSON.stringify(error.response?.data, null, 2));
+
             toast.error(error.response?.data?.error?.error_user_msg || "Error creating template. Please try again.");
         }
     };

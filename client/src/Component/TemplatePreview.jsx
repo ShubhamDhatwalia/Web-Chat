@@ -125,11 +125,11 @@ function TemplatePreview({ templateId, liveTemplateData }) {
                     </h2>
                 )}
                 {header && header.format === 'IMAGE' && (
-                    <div className='max-h-[140px] overflow-hidden mb-2'>
+                    <div className=' overflow-hidden mb-2'>
                         <img
                             src={header.imagePreview || header.example?.header_handle?.[0] || ''}
                             alt="Header"
-                            className="w-full object-cover"
+                            className="w-full  rounded-sm"
                         />
                     </div>
                 )}

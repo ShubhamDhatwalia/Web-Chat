@@ -63,23 +63,124 @@ function BroadCast() {
     e.preventDefault();
 
     const selectedTemplate = templates.find(t => t.id === formInput.template);
-    console.log(selectedTemplate);
+    console.log(selectedTemplate?.components);
 
     for (const number of formInput.contactList) {
       const payload = {
         messaging_product: "whatsapp",
+        recipient_type: "individual",
         to: number,
         type: "template",
         template: {
           name: selectedTemplate?.name || '',
           language: {
-            code: selectedTemplate?.language ,
-          }
+            code: selectedTemplate?.language || 'en_US'
+          },
+          components: []
         }
       };
 
 
-      console.log(payload);
+      // Dynamically add components based on selectedTemplate
+
+      if (selectedTemplate?.components) {
+        selectedTemplate.components.forEach((component) => {
+          // if (component.type === "HEADER" && component.format === "IMAGE") {
+          //   payload.template.components.push({
+          //     type: "header",
+          //     parameters: [
+          //       {
+          //         type: "image",
+          //         image: {
+          //           link: selectedTemplate?.components[0].example.header_handle[0] || "https://example.com/default.jpg" // or collected from UI
+          //         }
+          //       }
+          //     ]
+          //   });
+          // }
+
+
+
+
+
+        // HEADER
+    if (component.type === "HEADER") {
+      const headerParams = [];
+
+      // Named variable format
+      if (component?.example?.header_text_named_params) {
+        component.example.header_text_named_params.forEach(param => {
+          headerParams.push({
+            type: "text",
+            text: param.example,
+            parameter_name: param.param_name
+            
+          });
+        });
+      }
+
+      // Positional format
+      else if (component?.example?.header_text?.[0]) {
+        const exampleHeader = component.example.header_text[0];
+        headerParams.push({
+          type: "text",
+          text: exampleHeader
+        });
+      }
+
+      if (headerParams.length > 0) {
+        payload.template.components.push({
+          type: "HEADER",
+          parameters: headerParams
+        });
+      }
+    }
+
+    // BODY
+    if (component.type === "BODY") {
+      const bodyParams = [];
+
+      // Named variable format
+      if (component?.example?.body_text_named_params) {
+        component.example.body_text_named_params.forEach(param => {
+          bodyParams.push({
+            type: "text",
+            text: param.example,
+            parameter_name: param.param_name
+             
+          });
+        });
+      }
+
+      // Positional format
+      else if (component?.example?.body_text?.[0]) {
+        const exampleBody = component.example.body_text[0];
+        if (Array.isArray(exampleBody)) {
+          exampleBody.forEach(value => {
+            bodyParams.push({
+              type: "text",
+              text: value
+            });
+          });
+        }
+      }
+
+      if (bodyParams.length > 0) {
+        payload.template.components.push({
+          type: "BODY",
+          parameters: bodyParams
+        });
+      }
+    }
+
+        });
+      }
+
+
+
+      console.log("Final Payload:", payload);
+
+
 
       try {
         const response = await axios.post(`/sendMessage`, payload)
