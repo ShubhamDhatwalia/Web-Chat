@@ -27,6 +27,10 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
     });
 
 
+
+    console.log(sampleValues);
+
+
     const [buttons, setButtons] = useState([]);
     const [isDropupOpen, setIsDropupOpen] = useState(false);
     const dropupRef = useRef(null);
@@ -321,18 +325,18 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     })) || [],
                 });
             } else if (templateData.parameter_format === "POSITIONAL") {
-                // Extract positional parameters
                 setSampleValues({
-                    header_text: headerComponent?.example?.header_text?.map((text, index) => ({
+                    header_text: (headerComponent?.example?.header_text || []).map((example, index) => ({
                         param_name: `{{${index + 1}}}`,
-                        example: text,
+                        example,
                     })) || [],
-                    body_text: bodyComponent?.example?.body_text?.map((text, index) => ({
+                    body_text: (bodyComponent?.example?.body_text?.[0] || []).map((example, index) => ({
                         param_name: `{{${index + 1}}}`,
-                        example: text,
+                        example,
                     })) || [],
                 });
             }
+            
 
             const buttonComp = templateData?.components?.find(c => c.type === 'BUTTONS');
             if (buttonComp?.buttons) {
@@ -405,7 +409,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
     };
 
 
-    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -506,24 +510,34 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         // Handle BODY
         if (messageContent.trim()) {
             const bodyVars = extractVariableList(messageContent, parameter_format);
-
+        
             const bodyComponent = {
                 type: "BODY",
                 text: messageContent
             };
-
+        
             if (bodyVars.length > 0) {
                 if (parameter_format === 'POSITIONAL') {
-                    const bodyExamples = sampleValues.body_text?.map(v => v?.example).filter(Boolean) || [];
-
-                    if (bodyExamples.length !== bodyVars.length) {
+                    // Fix for positional: flatten the example values
+                    let bodyExamplesRaw = sampleValues.body_text || [];
+        
+                    // Convert from [{example: "val"}] to ["val"]
+                    const flatExamples = bodyExamplesRaw.map(item =>
+                        typeof item === 'object' && 'example' in item ? item.example : item
+                    );
+        
+                    // Validate example count matches variable count
+                    if (flatExamples.length !== bodyVars.length) {
                         return toast.error("Please provide example values for all BODY variables.");
                     }
-
+        
+                    // Final structure for WhatsApp: [ [val1, val2, ...] ]
                     bodyComponent.example = {
-                        body_text: bodyExamples
+                        body_text: [flatExamples]
                     };
+        
                 } else {
+                    // Named format: keep mapping param names with examples
                     bodyComponent.example = {
                         body_text_named_params: bodyVars.map((param, i) => ({
                             param_name: param,
@@ -532,10 +546,10 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     };
                 }
             }
-
+        
             components.push(bodyComponent);
         }
-
+        
 
 
         // Handle FOOTER (if exists)
