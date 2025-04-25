@@ -520,26 +520,21 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         
             if (bodyVars.length > 0) {
                 if (parameter_format === 'POSITIONAL') {
-                    // Fix for positional: flatten the example values
                     let bodyExamplesRaw = sampleValues.body_text || [];
         
-                    // Convert from [{example: "val"}] to ["val"]
                     const flatExamples = bodyExamplesRaw.map(item =>
                         typeof item === 'object' && 'example' in item ? item.example : item
                     );
         
-                    // Validate example count matches variable count
                     if (flatExamples.length !== bodyVars.length) {
                         return toast.error("Please provide example values for all BODY variables.");
                     }
         
-                    // Final structure for WhatsApp: [ [val1, val2, ...] ]
                     bodyComponent.example = {
                         body_text: [flatExamples]
                     };
         
                 } else {
-                    // Named format: keep mapping param names with examples
                     bodyComponent.example = {
                         body_text_named_params: bodyVars.map((param, i) => ({
                             param_name: param,
@@ -641,7 +636,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[50px] text-md'>
+            <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[50px] text-md '>
                 <div className="flex-1">
                     <TextField
                         required
@@ -653,6 +648,17 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         placeholder='Template Name'
                         value={formInput.templateName}
                         onChange={handleChange}
+                        className='hover:border-none hover:outline-none'
+                        // sx={{
+                        //     '& label.Mui-focused': {
+                        //       color: '#FFB300', // Custom label color on focus
+                        //     },
+                        //     '& .MuiOutlinedInput-root': {
+                        //       '&.Mui-focused fieldset': {
+                        //         borderColor: '#FFB300', // Custom border color on focus
+                        //       },
+                        //     },
+                        //   }}
                     />
                 </div>
 
