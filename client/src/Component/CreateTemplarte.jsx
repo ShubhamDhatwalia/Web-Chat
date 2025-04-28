@@ -635,8 +635,8 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
     return (
-        <form onSubmit={handleSubmit} className='max-h-[81vh] px-[10px] overflow-auto'>
-            <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[30px] text-md '>
+        <form onSubmit={handleSubmit} className='max-h-[81vh] px-[10px] py-[10px] overflow-auto'>
+            <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[20px] text-md '>
                 <div className="flex-1">
                     <TextField
                         required
@@ -645,10 +645,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         label="Template Name"
                         size="small"
                         fullWidth
-                        placeholder='Template Name'
+                        placeholder="Template Name"
                         value={formInput.templateName}
                         onChange={handleChange}
-                        className='hover:border-none hover:outline-none'
                         sx={{
                             '& label.Mui-focused': {
                                 color: '#E17100', // Label color on focus
@@ -660,9 +659,11 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                     borderColor: '#E17100', // Border color on focus
                                 },
+                                borderRadius: '10px', 
                             },
                         }}
                     />
+
                 </div>
 
                 <div className="flex-1">
@@ -680,11 +681,13 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#E17100', // Border on focus
                             },
+                            borderRadius: '10px',
                         },
                         '& .MuiSelect-select': {
                             '&:focus': {
                                 backgroundColor: 'transparent', // Prevent weird background on focus
                             },
+                            
                         },
                     }}>
                         <InputLabel id="category-label">Category</InputLabel>
@@ -711,6 +714,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                                 backgroundColor: '#FEF3C6',
 
                                             },
+                                            
                                         },
                                     },
                                 },
@@ -742,6 +746,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#E17100', // Border on focus
                             },
+                            borderRadius: '10px',
                         },
                         '& .MuiSelect-select': {
                             '&:focus': {
@@ -801,7 +806,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
 
-            <div className='mt-6'>
+            <div className='mt-8'>
                 <FormControl fullWidth size="small" sx={{
                     '& label.Mui-focused': {
                         color: '#E17100', // Label color when focused
@@ -813,6 +818,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                             borderColor: '#E17100', // Border on focus
                         },
+                        borderRadius: '10px',
                     },
                     '& .MuiSelect-select': {
                         '&:focus': {
@@ -845,6 +851,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                             backgroundColor: '#FEF3C6',
 
                                         },
+                                        
                                     },
                                 },
                             },
@@ -870,6 +877,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                             borderColor: '#E17100', // Border on focus
                         },
+                        borderRadius: '10px',
                     },
                     '& .MuiSelect-select': {
                         '&:focus': {
@@ -936,6 +944,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#E17100', // Border color on focus
                             },
+                            borderRadius: '10px',
                         },
                     }}
                 />
@@ -967,6 +976,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                     borderColor: '#E17100', // Border color on focus
                                 },
+                                borderRadius: '10px',
                             },
                         }}
 
@@ -1042,12 +1052,12 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 value={formInput.messageContent}
                 onChange={handleChange}
                 multiline
-                rows={8}
+                rows={7}
                 fullWidth
                 size="small"
                 variant="outlined"
                 sx={{
-                    mt: 2,
+                    mt: 4,
                     backgroundColor: '#f9fafb',
                     borderRadius: '4px',
                     '& label.Mui-focused': {
@@ -1060,6 +1070,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                             borderColor: '#E17100', // Border color on focus
                         },
+                        borderRadius: '10px',
                     },
                 }}
                 inputProps={{ maxLength: 1024 }}
@@ -1092,7 +1103,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     size="small"
                     required
                     label={`Body {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.messageContent, formInput.parameter_format)[i]}}}`}
-                    value={val.example} // ✅ FIX HERE
+                    value={val.example} 
 
                     sx={{
                         '& label.Mui-focused': {
@@ -1105,11 +1116,12 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#E17100', // Border color on focus
                             },
+                            borderRadius: '10px',
                         },
                     }}
                     onChange={(e) => {
                         const updated = [...sampleValues.body_text];
-                        updated[i] = { ...updated[i], example: e.target.value }; // ✅ FIX HERE
+                        updated[i] = { ...updated[i], example: e.target.value };
                         setSampleValues(prev => ({ ...prev, body_text: updated }));
                     }}
                     fullWidth
@@ -1126,23 +1138,24 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     size="small"
                     required
                     label={`Header {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.headerText, formInput.parameter_format)[i]}}}`}
-                    value={val.example} // ✅ FIX HERE
+                    value={val.example}
                     sx={{
                         '& label.Mui-focused': {
-                            color: '#E17100', // Label color on focus
+                            color: '#E17100',
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border color on hover
+                                borderColor: '#E17100',
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border color on focus
+                                borderColor: '#E17100',
                             },
+                            borderRadius: '10px',
                         },
                     }}
                     onChange={(e) => {
                         const updated = [...sampleValues.header_text];
-                        updated[i] = { ...updated[i], example: e.target.value }; // ✅ FIX HERE
+                        updated[i] = { ...updated[i], example: e.target.value };
                         setSampleValues(prev => ({ ...prev, header_text: updated }));
                     }}
                     fullWidth
@@ -1153,7 +1166,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
             {/* Buttons */}
-            <h3 className="font-semibold mt-[50px] pt-[10px]">Buttons (Optional)</h3>
+            <h3 className="font-semibold mt-[30px] pt-[10px]">Buttons (Optional)</h3>
             <p className="text-sm font-semibold text-gray-600 mb-8">Add Quick Reply or Call To Action buttons</p>
 
             {buttons.map((btn, i) => (
@@ -1169,6 +1182,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#E17100', // Border on focus
                             },
+                            borderRadius: '10px',
                         },
                         '& .MuiSelect-select': {
                             '&:focus': {
@@ -1232,6 +1246,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                     borderColor: '#E17100', // Border color on focus
                                 },
+                                borderRadius: '10px',
                             },
                         }}
 
@@ -1259,6 +1274,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                         borderColor: '#E17100', // Border color on focus
                                     },
+                                    borderRadius: '10px',
                                 },
                             }}
 
@@ -1288,6 +1304,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                         borderColor: '#E17100', // Border color on focus
                                     },
+                                    borderRadius: '10px',
                                 },
                             }}
                             className='!mb-2'

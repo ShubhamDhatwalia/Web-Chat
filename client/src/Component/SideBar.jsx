@@ -11,13 +11,13 @@ function SideBar({ isOpen, toggleSidebar }) {
 
     return (
         <>
-        
 
-            <div className={`bg-black h-[100vh]  ${isOpen ? 'w-[250px] ': 'w-[60px]'} overflow-hidden transition-all duration-500 ease-in-out text-nowrap`}>
+
+            <div className={`bg-black h-[100vh]  ${isOpen ? 'w-[250px] ' : 'w-[60px]'} overflow-hidden transition-all duration-500 ease-in-out text-nowrap`}>
                 <header className='flex items-center justify-between border-b-2 border-r-2 border-gray-700  py-[10px] px-[20px] h-[60px]'>
 
                     <a href="#">
-                        <div className={`logo text-white font-bold text-2xl ${isOpen ? 'visible': 'hidden'}` }>Web <span className='text-amber-600'>Chat</span></div>
+                        <div className={`logo text-white font-bold text-2xl ${isOpen ? 'visible' : 'hidden'}`}>Web <span className='text-amber-600'>Chat</span></div>
 
                     </a>
 
@@ -33,7 +33,8 @@ function SideBar({ isOpen, toggleSidebar }) {
                         <NavLink
                             to="/"
                             className={({ isActive }) =>
-                                isActive ? 'text-amber-600 font-semibold' : 'text-white'
+                                `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'
+                                }`
                             }
                         >
                             <i className="fa-solid fa-house"></i> <span>Home</span>
@@ -44,7 +45,8 @@ function SideBar({ isOpen, toggleSidebar }) {
                         <NavLink
                             to="/chats"
                             className={({ isActive }) =>
-                                isActive ? 'text-amber-600 font-semibold' : 'text-white'
+                                `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'
+                                }`
                             }
                         >
                             <i className="fa-solid fa-message"></i> <span>Chats</span>
@@ -55,7 +57,8 @@ function SideBar({ isOpen, toggleSidebar }) {
                         <NavLink
                             to="/broadCast"
                             className={({ isActive }) =>
-                                isActive ? 'text-amber-600 font-semibold' : 'text-white'
+                                `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'
+                                }`
                             }
                         >
                             <i className="fa-solid fa-tower-broadcast"></i> <span>BroadCast</span>
@@ -66,13 +69,27 @@ function SideBar({ isOpen, toggleSidebar }) {
                         <NavLink
                             to="/manageTemplates"
                             className={({ isActive }) =>
-                                isActive ? 'text-amber-600 font-semibold' : 'text-white'
+                                `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'
+                                }`
                             }
                         >
                             <i className="fa-solid fa-briefcase"></i> <span>Manage Templates</span>
                         </NavLink>
                     </li>
+
+                    <li>
+                        <NavLink
+                            to="/automation"
+                            className={({ isActive }) =>
+                                `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'
+                                }`
+                            }
+                        >
+                            <i className="fa-solid fa-gear"></i> <span>Automation</span>
+                        </NavLink>
+                    </li>
                 </ul>
+
 
             </div>
 

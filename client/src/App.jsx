@@ -7,6 +7,7 @@ import Chat from './Component/Pages/Chat';
 import Broadcast from './Component/Pages/BroadCast';
 import ErrorPage from './Component/Pages/ErrorPage';
 import ManageTemplates from './Component/Pages/ManageTemplates';
+import Automation from './Component/Pages/Automation';
 import { ToastContainer } from 'react-toastify';
 
 
@@ -26,6 +27,8 @@ function App() {
             <Route path='/chats' element={<Chat />} />
             <Route path='/broadCast' element={<Broadcast />} />
             <Route path='/manageTemplates' element={<ManageTemplates />} />
+            <Route path='/automation' element={<Automation />} />
+
 
 
 

@@ -38,8 +38,8 @@ function ManageTemplates() {
 
 
   return (
-    <div className='bg-gray-100 px-[15px] py-[10px] '>
-      <div className='flex justify-between gap-[20px] items-stretch'>
+    <div className='bg-gray-100 px-[10px] py-[10px] '>
+      <div className='flex justify-between gap-[10px] items-stretch'>
         <div className='bg-white p-[15px]  rounded-md flex-[66%] '>
           <div className='flex mt-4 p-[10px] justify-between items-center'>
             <h2 className='font-bold text-xl'>Message Templates</h2>
@@ -80,7 +80,7 @@ function ManageTemplates() {
 
         {/* Template Preview */}
         <div className='bg-white p-[15px] rounded-md flex-[33%] '>
-          <h2 className='font-bold text-xl'>Your Template</h2>
+          <h2 className='font-bold text-xl mt-4'>Your Template</h2>
           <p className='font-semibold text-md mt-[5px] text-gray-600'>
             Here you can see the selected message content body
           </p>

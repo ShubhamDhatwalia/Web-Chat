@@ -260,15 +260,15 @@ function BroadCast() {
 
 
   return (
-    <div className='bg-gray-100 px-[15px] py-[10px]'>
-      <div className='flex justify-between gap-[20px] items-stretch'>
+    <div className='bg-gray-100 px-[10px] py-[10px]'>
+      <div className='flex justify-between gap-[10px] items-stretch'>
         <div className='bg-white p-[15px] rounded-md flex-[66%]'>
-          <h2 className='font-bold text-xl'>Campaign/Broadcasting</h2>
+          <h2 className='font-bold text-xl mt-4'>Campaign/Broadcasting</h2>
           <p className='font-semibold text-md mt-[5px] text-gray-600'>
             Run a Campaign to broadcast your message
           </p>
 
-          <form onSubmit={handleSubmit} className='mt-[50px]'>
+          <form onSubmit={handleSubmit} className='mt-[30px]'>
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px]'>
               <TextField
                 label="Campaign Name"
@@ -280,9 +280,41 @@ function BroadCast() {
                 fullWidth
                 size='small'
                 variant="outlined"
+                sx={{
+                  '& label.Mui-focused': {
+                    color: '#E17100', // Label color on focus
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#E17100', // Border color on hover
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#E17100', // Border color on focus
+                    },
+                    borderRadius: '10px',
+                  },
+                }}
               />
 
-              <FormControl fullWidth required size='small'>
+              <FormControl fullWidth required size='small' sx={{
+                '& label.Mui-focused': {
+                  color: '#E17100', // Label color when focused
+                },
+                '& .MuiOutlinedInput-root': {
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#E17100', // Border on hover
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#E17100', // Border on focus
+                  },
+                  borderRadius: '10px',
+                },
+                '& .MuiSelect-select': {
+                  '&:focus': {
+                    backgroundColor: 'transparent', // Prevent weird background on focus
+                  },
+                },
+              }}>
                 <InputLabel id="whatsapp-number-label">Whatsapp Number</InputLabel>
                 <Select
                   name="whatsappNumber"
@@ -294,8 +326,21 @@ function BroadCast() {
                   placeholder="Send Message From Whatsapp Number"
                   MenuProps={{
                     PaperProps: {
-                      style: {
-                        maxWidth: 220,
+                      sx: {
+                        '& .MuiMenuItem-root': {
+                          '&:hover': {
+                            backgroundColor: '#FFFBEB',
+
+                          },
+                          '&.Mui-selected': {
+                            backgroundColor: '#FEF3C6',
+
+                          },
+                          '&.Mui-selected:hover': {
+                            backgroundColor: '#FEF3C6',
+
+                          },
+                        },
                       },
                     },
                   }}
@@ -331,6 +376,25 @@ function BroadCast() {
                       },
                     });
                   }}
+                  sx={{
+                    '& label.Mui-focused': {
+                      color: '#E17100',
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#E17100',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#E17100',
+                      },
+                      borderRadius: '10px',
+                    },
+                    '& .MuiSelect-select': {
+                      '&:focus': {
+                        backgroundColor: 'transparent',
+                      },
+                    },
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -339,17 +403,32 @@ function BroadCast() {
                     />
                   )}
                   ListboxProps={{
+                    sx: {
+                      '& .MuiAutocomplete-option': {
+                        transition: 'background-color 0.2s',
+                        '&:hover': {
+                          backgroundColor: '#FFFBEB',
+                        },
+                        '&[aria-selected="true"]': {
+                          backgroundColor: '#FEF3C6',
+                        },
+                        '&[aria-selected="true"]:hover': {
+                          backgroundColor: '#FEF3C6',
+                        },
+                      },
+                    },
                     style: {
-                      maxHeight: 220,
+                      maxHeight: 200,
                     },
                   }}
                 />
 
 
+
                 <Button
                   variant="outlined"
                   size="small"
-                  className="mt-2 float-end !font-semibold "
+                  className='!border-amber-600 !text-amber-600 hover:!bg-amber-50 mt-2 float-end !font-semibold'
                   onClick={() => {
                     navigate("/manageTemplates", { state: { openForm: true } });
                   }}
@@ -362,7 +441,30 @@ function BroadCast() {
 
 
               <div className='flex-1/2'>
-                <FormControl fullWidth required size="small">
+                <FormControl
+                  fullWidth
+                  required
+                  size="small"
+                  sx={{
+                    '& label.Mui-focused': {
+                      color: '#E17100', // Label color when focused
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#E17100', // Border on hover
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#E17100', // Border on focus
+                      },
+                      borderRadius: '10px',
+                    },
+                    '& .MuiSelect-select': {
+                      '&:focus': {
+                        backgroundColor: 'transparent', // Prevent weird background on focus
+                      },
+                    },
+                  }}
+                >
                   <InputLabel id="contact-list-label">Select Contacts</InputLabel>
                   <Select
                     labelId="contact-list-label"
@@ -378,33 +480,67 @@ function BroadCast() {
                         .map((c) => c.name)
                         .join(', ')
                     }
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          '& .MuiMenuItem-root': {
+                            '&:hover': {
+                              backgroundColor: '#FFFBEB',
+                            },
+                            '&.Mui-selected': {
+                              backgroundColor: '#FEF3C6',
+                            },
+                            '&.Mui-selected:hover': {
+                              backgroundColor: '#FEF3C6',
+                            },
+                          },
+                        },
+                      },
+                    }}
                   >
+                    {/* Select All Option */}
                     <MenuItem>
                       <FormControlLabel
                         control={
                           <Checkbox
                             checked={formInput.contactList.length === contacts.length}
                             onChange={handleSelectAll}
+                            sx={{
+                              color: '#E17100', // Checkbox color
+                              '&.Mui-checked': {
+                                color: '#E17100',
+                              },
+                            }}
                           />
                         }
                         label="Select All"
                       />
                     </MenuItem>
 
+                    {/* Contacts List */}
                     {contacts.map((contact) => (
                       <MenuItem key={contact.id} value={contact.number}>
-                        <Checkbox checked={formInput.contactList.includes(contact.number)} />
+                        <Checkbox
+                          checked={formInput.contactList.includes(contact.number)}
+                          sx={{
+                            color: '#E17100', // Checkbox color
+                            '&.Mui-checked': {
+                              color: '#E17100',
+                            },
+                          }}
+                        />
                         <ListItemText primary={contact.name} secondary={contact.number} />
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
+
               </div>
 
 
             </div>
 
-            <div className='flex flex-wrap lg:flex-nowrap gap-[20px] mt-16 items-center'>
+            <div className='flex flex-wrap lg:flex-nowrap gap-[20px] mt-8 items-center'>
 
               <div className=' flex flex-1/2 gap-[20px] items-center'>
                 <label
@@ -468,8 +604,8 @@ function BroadCast() {
 
         </div>
 
-        <div className='flex-[33%] bg-white p-[15px] rounded-md'>
-          <h2 className='font-bold text-xl'>Template Content</h2>
+        <div className='flex-[33%] bg-white p-[15px] rounded-md '>
+          <h2 className='font-bold text-xl mt-4'>Template Content</h2>
           <p className='font-semibold text-md mt-[5px] text-gray-600'>
             Here you can see the selected template content body
 

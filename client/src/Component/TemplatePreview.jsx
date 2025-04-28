@@ -115,8 +115,8 @@ function TemplatePreview({ templateId, liveTemplateData }) {
 
     
     return (
-        <div className='mt-4 bg-[url("./assets/whatsapp-bg.jpg")] rounded-md bg-no-repeat bg-center bg-cover opacity-70 p-4 pb-8 min-h-[80vh]'>
-            <div className='mt-5 p-2 bg-white max-w-[300px] rounded-md'>
+        <div className='mt-4 bg-[url("./assets/whatsapp-bg.jpg")] rounded-md bg-no-repeat bg-center bg-cover opacity-70 p-4 pb-8 min-h-[79vh]'>
+            <div className='mt-5 p-2 bg-white max-w-[300px] min-w-[300px] rounded-md'>
 
                 {/* Header */}
                 {header && header.format === 'TEXT' && (

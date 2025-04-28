@@ -5,19 +5,19 @@ function CampaignList() {
         <>
 
 
-            <div className='mt-[20px] rounded-md p-[0px] bg-white'>
+            <div className='mt-[20px] rounded-md p-[0px] bg-white flex flex-col justify-between min-h-[45vh]'>
                 <table className='table-auto w-full'>
                     <thead>
-                        <tr className='bg-blue-600 text-white text-nowrap'>
-                            <th className='px-4 py-4'>Campaign Name</th>
-                            <th className='px-4 py-4'>Operator Name</th>
-                            <th className='px-4 py-4'>Creation Date</th>
-                            <th className='px-4 py-4'>Total Number Count</th>
-                            <th className='px-4 py-4'>Sent Count</th>
-                            <th className='px-4 py-4'>Delivered Count</th>
-                            <th className='px-4 py-4'>Read Count</th>
-                            <th className='px-4 py-4'>Failed Count</th>
-                            <th className='px-4 py-4'>Action</th>
+                        <tr className='bg-white border-b border-gray-300 text-nowrap text-center '>
+                            <th className=' py-4 text-left'>Campaign Name</th>
+
+
+                            <th className=' py-4'>Total Number Count</th>
+                            <th className=' py-4'>Sent Count</th>
+
+                            <th className=' py-4'>Read Count</th>
+                            <th className=' py-4'>Failed Count</th>
+                            <th className=' py-4 text-right'>Action</th>
                         </tr>
                     </thead>
                     <tbody>

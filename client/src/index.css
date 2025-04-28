@@ -17,3 +17,28 @@ body{
 input , select, textarea{
     font-weight: 600;
 }
+
+
+/* Style the scrollbar container */
+::-webkit-scrollbar {
+    width: 4px; /* width of the scrollbar */
+    height: 4px; /* height of the horizontal scrollbar */
+  }
+  
+  /* Style the scrollbar track (background of the scrollbar) */
+  ::-webkit-scrollbar-track {
+    background: #ebebea; /* Light gray background */
+    border-radius: 10px;
+  }
+  
+  /* Style the scrollbar thumb (the draggable part) */
+  ::-webkit-scrollbar-thumb {
+    background: #acacac; /* Darker color for the thumb */
+    border-radius: 10px;
+  }
+  
+  /* Style the thumb on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Even darker color when hovered */
+  }
+  
