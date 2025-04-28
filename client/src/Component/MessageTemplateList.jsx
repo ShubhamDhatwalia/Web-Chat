@@ -68,7 +68,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
               <input
                 type="text"
                 placeholder="Search by name, category, status, ID, or language..."
-                className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -91,7 +91,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                     <tr
                       key={template.id}
                       onClick={() => onSelectTemplateId?.(template.id)}
-                      className={`group text-nowrap text-center  hover:bg-blue-100 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-blue-100' : ''
+                      className={`group text-nowrap text-center  hover:bg-amber-50 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-amber-50' : ''
                         }`}
                     >
                       {/* <td className="px-[10px] py-4 text-left">{template.id}</td> */}

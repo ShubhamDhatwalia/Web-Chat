@@ -336,7 +336,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     })) || [],
                 });
             }
-            
+
 
             const buttonComp = templateData?.components?.find(c => c.type === 'BUTTONS');
             if (buttonComp?.buttons) {
@@ -473,7 +473,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 formData.append('file', headerImage);
                 formData.append('type', headerImage.type);
                 formData.append('messaging_product', 'whatsapp');
-               
+
 
                 const uploadResponse = await axios.post(
                     `https://graph.facebook.com/v22.0/${phone_id}/media`,
@@ -512,28 +512,28 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         // Handle BODY
         if (messageContent.trim()) {
             const bodyVars = extractVariableList(messageContent, parameter_format);
-        
+
             const bodyComponent = {
                 type: "BODY",
                 text: messageContent
             };
-        
+
             if (bodyVars.length > 0) {
                 if (parameter_format === 'POSITIONAL') {
                     let bodyExamplesRaw = sampleValues.body_text || [];
-        
+
                     const flatExamples = bodyExamplesRaw.map(item =>
                         typeof item === 'object' && 'example' in item ? item.example : item
                     );
-        
+
                     if (flatExamples.length !== bodyVars.length) {
                         return toast.error("Please provide example values for all BODY variables.");
                     }
-        
+
                     bodyComponent.example = {
                         body_text: [flatExamples]
                     };
-        
+
                 } else {
                     bodyComponent.example = {
                         body_text_named_params: bodyVars.map((param, i) => ({
@@ -543,10 +543,10 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     };
                 }
             }
-        
+
             components.push(bodyComponent);
         }
-        
+
 
 
         // Handle FOOTER (if exists)
@@ -649,16 +649,19 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         value={formInput.templateName}
                         onChange={handleChange}
                         className='hover:border-none hover:outline-none'
-                        // sx={{
-                        //     '& label.Mui-focused': {
-                        //       color: '#FFB300', // Custom label color on focus
-                        //     },
-                        //     '& .MuiOutlinedInput-root': {
-                        //       '&.Mui-focused fieldset': {
-                        //         borderColor: '#FFB300', // Custom border color on focus
-                        //       },
-                        //     },
-                        //   }}
+                        sx={{
+                            '& label.Mui-focused': {
+                                color: '#E17100', // Label color on focus
+                            },
+                            '& .MuiOutlinedInput-root': {
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#E17100', // Border color on hover
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#E17100', // Border color on focus
+                                },
+                            },
+                        }}
                     />
                 </div>
 
@@ -666,7 +669,24 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
 
-                    <FormControl fullWidth required size="small">
+                    <FormControl fullWidth required size="small" sx={{
+                        '& label.Mui-focused': {
+                            color: '#E17100', // Label color when focused
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border on hover
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border on focus
+                            },
+                        },
+                        '& .MuiSelect-select': {
+                            '&:focus': {
+                                backgroundColor: 'transparent', // Prevent weird background on focus
+                            },
+                        },
+                    }}>
                         <InputLabel id="category-label">Category</InputLabel>
                         <Select
                             labelId="category-label"
@@ -675,6 +695,27 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             value={formInput.category}
                             label="Category"
                             onChange={handleChange}
+                            MenuProps={{
+                                PaperProps: {
+                                    sx: {
+                                        '& .MuiMenuItem-root': {
+                                            '&:hover': {
+                                                backgroundColor: '#FFFBEB',
+
+                                            },
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#FEF3C6',
+
+                                            },
+                                            '&.Mui-selected:hover': {
+                                                backgroundColor: '#FEF3C6',
+
+                                            },
+                                        },
+                                    },
+                                },
+                            }}
+
                         >
 
                             <MenuItem value="UTILITY">Utility</MenuItem>
@@ -690,7 +731,24 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
 
-                    <FormControl fullWidth required size='small'>
+                    <FormControl fullWidth required size='small' sx={{
+                        '& label.Mui-focused': {
+                            color: '#E17100', // Label color when focused
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border on hover
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border on focus
+                            },
+                        },
+                        '& .MuiSelect-select': {
+                            '&:focus': {
+                                backgroundColor: 'transparent', // Prevent weird background on focus
+                            },
+                        },
+                    }}>
                         <InputLabel id="language-label">Language</InputLabel>
                         <Select
                             labelId='language-label'
@@ -699,6 +757,27 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             label="Language"
                             value={formInput.language}
                             onChange={handleChange}
+                            MenuProps={{
+                                PaperProps: {
+                                    sx: {
+                                        '& .MuiMenuItem-root': {
+                                            '&:hover': {
+                                                backgroundColor: '#FFFBEB',
+
+                                            },
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#FEF3C6',
+
+                                            },
+                                            '&.Mui-selected:hover': {
+                                                backgroundColor: '#FEF3C6',
+
+                                            },
+                                        },
+                                    },
+                                },
+                            }}
+
                         >
 
                             <MenuItem value="en_US">English</MenuItem>
@@ -723,7 +802,24 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
             <div className='mt-6'>
-                <FormControl fullWidth size="small">
+                <FormControl fullWidth size="small" sx={{
+                    '& label.Mui-focused': {
+                        color: '#E17100', // Label color when focused
+                    },
+                    '& .MuiOutlinedInput-root': {
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#E17100', // Border on hover
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#E17100', // Border on focus
+                        },
+                    },
+                    '& .MuiSelect-select': {
+                        '&:focus': {
+                            backgroundColor: 'transparent', // Prevent weird background on focus
+                        },
+                    },
+                }}>
                     <InputLabel id="variable-type-label">Variable</InputLabel>
                     <Select
                         labelId="variable-type-label"
@@ -733,6 +829,26 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         label=" Variable"
                         onChange={handleChange}
                         variant='outlined'
+                        MenuProps={{
+                            PaperProps: {
+                                sx: {
+                                    '& .MuiMenuItem-root': {
+                                        '&:hover': {
+                                            backgroundColor: '#FFFBEB',
+
+                                        },
+                                        '&.Mui-selected': {
+                                            backgroundColor: '#FEF3C6',
+
+                                        },
+                                        '&.Mui-selected:hover': {
+                                            backgroundColor: '#FEF3C6',
+
+                                        },
+                                    },
+                                },
+                            },
+                        }}
                     >
                         <MenuItem value="POSITIONAL">Number</MenuItem>
                         <MenuItem value="NAMED">Name</MenuItem>
@@ -743,7 +859,24 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[30px] text-md'>
-                <FormControl fullWidth size="small">
+                <FormControl fullWidth size="small" sx={{
+                    '& label.Mui-focused': {
+                        color: '#E17100', // Label color when focused
+                    },
+                    '& .MuiOutlinedInput-root': {
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#E17100', // Border on hover
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#E17100', // Border on focus
+                        },
+                    },
+                    '& .MuiSelect-select': {
+                        '&:focus': {
+                            backgroundColor: 'transparent', // Prevent weird background on focus
+                        },
+                    },
+                }}>
                     <InputLabel id="header-option-label">Header Option</InputLabel>
                     <Select
                         labelId="header-option-label"
@@ -752,6 +885,27 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         value={formInput.headerOption}
                         label="Header Option"
                         onChange={handleChange}
+
+                        MenuProps={{
+                            PaperProps: {
+                                sx: {
+                                    '& .MuiMenuItem-root': {
+                                        '&:hover': {
+                                            backgroundColor: '#FFFBEB',
+
+                                        },
+                                        '&.Mui-selected': {
+                                            backgroundColor: '#FEF3C6',
+
+                                        },
+                                        '&.Mui-selected:hover': {
+                                            backgroundColor: '#FEF3C6',
+
+                                        },
+                                    },
+                                },
+                            },
+                        }}
                     >
                         <MenuItem value="None">None</MenuItem>
 
@@ -771,6 +925,19 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     fullWidth
                     size="small"
                     inputProps={{ maxLength: 60 }}
+                    sx={{
+                        '& label.Mui-focused': {
+                            color: '#E17100', // Label color on focus
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border color on hover
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border color on focus
+                            },
+                        },
+                    }}
                 />
 
             </div>
@@ -789,8 +956,23 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         size="small"
                         placeholder="Header Text (60 Characters)"
                         variant="outlined"
-                        sx={{ width: 'calc(100%)', mt: 2 }}
+                        sx={{
+                            width: 'calc(100%)', mt: 2, '& label.Mui-focused': {
+                                color: '#E17100', // Label color on focus
+                            },
+                            '& .MuiOutlinedInput-root': {
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#E17100', // Border color on hover
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#E17100', // Border color on focus
+                                },
+                            },
+                        }}
+
+
                         inputProps={{ maxLength: 60 }}
+
                     />
 
 
@@ -800,6 +982,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                         variant="outlined"
                         color="primary"
+                        className='!border-amber-600 !text-amber-600 hover:!bg-amber-50'
                         sx={{
                             fontWeight: 600,
                             fontSize: '14px',
@@ -859,7 +1042,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 value={formInput.messageContent}
                 onChange={handleChange}
                 multiline
-                rows={7}
+                rows={8}
                 fullWidth
                 size="small"
                 variant="outlined"
@@ -867,6 +1050,17 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     mt: 2,
                     backgroundColor: '#f9fafb',
                     borderRadius: '4px',
+                    '& label.Mui-focused': {
+                        color: '#E17100', // Label color on focus
+                    },
+                    '& .MuiOutlinedInput-root': {
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#E17100', // Border color on hover
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#E17100', // Border color on focus
+                        },
+                    },
                 }}
                 inputProps={{ maxLength: 1024 }}
             />
@@ -877,6 +1071,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                 variant="outlined"
                 color="primary"
+                className='!border-amber-600 !text-amber-600 hover:!bg-amber-50'
                 sx={{
                     fontWeight: 600,
                     fontSize: '14px',
@@ -898,6 +1093,20 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     required
                     label={`Body {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.messageContent, formInput.parameter_format)[i]}}}`}
                     value={val.example} // ✅ FIX HERE
+
+                    sx={{
+                        '& label.Mui-focused': {
+                            color: '#E17100', // Label color on focus
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border color on hover
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border color on focus
+                            },
+                        },
+                    }}
                     onChange={(e) => {
                         const updated = [...sampleValues.body_text];
                         updated[i] = { ...updated[i], example: e.target.value }; // ✅ FIX HERE
@@ -918,6 +1127,19 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     required
                     label={`Header {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.headerText, formInput.parameter_format)[i]}}}`}
                     value={val.example} // ✅ FIX HERE
+                    sx={{
+                        '& label.Mui-focused': {
+                            color: '#E17100', // Label color on focus
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border color on hover
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border color on focus
+                            },
+                        },
+                    }}
                     onChange={(e) => {
                         const updated = [...sampleValues.header_text];
                         updated[i] = { ...updated[i], example: e.target.value }; // ✅ FIX HERE
@@ -931,12 +1153,29 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
             {/* Buttons */}
-            <h3 className="font-semibold mt-[40px] pt-[10px]">Buttons (Optional)</h3>
-            <p className="text-sm font-semibold text-gray-600 mb-6">Add Quick Reply or Call To Action buttons</p>
+            <h3 className="font-semibold mt-[50px] pt-[10px]">Buttons (Optional)</h3>
+            <p className="text-sm font-semibold text-gray-600 mb-8">Add Quick Reply or Call To Action buttons</p>
 
             {buttons.map((btn, i) => (
                 <div key={i} className="flex gap-2 items-center text-gray-700 text-sm my-2">
-                    <FormControl size="small" sx={{ width: '150px', mr: 2 }}>
+                    <FormControl size="small" sx={{
+                        width: '150px', mr: 2, '& label.Mui-focused': {
+                            color: '#E17100', // Label color when focused
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border on hover
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#E17100', // Border on focus
+                            },
+                        },
+                        '& .MuiSelect-select': {
+                            '&:focus': {
+                                backgroundColor: 'transparent', // Prevent weird background on focus
+                            },
+                        },
+                    }} >
                         <InputLabel id={`button-type-label-${i}`}>Button Type</InputLabel>
                         <Select
                             labelId={`button-type-label-${i}`}
@@ -944,6 +1183,26 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             value={btn.type}
                             label="Button Type"
                             onChange={(e) => handleButtonChange(i, 'type', e.target.value)}
+                            MenuProps={{
+                                PaperProps: {
+                                    sx: {
+                                        '& .MuiMenuItem-root': {
+                                            '&:hover': {
+                                                backgroundColor: '#FFFBEB',
+
+                                            },
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#FEF3C6',
+
+                                            },
+                                            '&.Mui-selected:hover': {
+                                                backgroundColor: '#FEF3C6',
+
+                                            },
+                                        },
+                                    },
+                                },
+                            }}
                         >
                             <MenuItem value="QUICK_REPLY">Quick Reply</MenuItem>
                             <MenuItem value="PHONE_NUMBER" disabled={!canAddPhoneButton}>
@@ -962,7 +1221,21 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         size="small"
                         value={btn.text}
                         onChange={(e) => handleButtonChange(i, 'text', e.target.value)}
-                        sx={{ width: 200 }}
+                        sx={{
+                            width: 200, '& label.Mui-focused': {
+                                color: '#E17100', // Label color on focus
+                            },
+                            '& .MuiOutlinedInput-root': {
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#E17100', // Border color on hover
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#E17100', // Border color on focus
+                                },
+                            },
+                        }}
+
+
                         inputProps={{ maxLength: 25 }}
                         className='!mb-2'
                     />
@@ -975,7 +1248,21 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             size="small"
                             value={btn.phone_number || ''}
                             onChange={(e) => handleButtonChange(i, 'phone_number', e.target.value)}
-                            sx={{ width: 280 }}
+                            sx={{
+                                width: 280, '& label.Mui-focused': {
+                                    color: '#E17100', // Label color on focus
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#E17100', // Border color on hover
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#E17100', // Border color on focus
+                                    },
+                                },
+                            }}
+
+
                             inputProps={{ maxLength: 15 }}
                             className='!mb-2'
 
@@ -990,7 +1277,19 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             size="small"
                             value={btn.url || ''}
                             onChange={(e) => handleButtonChange(i, 'url', e.target.value)}
-                            sx={{ width: 200 }}
+                            sx={{
+                                width: 200, '& label.Mui-focused': {
+                                    color: '#E17100', // Label color on focus
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#E17100', // Border color on hover
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#E17100', // Border color on focus
+                                    },
+                                },
+                            }}
                             className='!mb-2'
                         />
                     )}
@@ -1005,7 +1304,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 variant="contained"
                 color="primary"
                 size="small"
-                className='!bg-blue-600 hover:!bg-blue-700 !text-lg  !capitalize !rounded-md mt-2'
+                className='!bg-amber-600 hover:!bg-amber-700 !text-lg  !capitalize !rounded-md mt-2'
             >
                 + Add Button
             </Button>
@@ -1013,13 +1312,13 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
             {/* Submit/Reset buttons */}
-            <div className='mt-[40px] flex gap-[20px] float-right'>
+            <div className='mt-[0px] flex gap-[20px] float-right'>
                 <Button
                     type="submit"
                     variant="contained"
                     color="success"
                     className='!bg-green-600 hover:!bg-green-700 !text-md !font-semibold !capitalize !rounded-md'
-                  
+
                 >
                     Save Template
                 </Button>
