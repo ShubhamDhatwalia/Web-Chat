@@ -635,8 +635,8 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[50px] text-md '>
+        <form onSubmit={handleSubmit} className='max-h-[81vh] px-[10px] overflow-auto'>
+            <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[30px] text-md '>
                 <div className="flex-1">
                     <TextField
                         required
@@ -964,6 +964,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         onChange={(e) => handleButtonChange(i, 'text', e.target.value)}
                         sx={{ width: 200 }}
                         inputProps={{ maxLength: 25 }}
+                        className='!mb-2'
                     />
 
                     {btn.type === 'PHONE_NUMBER' && (
@@ -976,6 +977,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             onChange={(e) => handleButtonChange(i, 'phone_number', e.target.value)}
                             sx={{ width: 280 }}
                             inputProps={{ maxLength: 15 }}
+                            className='!mb-2'
 
                         />
                     )}
@@ -989,6 +991,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             value={btn.url || ''}
                             onChange={(e) => handleButtonChange(i, 'url', e.target.value)}
                             sx={{ width: 200 }}
+                            className='!mb-2'
                         />
                     )}
 
@@ -1002,19 +1005,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 variant="contained"
                 color="primary"
                 size="small"
-                sx={{
-                    mt: 2,
-                    py: '5px',
-                    px: '12px',
-                    borderRadius: '4px',
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    fontSize: '16px',
-                    backgroundColor: '#2563eb',
-                    '&:hover': {
-                        backgroundColor: '#1d4ed8',
-                    },
-                }}
+                className='!bg-blue-600 hover:!bg-blue-700 !text-lg  !capitalize !rounded-md mt-2'
             >
                 + Add Button
             </Button>
@@ -1022,22 +1013,13 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
             {/* Submit/Reset buttons */}
-            <div className='mt-[30px] flex gap-[20px]'>
+            <div className='mt-[40px] flex gap-[20px] float-right'>
                 <Button
                     type="submit"
                     variant="contained"
                     color="success"
-                    sx={{
-                        fontWeight: 600,
-                        fontSize: '16px',
-                        py: '5px',
-                        px: '12px',
-                        borderRadius: '4px',
-                        textTransform: 'none',
-                        '&:hover': {
-                            backgroundColor: '#2e7d32', // darker green
-                        },
-                    }}
+                    className='!bg-green-600 hover:!bg-green-700 !text-md !font-semibold !capitalize !rounded-md'
+                  
                 >
                     Save Template
                 </Button>
@@ -1047,17 +1029,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     onClick={handleReset}
                     variant="contained"
                     color="error"
-                    sx={{
-                        fontWeight: 600,
-                        fontSize: '16px',
-                        py: '5px',
-                        px: '20px',
-                        borderRadius: '4px',
-                        textTransform: 'none',
-                        '&:hover': {
-                            backgroundColor: '#c62828', // darker red on hover
-                        },
-                    }}
+                    className='!bg-red-600 hover:!bg-red-700 !text-md !font-semibold !capitalize !rounded-md'
                 >
                     Reset
                 </Button>

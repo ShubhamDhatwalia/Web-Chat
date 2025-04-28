@@ -103,75 +103,75 @@ function BroadCast() {
 
 
 
-        // HEADER
-    if (component.type === "HEADER") {
-      const headerParams = [];
+          // HEADER
+          if (component.type === "HEADER") {
+            const headerParams = [];
 
-      // Named variable format
-      if (component?.example?.header_text_named_params) {
-        component.example.header_text_named_params.forEach(param => {
-          headerParams.push({
-            type: "text",
-            text: param.example,
-            parameter_name: param.param_name
-            
-          });
-        });
-      }
+            // Named variable format
+            if (component?.example?.header_text_named_params) {
+              component.example.header_text_named_params.forEach(param => {
+                headerParams.push({
+                  type: "text",
+                  text: param.example,
+                  parameter_name: param.param_name
 
-      // Positional format
-      else if (component?.example?.header_text?.[0]) {
-        const exampleHeader = component.example.header_text[0];
-        headerParams.push({
-          type: "text",
-          text: exampleHeader
-        });
-      }
+                });
+              });
+            }
 
-      if (headerParams.length > 0) {
-        payload.template.components.push({
-          type: "HEADER",
-          parameters: headerParams
-        });
-      }
-    }
+            // Positional format
+            else if (component?.example?.header_text?.[0]) {
+              const exampleHeader = component.example.header_text[0];
+              headerParams.push({
+                type: "text",
+                text: exampleHeader
+              });
+            }
 
-    // BODY
-    if (component.type === "BODY") {
-      const bodyParams = [];
+            if (headerParams.length > 0) {
+              payload.template.components.push({
+                type: "HEADER",
+                parameters: headerParams
+              });
+            }
+          }
 
-      // Named variable format
-      if (component?.example?.body_text_named_params) {
-        component.example.body_text_named_params.forEach(param => {
-          bodyParams.push({
-            type: "text",
-            text: param.example,
-            parameter_name: param.param_name
-             
-          });
-        });
-      }
+          // BODY
+          if (component.type === "BODY") {
+            const bodyParams = [];
 
-      // Positional format
-      else if (component?.example?.body_text?.[0]) {
-        const exampleBody = component.example.body_text[0];
-        if (Array.isArray(exampleBody)) {
-          exampleBody.forEach(value => {
-            bodyParams.push({
-              type: "text",
-              text: value
-            });
-          });
-        }
-      }
+            // Named variable format
+            if (component?.example?.body_text_named_params) {
+              component.example.body_text_named_params.forEach(param => {
+                bodyParams.push({
+                  type: "text",
+                  text: param.example,
+                  parameter_name: param.param_name
 
-      if (bodyParams.length > 0) {
-        payload.template.components.push({
-          type: "BODY",
-          parameters: bodyParams
-        });
-      }
-    }
+                });
+              });
+            }
+
+            // Positional format
+            else if (component?.example?.body_text?.[0]) {
+              const exampleBody = component.example.body_text[0];
+              if (Array.isArray(exampleBody)) {
+                exampleBody.forEach(value => {
+                  bodyParams.push({
+                    type: "text",
+                    text: value
+                  });
+                });
+              }
+            }
+
+            if (bodyParams.length > 0) {
+              payload.template.components.push({
+                type: "BODY",
+                parameters: bodyParams
+              });
+            }
+          }
 
         });
       }
@@ -406,49 +406,66 @@ function BroadCast() {
 
             <div className='flex flex-wrap lg:flex-nowrap gap-[20px] mt-16 items-center'>
 
-              <label
-                htmlFor='fileUpload'
-                className='cursor-pointer text-nowrap bg-blue-600 hover:bg-blue-700 text-white font-semibold py-[5px] px-[12px] rounded flex items-center gap-2'
-              >
-                <i className='fa-solid fa-upload'></i>
-                Upload File
-              </label>
-              <input
-                type='file'
-                id='fileUpload'
-                onChange={handleFileChange}
-                className='hidden'
-              />
-              <span className='text-sm text-nowrap text-gray-600 mt-1'>{fileName}</span>
+              <div className=' flex flex-1/2 gap-[20px] items-center'>
+                <label
+                  htmlFor='fileUpload'
+                  className='cursor-pointer text-nowrap bg-blue-600 hover:bg-blue-700 text-white font-semibold py-[5px] px-[12px] rounded flex items-center gap-2'
+                >
+                  <i className='fa-solid fa-upload'></i>
+                  Upload File
+                </label>
+                <input
+                  type='file'
+                  id='fileUpload'
+                  onChange={handleFileChange}
+                  className='hidden'
+                />
+                <span className='text-sm text-nowrap text-gray-600 mt-1'>{fileName}</span>
 
+              </div>
+
+
+              <div className='flex-1/2 flex justify-end items-center'>
+
+
+                <button
+                  type='button'
+                  className='font-semibold mr-[20px] text-nowrap bg-blue-600 hover:bg-blue-700 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
+                >
+                  Save
+                </button>
+
+
+                <div>
+                  <button
+                    type='submit'
+                    className='text-nowrap mr-[20px] font-semibold bg-green-600 hover:bg-green-700 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
+                  >
+                    Broadcast Now
+                  </button>
+
+                  <button
+                    type='button'
+                    className='font-semibold  text-nowrap bg-red-500 hover:bg-red-600 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
+                    onClick={handleReset}
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+
+              </div>
 
             </div>
 
 
-            <div className='mt-18 flex gap-[20px] items-center'>
-              <button
-                type='submit'
-                className='text-nowrap font-semibold bg-green-600 hover:bg-green-700 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
-              >
-                Broadcast Now
-              </button>
 
-              <button
-                type='button'
-                className='font-semibold text-nowrap bg-red-500 hover:bg-red-600 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
-                onClick={handleReset}
-              >
-                Cancel
-              </button>
-
-              <button
-                type='button'
-                className='font-semibold text-nowrap bg-blue-600 hover:bg-blue-700 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
-              >
-                Whatsapp Chat Report
-              </button>
-            </div>
           </form>
+
+          <div className='mt-24'>
+            <CampaignList />
+          </div>
+
         </div>
 
         <div className='flex-[33%] bg-white p-[15px] rounded-md'>
@@ -459,16 +476,11 @@ function BroadCast() {
           </p>
 
 
-          <div>
+          <div >
             <TemplatePreview templateId={formInput.template} />
           </div>
         </div>
       </div>
-
-
-
-
-      <CampaignList />
 
 
 

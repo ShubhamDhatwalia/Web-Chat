@@ -40,13 +40,13 @@ function ManageTemplates() {
   return (
     <div className='bg-gray-100 px-[15px] py-[10px] '>
       <div className='flex justify-between gap-[20px] items-stretch'>
-        <div className='bg-white p-[15px] rounded-md flex-[66%] '>
-          <div className='flex justify-between items-center'>
+        <div className='bg-white p-[15px]  rounded-md flex-[66%] '>
+          <div className='flex mt-4 p-[10px] justify-between items-center'>
             <h2 className='font-bold text-xl'>Message Templates</h2>
             {!isOpen && (
               <button
                 type='button'
-                className='bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-semibold py-[5px] px-[12px] rounded'
+                className='bg-blue-600 hover:bg-blue-700 cursor-pointer  text-white font-semibold py-[5px] px-[12px] rounded'
                 onClick={handleFormModel}
               >
                 Create Template
@@ -55,7 +55,7 @@ function ManageTemplates() {
             {isOpen && (
               <button
                 type='button'
-                className='bg-red-500 hover:bg-red-600 cursor-pointer text-white font-semibold py-[5px] px-[12px] rounded'
+                className='bg-red-500 hover:bg-red-600 cursor-pointer text-white font-semibold py-[5px] px-[12px] rounded-md'
                 onClick={handleFormModel}
               >
                 Close

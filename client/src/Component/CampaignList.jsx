@@ -5,7 +5,7 @@ function CampaignList() {
         <>
 
 
-            <div className='mt-[20px] rounded-md p-[15px] bg-white'>
+            <div className='mt-[20px] rounded-md p-[0px] bg-white'>
                 <table className='table-auto w-full'>
                     <thead>
                         <tr className='bg-blue-600 text-white text-nowrap'>
