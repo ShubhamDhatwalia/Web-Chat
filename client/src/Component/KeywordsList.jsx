@@ -45,7 +45,7 @@ function KeywordsList({ onOpen }) {
                                                 {kw.keywords.map((word, i) => (
                                                     <span
                                                         key={i}
-                                                        className="inline-block bg-amber-100 text-amber-600 text-sm font-medium px-3 py-1 rounded-full"
+                                                        className="inline-block bg-amber-100 text-amber-600  font-medium px-3 py-1 rounded-full"
                                                     >
                                                         {word}
                                                     </span>
