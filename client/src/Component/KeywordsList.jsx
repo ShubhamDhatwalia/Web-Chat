@@ -4,13 +4,13 @@ import { useDispatch } from 'react-redux';
 import { removeKeyword } from '../redux/Keywords/keywordSlice';
 
 
-function KeywordsList({onOpen}) {
+function KeywordsList({ onOpen }) {
     const keywords = useSelector(state => state.keyword.keywords);
     const dispatch = useDispatch();
 
 
 
-    const handleEdit = (index)=>{
+    const handleEdit = (index) => {
         onOpen();
 
     }
@@ -57,11 +57,18 @@ function KeywordsList({onOpen}) {
                                     </td>
 
                                     <td className='py-6'>{kw.triggered || 0}</td>
-                                    <td className='py-6'>{kw.matchingMethod || 'Exact'}</td>
+                                    <td className='py-6'>
+                                        {kw.matchingMethod
+                                            ? `${kw.matchingMethod.charAt(0).toUpperCase()}${kw.matchingMethod.slice(1).toLowerCase()}${kw.matchingMethod.toLowerCase() === 'fuzzy' && kw.fuzzyThreshold ? ` (${kw.fuzzyThreshold}%)` : ''
+                                            }`
+                                            : 'Fuzzy'}
+                                    </td>
+
+
                                     <td className='py-6'>{kw.replyMaterial || 'None'}</td>
                                     <td className='py-6 text-right'>
                                         <div className='flex gap-4 justify-end'>
-                                            <i className="fa-solid fa-pen-to-square bg-gray-100 p-2 rounded-lg hover:text-blue-600 hover:bg-blue-100 cursor-pointer" onClick={()=> handleEdit(index)} ></i>
+                                            <i className="fa-solid fa-pen-to-square bg-gray-100 p-2 rounded-lg hover:text-blue-600 hover:bg-blue-100 cursor-pointer" onClick={() => handleEdit(index)} ></i>
                                             <i className="fa-solid fa-trash bg-gray-100 p-2 rounded-lg hover:text-red-600 hover:bg-red-100 cursor-pointer" onClick={() => handleDelete(index)}></i>
                                         </div>
                                     </td>
