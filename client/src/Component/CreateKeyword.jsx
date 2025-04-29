@@ -194,6 +194,13 @@ function CreateKeyword({ onClose }) {
                                         borderRadius: '4px',
                                         fontWeight: 'bold',
                                         fontSize: '18px',
+                                        '&::before': {
+                                          
+                                            borderRight: '1px solid #E17100',
+                                            
+                                            borderBottom: '1px solid #E17100',
+
+                                          },
                                     },
                                     '& .MuiSlider-thumb': {
                                         '&:hover, &.Mui-focusVisible, &.Mui-active': {
