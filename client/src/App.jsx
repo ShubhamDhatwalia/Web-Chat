@@ -7,7 +7,10 @@ import Chat from './Component/Pages/Chat';
 import Broadcast from './Component/Pages/BroadCast';
 import ErrorPage from './Component/Pages/ErrorPage';
 import ManageTemplates from './Component/Pages/ManageTemplates';
-import Automation from './Component/Pages/Automation';
+import KeywordAction from './Component/Pages/KeywordAction';
+import ReplyMaterial from './Component/Pages/ReplyMaterial';
+import Chatbot from './Component/Pages/Chatbot';
+import Rules from './Component/Pages/Rules';
 import { ToastContainer } from 'react-toastify';
 
 
@@ -27,10 +30,10 @@ function App() {
             <Route path='/chats' element={<Chat />} />
             <Route path='/broadCast' element={<Broadcast />} />
             <Route path='/manageTemplates' element={<ManageTemplates />} />
-            <Route path='/automation' element={<Automation />} />
-
-
-
+            <Route path='/keywordAction' element={<KeywordAction />} />
+            <Route path='/replyMaterial' element={<ReplyMaterial />} />
+            <Route path='/chatbot' element={<Chatbot />} />
+            <Route path='/rules' element={<Rules />} />
 
           </Route>
 
