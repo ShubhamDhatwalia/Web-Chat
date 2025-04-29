@@ -144,7 +144,7 @@ function CreateKeyword({ onClose }) {
                         </button>
                     </div>
 
-                    <div className='mt-12 flex gap-8'>
+                    <div className='mt-18 flex gap-8'>
                         <h4 className='font-semibold'>Message matching methods:</h4>
                         <div className="flex gap-8 font-semibold text-gray-700">
                             {['fuzzy', 'exact', 'contains'].map(method => (
@@ -169,7 +169,7 @@ function CreateKeyword({ onClose }) {
                     </div>
 
                     {keywordConfig.matchingMethod === "fuzzy" && (
-                        <div className="mt-10">
+                        <div className="mt-22">
                             <Slider
                                 value={keywordConfig.fuzzyThreshold}
                                 onChange={(e, newValue) =>
