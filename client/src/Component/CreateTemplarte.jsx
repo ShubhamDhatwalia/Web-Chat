@@ -7,6 +7,11 @@ import { TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@m
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
 
+
+
+
+
+
 function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
     const [formInput, setFormInput] = useState({
         templateName: '',

@@ -2,21 +2,27 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { removeKeyword } from '../redux/Keywords/keywordSlice';
+import { toast } from 'react-toastify';
 
 
-function KeywordsList({ onOpen }) {
+
+
+function KeywordsList({ onOpen, onEdit }) {
     const keywords = useSelector(state => state.keyword.keywords);
     const dispatch = useDispatch();
 
 
 
     const handleEdit = (index) => {
-        onOpen();
+        onOpen(true);
+        onEdit(keywords[index]);
+        console.log(onEdit);
 
     }
 
     const handleDelete = (index) => {
         dispatch(removeKeyword(index));
+        toast.success("Keyword deleted successfully!");
     };
 
     console.log(keywords, 'keywords from redux store');

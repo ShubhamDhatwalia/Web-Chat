@@ -1,12 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { addKeyword, removeKeyword } from "../redux/Keywords/keywordSlice";
+import { addKeyword, removeKeyword, editKeyword } from "../redux/Keywords/keywordSlice";
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Slider from '@mui/material/Slider';
+import { toast } from 'react-toastify';
 
-function CreateKeyword({ onClose }) {
+
+
+
+
+function CreateKeyword({ onClose, editData }) {
     const steps = ['Trigger Keyword', 'Reply Action'];
     const [popUp, setPopUp] = useState(false);
     const [newKeyword, setNewKeyword] = useState('');
@@ -18,8 +23,26 @@ function CreateKeyword({ onClose }) {
         fuzzyThreshold: 70,
         replyMaterial: 'Sample Reply',
     });
+    const [activeStep, setActiveStep] = useState(0);
+
 
     const dispatch = useDispatch();
+
+
+
+
+    const handleEdit = () => {
+        dispatch(editKeyword({ oldKeyword: editData, newKeyword: keywordConfig }));
+        toast.success("Keyword edited successfully!");
+
+    };
+
+    useEffect(() => {
+        if (editData) {
+            setKeywordConfigState(editData);
+        }
+    }, [editData]);
+
 
     const handleKeyword = () => {
         const trimmed = newKeyword.trim();
@@ -30,7 +53,7 @@ function CreateKeyword({ onClose }) {
             keywords: [...prev.keywords, trimmed]
         }));
 
-       
+
         setNewKeyword('');
         setPopUp(false);
     };
@@ -42,6 +65,8 @@ function CreateKeyword({ onClose }) {
         }));
 
         dispatch(removeKeyword(kw));
+        
+
     };
 
     useEffect(() => {
@@ -63,7 +88,15 @@ function CreateKeyword({ onClose }) {
     const handleSubmit = () => {
         console.log("Final Config:", keywordConfig);
         dispatch(addKeyword(keywordConfig));
+        setActiveStep(prev => prev + 1);
+        toast.success("Keyword added successfully!");
+
     };
+
+
+
+
+
 
     return (
         <>
@@ -77,7 +110,7 @@ function CreateKeyword({ onClose }) {
                 </div>
 
                 <Stepper
-                    activeStep={1}
+                    activeStep={activeStep}
                     alternativeLabel
                     sx={{
                         minHeight: 100,
@@ -195,12 +228,12 @@ function CreateKeyword({ onClose }) {
                                         fontWeight: 'bold',
                                         fontSize: '18px',
                                         '&::before': {
-                                          
+
                                             borderRight: '1px solid #E17100',
-                                            
+
                                             borderBottom: '1px solid #E17100',
 
-                                          },
+                                        },
                                     },
                                     '& .MuiSlider-thumb': {
                                         '&:hover, &.Mui-focusVisible, &.Mui-active': {
@@ -212,13 +245,22 @@ function CreateKeyword({ onClose }) {
                         </div>
                     )}
 
-                    <div className='mt-14'>
+                    <div className='mt-14 flex gap-8'>
                         <button
                             type='button'
                             className='bg-green-600 cursor-pointer hover:bg-green-700 text-white py-1 rounded-md px-2'
                             onClick={handleSubmit}
                         >
                             Next Step
+                        </button>
+
+
+                        <button
+                            type='button'
+                            className={`bg-green-600 cursor-pointer hover:bg-green-700 text-white py-1 rounded-md px-2 ${editData ? "" : '!bg-gray-400 !cursor-not-allowed pointer-events-none'}`}
+                            onClick={handleEdit}
+                        >
+                            Save Changes
                         </button>
                     </div>
                 </div>

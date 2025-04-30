@@ -7,17 +7,25 @@ import CreateKeyword from '../CreateKeyword';
 function KeywordAction() {
 
     const [isOpen, setIsOpen] = useState(false);
-
+    const [editData, setEditData] = useState(null);
 
     const handleNewKeyword = () => {
+        setEditData(null); 
         setIsOpen(true);
-    }
+    };
+
+    const handleEditKeyword = (data) => {
+        setEditData(data);
+        setIsOpen(true);
+    };
+
+
 
 
 
     return (
         <>
-            {isOpen ? <CreateKeyword onClose={() => setIsOpen(false)} /> : (
+            {isOpen ? <CreateKeyword onClose={() => setIsOpen(false)} editData={editData} /> : (
                 <>
                     <div className='p-8  mb-[7px] bg-gray-100 flex items-center justify-between'>
                         <div className='flex items-center gap-12'>
@@ -52,7 +60,7 @@ function KeywordAction() {
 
 
                     <div>
-                        <KeywordsList onOpen={() => setIsOpen(true)} />
+                        <KeywordsList onOpen={() => setIsOpen(true)} onEdit={handleEditKeyword} />
                     </div>
                 </>
             )}
