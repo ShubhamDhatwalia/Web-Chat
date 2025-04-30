@@ -3,6 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchTemplates, deleteTemplate } from '../redux/templateThunks.js';
 import { toast } from 'react-toastify';
 
+
+
+
+
+
 function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId }) {
   const dispatch = useDispatch();
   const { templates, loading } = useSelector((state) => state.templates);
@@ -11,9 +16,9 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    dispatch(fetchTemplates());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchTemplates());
+  // }, [dispatch]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -24,6 +29,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
     en_US: 'English (US)',
     hi: 'Hindi',
   };
+
 
   const filteredTemplates = [...templates].reverse().filter((template) => {
     const search = searchTerm.toLowerCase();

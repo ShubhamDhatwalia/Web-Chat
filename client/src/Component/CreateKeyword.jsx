@@ -33,6 +33,8 @@ function CreateKeyword({ onClose, editData }) {
 
     const handleEdit = () => {
         dispatch(editKeyword({ oldKeyword: editData, newKeyword: keywordConfig }));
+        setActiveStep(prev => prev + 1);
+        onClose();
         toast.success("Keyword edited successfully!");
 
     };
@@ -65,7 +67,7 @@ function CreateKeyword({ onClose, editData }) {
         }));
 
         dispatch(removeKeyword(kw));
-        
+
 
     };
 
@@ -109,48 +111,56 @@ function CreateKeyword({ onClose, editData }) {
                     <span>Back</span>
                 </div>
 
-                <Stepper
-                    activeStep={activeStep}
-                    alternativeLabel
-                    sx={{
-                        minHeight: 100,
-                        '& .MuiStepConnector-line': {
-                            borderColor: '#E17100',
-                            borderTopWidth: 4,
-                            width: '99%',
-                        },
-                        '& .MuiStepConnector-root': {
-                            top: '30px',
-                        },
-                        '& .MuiStepLabel-root .Mui-active': {
-                            color: '#E17100',
-                            fontWeight: '700',
-                        },
-                        '& .MuiStepLabel-root .Mui-completed': {
-                            color: '#E17100',
-                            fontWeight: '700',
-                        },
-                        '& .MuiStepLabel-label': {
-                            fontWeight: '700',
-                            fontSize: '18px',
-                        },
-                        '& .MuiStepIcon-root.Mui-active': {
-                            color: '#E17100',
-                        },
-                        '& .MuiStepIcon-root.Mui-completed': {
-                            color: '#E17100',
-                        },
-                        '& .MuiStepIcon-root': {
-                            fontSize: '58px',
-                        },
-                    }}
-                >
-                    {steps.map((label) => (
-                        <Step key={label}>
-                            <StepLabel>{label}</StepLabel>
-                        </Step>
-                    ))}
-                </Stepper>
+                <div className='mt-8'>
+                    <Stepper
+                        activeStep={activeStep}
+                        alternativeLabel
+                        sx={{
+                            minHeight: 100,
+                            '& .MuiStepConnector-line': {
+                                borderColor: '#E17100',
+                                borderTopWidth: 3,
+                                width: '99%',
+                                borderStyle: 'dashed'
+                            },
+                            '& .MuiStepConnector-root': {
+                                top: '30px',
+
+                            },
+                            '&.MuiStepConnector-root': {
+                                left: 'calc(-50 % + 22px) !important',
+                                right: 'calc(50 % + 22px) !important',
+                            },
+                            '& .MuiStepLabel-root .Mui-active': {
+                                color: '#E17100',
+                                fontWeight: '700',
+                            },
+                            '& .MuiStepLabel-root .Mui-completed': {
+                                color: '#E17100',
+                                fontWeight: '700',
+                            },
+                            '& .MuiStepLabel-label': {
+                                fontWeight: '700',
+                                fontSize: '18px',
+                            },
+                            '& .MuiStepIcon-root.Mui-active': {
+                                color: '#E17100',
+                            },
+                            '& .MuiStepIcon-root.Mui-completed': {
+                                color: '#E17100',
+                            },
+                            '& .MuiStepIcon-root': {
+                                fontSize: '58px',
+                            },
+                        }}
+                    >
+                        {steps.map((label) => (
+                            <Step key={label}>
+                                <StepLabel>{label}</StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+                </div>
 
                 <div className='mt-18 bg-gray-100 p-8 rounded-lg'>
                     <div className='flex flex-wrap gap-6 items-center'>
@@ -158,7 +168,7 @@ function CreateKeyword({ onClose, editData }) {
 
                         <ul className='text-gray-700 flex flex-wrap gap-6 items-center'>
                             {keywordConfig.keywords.map((kw, index) => (
-                                <li key={index} className='flex bg-white py-[9px] max-w-[200px] px-1 rounded-lg justify-between items-center'>
+                                <li key={index} className='flex bg-white py-[9px] max-w-[200px] px-1 pl-3 rounded-lg justify-between items-center'>
                                     <span className='truncate'>{kw}</span>
                                     <i
                                         className="fa-solid fa-xmark ml-2 text-lg text-red-600 bg-red-100 cursor-pointer hover:scale-105 rounded-full px-1 py-[2px]"
@@ -248,7 +258,7 @@ function CreateKeyword({ onClose, editData }) {
                     <div className='mt-14 flex gap-8'>
                         <button
                             type='button'
-                            className='bg-green-600 cursor-pointer hover:bg-green-700 text-white py-1 rounded-md px-2'
+                            className='bg-green-600 cursor-pointer hover:bg-green-700 text-white py-2 rounded-md px-2'
                             onClick={handleSubmit}
                         >
                             Next Step
@@ -257,7 +267,7 @@ function CreateKeyword({ onClose, editData }) {
 
                         <button
                             type='button'
-                            className={`bg-green-600 cursor-pointer hover:bg-green-700 text-white py-1 rounded-md px-2 ${editData ? "" : '!bg-gray-400 !cursor-not-allowed pointer-events-none'}`}
+                            className={`bg-green-600 cursor-pointer hover:bg-green-700 text-white py-2 rounded-md px-2 ${editData === keywordConfig ? "!bg-gray-400 !cursor-not-allowed pointer-events-none" : ''}`}
                             onClick={handleEdit}
                         >
                             Save Changes
@@ -267,7 +277,7 @@ function CreateKeyword({ onClose, editData }) {
             </div>
 
             {popUp && (
-                <div className='fixed inset-0 bg-black/60 z-50 flex items-center justify-center'>
+                <div className='fixed inset-0 bg-black/70 z-50 flex items-center justify-center'>
                     <div
                         ref={modalRef}
                         className='p-6 bg-white rounded-lg shadow-lg border border-gray-200 min-w-[300px] relative z-50'

@@ -8,9 +8,14 @@ function KeywordAction() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [editData, setEditData] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+
+
+    console.log(searchTerm);
+
 
     const handleNewKeyword = () => {
-        setEditData(null); 
+        setEditData(null);
         setIsOpen(true);
     };
 
@@ -40,7 +45,9 @@ function KeywordAction() {
                                     <div className='search-bar w-full flex items-center max-w-[500px] relative'>
 
                                         <i className="fa-solid fa-magnifying-glass absolute right-4 text-gray-400"></i>
-                                        <input type="text" className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[14px] focus:outline-none !font-medium' placeholder='Search here ... ' />
+                                        <input type="text" className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[14px] focus:outline-none !font-medium' placeholder='Search here ... '
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)} />
 
                                     </div>
                                 </form>
@@ -60,7 +67,7 @@ function KeywordAction() {
 
 
                     <div>
-                        <KeywordsList onOpen={() => setIsOpen(true)} onEdit={handleEditKeyword} />
+                        <KeywordsList onOpen={() => setIsOpen(true)} onEdit={handleEditKeyword} onSearch={searchTerm} />
                     </div>
                 </>
             )}

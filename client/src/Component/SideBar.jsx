@@ -1,12 +1,32 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 function SideBar({ isOpen, toggleSidebar }) {
     const [isAutomationOpen, setAutomationOpen] = useState(false);
+    
+    const location = useLocation();
+
+    const isAutomationPath = [
+        '/keywordAction',
+        '/replyMaterial',
+        '/chatbot',
+        '/rules'
+    ].includes(location.pathname);
+
+
+    useEffect(() => {
+        setAutomationOpen(isAutomationPath);
+    },[location.pathname, isAutomationPath]);
+
+
 
     const toggleAutomationDropdown = () => {
         setAutomationOpen(prev => !prev);
     };
+
+
+
+
 
     return (
         <div className={`bg-black h-[100vh] ${isOpen ? 'w-[250px]' : 'w-[60px]'} overflow-hidden transition-all duration-500 ease-in-out text-nowrap`}>
@@ -68,19 +88,19 @@ function SideBar({ isOpen, toggleSidebar }) {
                         className="flex items-center justify-between cursor-pointer gap-2 hover:text-amber-600 transition-colors duration-200"
                     >
                         <div className="flex items-center gap-2">
-                            <i className="fa-solid fa-gear"></i> <span className='ml-[10px]'>Automation</span>
+                            <i className="fa-solid fa-gear"></i> <span className='ml-[16px]'>Automation</span>
                         </div>
                         <i className={`fa-solid fa-chevron-${isAutomationOpen ? 'up' : 'down'}`}></i>
                     </div>
 
                     {/* Dropdown items */}
                     {isAutomationOpen && (
-                        <ul className='ml-8 mt-4 flex flex-col gap-4 text-sm'>
+                        <ul className='ml-10 mt-4 flex flex-col gap-4 text-sm'>
                             <li>
                                 <NavLink to="/keywordAction" className={({ isActive }) =>
                                     `${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
                                 }>
-                                    <i class="fa-solid fa-gears"></i>
+                                    <i className="fa-solid fa-gears"></i>
                                     <span>Keyword Action</span>
                                 </NavLink>
                             </li>
@@ -88,7 +108,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                                 <NavLink to="/replyMaterial" className={({ isActive }) =>
                                     `${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
                                 }>
-                                    <i class="fa-solid fa-reply"></i>
+                                    <i className="fa-solid fa-reply"></i>
                                     <span>Reply Material</span>
                                 </NavLink>
                             </li>
@@ -97,7 +117,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                                     `${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
                                 }>
 
-                                    <i class="fa-regular fa-message"></i>
+                                    <i className="fa-regular fa-message"></i>
                                     <span>Chatbots</span>
                                 </NavLink>
                             </li>
@@ -106,7 +126,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                                     `${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
                                 }>
 
-                                    <i class="fa-solid fa-layer-group"></i>
+                                    <i className="fa-solid fa-layer-group"></i>
                                     <span>Rules</span>
                                 </NavLink>
                             </li>
