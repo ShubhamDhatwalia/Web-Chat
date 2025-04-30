@@ -37,18 +37,18 @@ function BroadCast() {
 
   const { phoneNumbers, loading: numbersLoading, error: numbersError } = useSelector(state => state.phoneNumbers);
 
-  // useEffect(() => {
-  //   dispatch(fetchPhoneNumbers());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchPhoneNumbers());
+  }, [dispatch]);
 
 
 
 
   const { templates, loading, error } = useSelector((state) => state.templates);
 
-  // useEffect(() => {
-  //   dispatch(fetchTemplates());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchTemplates());
+  }, [dispatch]);
 
 
   const [contacts, setContacts] = useState([

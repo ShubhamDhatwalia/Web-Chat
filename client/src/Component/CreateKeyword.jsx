@@ -266,12 +266,17 @@ function CreateKeyword({ onClose, editData }) {
 
 
                         <button
-                            type='button'
-                            className={`bg-green-600 cursor-pointer hover:bg-green-700 text-white py-2 rounded-md px-2 ${editData === keywordConfig ? "!bg-gray-400 !cursor-not-allowed pointer-events-none" : ''}`}
+                            type="button"
                             onClick={handleEdit}
+                            className={`text-white py-2 px-2 rounded-md ${!editData || JSON.stringify(editData) === JSON.stringify(keywordConfig)
+                                ? 'bg-gray-400 cursor-not-allowed pointer-events-none'
+                                : 'bg-green-600 hover:bg-green-700 cursor-pointer pointer-events-auto'
+                                }
+                            `}
                         >
                             Save Changes
                         </button>
+
                     </div>
                 </div>
             </div>

@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTemplates, deleteTemplate } from '../redux/templateThunks.js';
 import { toast } from 'react-toastify';
-
-
-
+import Skeleton from '@mui/material/Skeleton';
 
 
 
@@ -16,9 +14,12 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // useEffect(() => {
-  //   dispatch(fetchTemplates());
-  // }, [dispatch]);
+
+
+  useEffect(() => {
+    dispatch(fetchTemplates());
+    
+  }, [dispatch]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -29,7 +30,6 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
     en_US: 'English (US)',
     hi: 'Hindi',
   };
-
 
   const filteredTemplates = [...templates].reverse().filter((template) => {
     const search = searchTerm.toLowerCase();
@@ -58,103 +58,142 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
     onSuccess(template);
   };
 
-
-
-
-
-
   return (
     <div className="mt-[30px] rounded-md min-h-[78vh] flex flex-col justify-between">
-      {loading ? (
-        <div className="py-10 text-center text-gray-500 text-lg">Loading templates...</div>
-      ) : (
-        <>
-          <div>
-            <div className="pb-2 p-[10px]">
-              <input
-                type="text"
-                placeholder="Search by name, category, status, ID, or language..."
-                className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+      <div>
+        <div className="pb-2 p-[10px]">
+          <input
+            type="text"
+            placeholder="Search by name, category, status, ID, or language..."
+            className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
 
-            <div className="overflow-auto max-h-[70vh]">
-              <table className="table-auto w-full">
-                <thead className=' text-lg'>
-                  <tr className="sticky top-0 z-10 border-b border-gray-300 bg-white text-center text-nowrap ">
-                    {/* <th className="px-[10px] py-4 text-left">Template Id</th> */}
-                    <th className=" px-[10px] py-4 text-left ">Name</th>
-                    <th className=" px-[10px] py-4">Category</th>
-                    <th className=" px-[10px] py-4">Language</th>
-                    <th className=" px-[10px] py-4">Status</th>
-                    <th className="px-[10px] py-4 text-right">Last Edited</th>
+        <div className="overflow-auto max-h-[64vh] mt-4">
+          <table className="table-auto w-full">
+            <thead className="text-lg">
+              <tr className="sticky top-0 z-10 border-b border-gray-300 bg-white text-center text-nowrap">
+                <th className="px-[10px] pb-4 text-left">Name</th>
+                <th className="px-[10px] pb-4">Category</th>
+                <th className="px-[10px] pb-4">Language</th>
+                <th className="px-[10px] pb-4">Status</th>
+                <th className="px-[10px] pb-4 text-right">Last Edited</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                Array.from({ length: limit / 2 }).map((_, index) => (
+                  <tr key={index}>
+                    <td className="px-[10px] py-4 text-left">
+                      <Skeleton variant="text" animation="wave" width="100%" height={20} />
+                    </td>
+                    <td className="px-[10px]  py-4 text-center">
+                      <Skeleton variant="text" animation="wave" width="50%" className='mx-auto' height={20} />
+                    </td>
+                    <td className="px-[10px] py-4 text-center">
+                      <Skeleton variant="text" animation="wave" width="50%" className='mx-auto' height={20} />
+                    </td>
+                    <td className="px-[10px] py-4 text-center">
+                      <Skeleton variant="rectangular" animation="wave" width="50%" className='mx-auto' height={20} />
+                    </td>
+                    <td className="px-[10px] py-4 text-right">
+                      <Skeleton variant="text" animation="wave" width="30%" className='float-right' height={20} />
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {currentData.map((template) => (
-                    <tr
-                      key={template.id}
-                      onClick={() => onSelectTemplateId?.(template.id)}
-                      className={`group text-nowrap text-center  hover:bg-amber-50 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-amber-50' : ''
-                        }`}
-                    >
-                      {/* <td className="px-[10px] py-4 text-left">{template.id}</td> */}
-                      <td className="px-[10px] py-4 text-left text-blue-500">{template.name}</td>
-                      <td className="px-[10px] py-4">{template.category}</td>
-                      <td className=" px-[10px]py-4">{languageMap[template.language] || template.language}</td>
-                      <td className="px-[10px] py-4">
-                        <span
-                          className={`rounded-2xl  py-1 text-white text-center  w-[95px] inline-block
-                            ${template.status === 'APPROVED'
-                              ? 'bg-green-100 !text-green-700'
-                              : template.status === 'PENDING'
-                                ? 'bg-orange-100 !text-orange-500'
-                                : 'bg-red-100 !text-red-700'
-                            }`}
-                        >
-                          {template.status}
-                        </span>
-                      </td>
-                      <td className="px-[10px] py-3 text-gray-400 italic relative text-right">
-                        <span className={`group-hover:hidden ${selectedTemplateId === template.id ? 'hidden' : 'text-nowrap'}`}>
-                          {template.createdAt
-                            ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(new Date(template.createdAt))
-                            : 'N/A'}
-                        </span>
-                        <div className={`absolute px-[10px] top-1/2 left-0 right-0 transform -translate-y-1/2 gap-6 justify-end items-center ${selectedTemplateId === template.id ? 'flex' : 'hidden group-hover:flex'}`}>
-                          <i className="fa-solid fa-pen-to-square text-blue-500 bg-white p-2 rounded-full text-lg cursor-pointer hover:scale-105"
-                            onClick={(e) => handleEdit(e, template)} />
-                          <i className="fa-solid fa-trash text-red-400 bg-white p-2 rounded-full text-lg cursor-pointer hover:scale-105"
-                            onClick={(e) => handleDelete(e, template)} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                ))
+              ) : (
+                currentData.map((template) => (
+                  <tr
+                    key={template.id}
+                    onClick={() => onSelectTemplateId?.(template.id)}
+                    className={`group text-nowrap text-center hover:bg-amber-50 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-amber-50' : ''
+                      }`}
+                  >
+                    <td className="px-[10px] py-4 text-left text-blue-500">{template.name}</td>
+                    <td className="px-[10px] py-4">{template.category}</td>
+                    <td className="px-[10px] py-4">{languageMap[template.language] || template.language}</td>
+                    <td className="px-[10px] py-4">
+                      <span
+                        className={`rounded-2xl py-1 text-white text-center w-[95px] inline-block
+                          ${template.status === 'APPROVED'
+                            ? 'bg-green-100 !text-green-700'
+                            : template.status === 'PENDING'
+                              ? 'bg-orange-100 !text-orange-500'
+                              : 'bg-red-100 !text-red-700'
+                          }`}
+                      >
+                        {template.status}
+                      </span>
+                    </td>
+                    <td className="px-[10px] py-3 text-gray-400 italic relative text-right">
+                      <span
+                        className={`group-hover:hidden ${selectedTemplateId === template.id ? 'hidden' : 'text-nowrap'
+                          }`}
+                      >
+                        {template.createdAt
+                          ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(
+                            new Date(template.createdAt)
+                          )
+                          : 'N/A'}
+                      </span>
+                      <div
+                        className={`absolute px-[10px] top-1/2 left-0 right-0 transform -translate-y-1/2 gap-6 justify-end items-center ${selectedTemplateId === template.id ? 'flex' : 'hidden group-hover:flex'
+                          }`}
+                      >
+                        <i
+                          className="fa-solid fa-pen-to-square text-blue-500 bg-white p-2 rounded-full text-lg cursor-pointer hover:scale-105"
+                          onClick={(e) => handleEdit(e, template)}
+                        />
+                        <i
+                          className="fa-solid fa-trash text-red-400 bg-white p-2 rounded-full text-lg cursor-pointer hover:scale-105"
+                          onClick={(e) => handleDelete(e, template)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-          {/* Pagination */}
-          <div className="flex justify-between mt-1 px-[10px] py-2 text-sm text-gray-700">
-            <div className="flex items-center gap-2">
-              <span>Items per page:</span>
-              <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="border cursor-pointer px-2 py-1 rounded">
-                {[2, 3, 10, 20, 50].map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-4 ">
-              <span>Page {currentPage} of {totalPages}</span>
-              <button onClick={handlePrev} disabled={currentPage === 1}><i className={`fas fa-angle-left text-lg  ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-600 cursor-pointer'}`} /></button>
-              <button onClick={handleNext} disabled={currentPage === totalPages}><i className={`fas fa-angle-right text-lg  ${currentPage === totalPages ? 'text-gray-400 cursor-not-allowed' : 'text-gray-600 cursor-pointer'}`} /></button>
-            </div>
-          </div>
-        </>
-      )}
+      {/* Pagination */}
+      <div className="flex justify-between mt-1 px-[10px] py-2 text-sm text-gray-700">
+        <div className="flex items-center gap-2">
+          <span>Items per page:</span>
+          <select
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+            className="border cursor-pointer px-2 py-1 rounded"
+          >
+            {[2, 3, 10, 20, 50].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center gap-4">
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button onClick={handlePrev} disabled={currentPage === 1}>
+            <i
+              className={`fas fa-angle-left text-lg ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-600 cursor-pointer'
+                }`}
+            />
+          </button>
+          <button onClick={handleNext} disabled={currentPage === totalPages}>
+            <i
+              className={`fas fa-angle-right text-lg ${currentPage === totalPages ? 'text-gray-400 cursor-not-allowed' : 'text-gray-600 cursor-pointer'
+                }`}
+            />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

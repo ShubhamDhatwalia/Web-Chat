@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SideBar from '../ReplyMaterial/Sidebar';
 
 function ReplyMaterial() {
+  const [selected, setSelected]  = useState('Text');
+
+  console.log(selected);
+
+
   return (
     <>
       <div className=' m-4 bg-gray-50 rounded-lg flex'>
 
 
-        <SideBar />
+        <SideBar selected={setSelected} />
 
 
         <div className='p-4 flex-grow'>
@@ -33,7 +38,7 @@ function ReplyMaterial() {
 
           <div>
 
-            
+
           </div>
 
         </div>

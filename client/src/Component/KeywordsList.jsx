@@ -74,7 +74,7 @@ function KeywordsList({ onOpen, onEdit, onSearch }) {
                         {currentData.length > 0 ? (
                             currentData.map((kw, index) => (
                                 <tr key={index} className=' text-center text-lg'>
-                                    <td className='py-6 pr-22 text-left'>
+                                    <td className='py-6 pr-1 text-left max-w-[400px]'>
                                         {Array.isArray(kw.keywords) && kw.keywords.length > 0 ? (
                                             <div className="flex flex-wrap  gap-2">
                                                 {kw.keywords.map((word, i) => (

@@ -29,7 +29,7 @@ function SideBar({ isOpen, toggleSidebar }) {
 
 
     return (
-        <div className={`bg-black h-[100vh] ${isOpen ? 'w-[250px]' : 'w-[60px]'} overflow-hidden transition-all duration-500 ease-in-out text-nowrap`}>
+        <div className={`bg-black h-[100vh] ${isOpen ? 'w-[250px]' : 'w-[60px]'} overflow-hidden transition-[width] duration-500 ease-in-out text-nowrap`}>
             <header className='flex items-center justify-between border-b-2 border-r-2 border-gray-700 py-[10px] px-[20px] h-[60px]'>
                 <a href="#">
                     <div className={`logo text-white font-bold text-2xl ${isOpen ? 'visible' : 'hidden'}`}>Web <span className='text-amber-600'>Chat</span></div>

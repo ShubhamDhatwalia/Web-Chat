@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 
-function Sidebar() {
+function Sidebar({selected}) {
     const [activeItem, setActiveItem] = useState('Text')
+
+    const handleActive = (e)=>{
+        setActiveItem(e.target.innerText);
+        selected(e.target.innerText);
+
+    }
 
     const items = [
         { label: 'Text', icon: 'fa-regular fa-pen-to-square' },
@@ -21,7 +27,7 @@ function Sidebar() {
                 {items.map((item, index) => (
                     <li
                         key={index}
-                        onClick={() => setActiveItem(item.label)}
+                        onClick={handleActive}
                         className={`flex items-center cursor-pointer gap-6 
                             ${index !== items.length - 1 ? 'border-b border-gray-300' : ''} 
                             ${activeItem === item.label ? 'text-amber-600' : 'hover:text-amber-600'} 
