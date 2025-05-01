@@ -100,7 +100,7 @@ function TextReplyMaterial() {
 
 
                 {isOpen && (
-                    <div className='fixed bg-black/70 inset-0 z-50 flex items-center justify-center'>
+                    <div className='fixed bg-black/80 inset-0 z-50 flex items-center justify-center'>
 
 
                         <div className='bg-white rounded-lg p-4 max-w-[600px] w-full '>
@@ -136,7 +136,7 @@ function TextReplyMaterial() {
 
                 <div className='mt-8 flex gap-4 flex-wrap'>
                     {textReplys.map((reply, index) => (
-                        <div key={index} className='bg-white rounded-lg p-4 max-w-[300px] min-h-[200px] w-full'>
+                        <div key={index} className='bg-white rounded-lg p-4 max-w-[300px] min-h-[200px] w-full hover:drop-shadow-2xl'>
                             <div className='flex items-center justify-between gap-4'>
                                 <h4 className='truncate font-semibold text-green-600'>{reply.name}</h4>
                                 <div className='flex items-center gap-2'>
