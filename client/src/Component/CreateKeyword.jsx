@@ -95,7 +95,10 @@ function CreateKeyword({ onClose, editData }) {
 
     };
 
-
+    const handleClose = () => {
+        setPopUp(false);
+        setNewKeyword('');
+    }
 
 
 
@@ -287,33 +290,40 @@ function CreateKeyword({ onClose, editData }) {
                         ref={modalRef}
                         className='p-6 bg-white rounded-lg shadow-lg border border-gray-200 min-w-[300px] relative z-50'
                     >
-                        <div className='flex justify-between items-center border-b border-gray-300 pb-4'>
-                            <h4 className='font-semibold'>Add Keyword</h4>
-                            <i
-                                className='fa-solid fa-xmark text-2xl cursor-pointer hover:scale-110 text-red-600'
-                                onClick={() => setPopUp(false)}
-                            ></i>
-                        </div>
-
-                        <input
-                            type='text'
-                            required
-                            value={newKeyword}
-                            onChange={(e) => setNewKeyword(e.target.value)}
-                            className='w-full bg-gray-100 px-4 py-2 mt-6 rounded-md focus:outline-none text-sm'
-                            placeholder='Please input a keyword'
-                        />
-
-                        <button
-                            type='button'
-                            className='bg-green-600 hover:bg-green-700 cursor-pointer rounded-lg px-2 py-2 text-white mt-6 float-right'
-                            onClick={handleKeyword}
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleKeyword();
+                            }}
                         >
-                            Add Keyword
-                        </button>
+                            <div className='flex justify-between items-center border-b border-gray-300 pb-4'>
+                                <h4 className='font-semibold'>Add Keyword</h4>
+                                <i
+                                    className='fa-solid fa-xmark text-2xl cursor-pointer hover:scale-110 text-red-600'
+                                    onClick={handleClose}
+                                ></i>
+                            </div>
+
+                            <input
+                                type='text'
+                                required
+                                value={newKeyword}
+                                onChange={(e) => setNewKeyword(e.target.value)}
+                                className='w-full bg-gray-100 px-4 py-2 mt-6 rounded-md focus:outline-none text-sm'
+                                placeholder='Please input a keyword'
+                            />
+
+                            <button
+                                type='submit'
+                                className='bg-green-600 hover:bg-green-700 rounded-lg px-2 py-2 text-white mt-6 float-right'
+                            >
+                                Add Keyword
+                            </button>
+                        </form>
                     </div>
                 </div>
             )}
+
         </>
     );
 }

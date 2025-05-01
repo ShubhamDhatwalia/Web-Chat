@@ -22,7 +22,7 @@ function Sidebar({selected}) {
     ]
 
     return (
-        <div className='bg-gray-100 px-6 rounded-tl-lg rounded-bl-lg'>
+        <div className='bg-gray-200 px-6 rounded-tl-lg rounded-bl-lg max-w-[280px] w-full'>
             <ul className='flex flex-col gap-4 font-semibold text-gray-600'>
                 {items.map((item, index) => (
                     <li

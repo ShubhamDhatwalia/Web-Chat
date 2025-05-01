@@ -7,6 +7,7 @@ const templateSlice = createSlice({
     templates: [],
     loading: false,
     error: null,
+    deleteStatus: 'idle',
   },
   reducers: {
     clearTemplates(state) {
@@ -29,6 +30,7 @@ const templateSlice = createSlice({
       })
       .addCase(deleteTemplate.fulfilled, (state, action) => {
         state.templates = state.templates.filter(t => t.id !== action.payload);
+        state.deleteStatus = 'success';
       });
   },
 });

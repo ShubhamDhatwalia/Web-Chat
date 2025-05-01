@@ -4,12 +4,12 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
 
+
+
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
 
-
-
-
+ 
 
 
 function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
@@ -26,14 +26,16 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
     });
 
 
+
+    console.log(onTemplateChange);
+
+
     const [sampleValues, setSampleValues] = useState({
         header_text: [],
         body_text: []
     });
 
 
-
-    console.log(sampleValues);
 
 
     const [buttons, setButtons] = useState([]);
@@ -605,8 +607,8 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 createdAt: new Date().toISOString()
             };
             localStorage.setItem('whatsappTemplates', JSON.stringify([...existingTemplates, newTemplate]));
-
             toast.success("Template created successfully!");
+
             onSuccess();
         } catch (error) {
             console.log(JSON.stringify(error.response?.data, null, 2));
@@ -664,7 +666,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                     borderColor: '#E17100', // Border color on focus
                                 },
-                                borderRadius: '10px', 
+                                borderRadius: '10px',
                             },
                         }}
                     />
@@ -692,7 +694,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             '&:focus': {
                                 backgroundColor: 'transparent', // Prevent weird background on focus
                             },
-                            
+
                         },
                     }}>
                         <InputLabel id="category-label">Category</InputLabel>
@@ -719,7 +721,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                                 backgroundColor: '#FEF3C6',
 
                                             },
-                                            
+
                                         },
                                     },
                                 },
@@ -856,7 +858,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                             backgroundColor: '#FEF3C6',
 
                                         },
-                                        
+
                                     },
                                 },
                             },
@@ -1108,7 +1110,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     size="small"
                     required
                     label={`Body {{${formInput.parameter_format === 'POSITIONAL' ? i + 1 : extractVariableList(formInput.messageContent, formInput.parameter_format)[i]}}}`}
-                    value={val.example} 
+                    value={val.example}
 
                     sx={{
                         '& label.Mui-focused': {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTemplates, deleteTemplate } from '../redux/templateThunks.js';
+import { fetchTemplates, deleteTemplate,  } from '../redux/templateThunks.js';
 import { toast } from 'react-toastify';
 import Skeleton from '@mui/material/Skeleton';
 
@@ -8,7 +8,7 @@ import Skeleton from '@mui/material/Skeleton';
 
 function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId }) {
   const dispatch = useDispatch();
-  const { templates, loading } = useSelector((state) => state.templates);
+  const { templates, loading, deleteStatus } = useSelector((state) => state.templates);
 
   const [limit, setLimit] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,7 +18,6 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
 
   useEffect(() => {
     dispatch(fetchTemplates());
-    
   }, [dispatch]);
 
   useEffect(() => {
@@ -48,9 +47,20 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
   const handleNext = () => currentPage < totalPages && setCurrentPage((prev) => prev + 1);
   const handlePrev = () => currentPage > 1 && setCurrentPage((prev) => prev - 1);
 
+
+
+
+  useEffect(() => {
+    if (deleteStatus === 'success') {
+      onSelectTemplateId(null);
+    }
+  }, [deleteStatus]);
+
+
   const handleDelete = (e, template) => {
     e.stopPropagation();
     dispatch(deleteTemplate(template));
+    
   };
 
   const handleEdit = (e, template) => {
@@ -84,7 +94,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
             </thead>
             <tbody>
               {loading ? (
-                Array.from({ length: limit / 2 }).map((_, index) => (
+                Array.from({ length: 3 }).map((_, index) => (
                   <tr key={index}>
                     <td className="px-[10px] py-4 text-left">
                       <Skeleton variant="text" animation="wave" width="100%" height={20} />
