@@ -69,13 +69,13 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
   };
 
   return (
-    <div className="mt-[30px] rounded-md min-h-[78vh] flex flex-col justify-between">
+    <div className="mt-[30px] rounded-md min-h-[78vh] flex flex-col text-gray-600 justify-between">
       <div>
         <div className="pb-2 p-[10px]">
           <input
             type="text"
             placeholder="Search by name, category, status, ID, or language..."
-            className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500"
+            className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-green-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -118,7 +118,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                   <tr
                     key={template.id}
                     onClick={() => onSelectTemplateId?.(template.id)}
-                    className={`group text-nowrap text-center hover:bg-amber-50 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-amber-50' : ''
+                    className={`group text-nowrap text-center hover:bg-green-50 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-green-50' : ''
                       }`}
                   >
                     <td className="px-[10px] py-4 text-left text-blue-500">{template.name}</td>

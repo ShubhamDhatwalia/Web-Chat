@@ -42,3 +42,16 @@ textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+
+ 
+
+
+.items:hover .fill{
+  fill: #00A67A;
+}
+
+.items:hover .stroke{
+  stroke: #00A67A;
+}
+

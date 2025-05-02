@@ -46,7 +46,7 @@ function ManageTemplates() {
             {!isOpen && (
               <button
                 type='button'
-                className='bg-amber-600 hover:bg-amber-700 cursor-pointer  text-white font-semibold py-[5px] px-[12px] rounded'
+                className='bg-green-600 hover:bg-green-700 cursor-pointer  text-white font-semibold py-[5px] px-[12px] rounded'
                 onClick={handleFormModel}
               >
                 Create Template

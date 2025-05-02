@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import togglebtn from '../assets/togglebtn.png';
+
+
+
 
 function SideBar({ isOpen, toggleSidebar }) {
     const [isAutomationOpen, setAutomationOpen] = useState(false);
@@ -29,20 +33,21 @@ function SideBar({ isOpen, toggleSidebar }) {
 
 
     return (
-        <div className={`bg-black h-[100vh] ${isOpen ? 'w-[250px]' : 'w-[60px]'} overflow-hidden transition-[width] duration-500 ease-in-out text-nowrap`}>
-            <header className='flex items-center justify-between border-b-2 border-r-2 border-gray-700 py-[10px] px-[20px] h-[60px]'>
+        <div className={`bg-white h-[100vh] ${isOpen ? 'w-[250px]' : 'w-[60px]'} overflow-hidden transition-[width] duration-500 ease-in-out text-nowrap border-r-1 border-gray-300`}>
+            <header className='flex items-center justify-between border-b-1 border-gray-300 py-[10px] w-full px-[20px] h-[60px]'>
                 <a href="#">
-                    <div className={`logo text-white font-bold text-2xl ${isOpen ? 'visible' : 'hidden'}`}>Web <span className='text-amber-600'>Chat</span></div>
+                    <div className={`logo text-black font-bold text-2xl ${isOpen ? 'visible' : 'hidden'}`}>Web <span className='text-green-600'>Chat</span></div>
                 </a>
-                <i className="fa-solid fa-bars text-white text-2xl cursor-pointer" onClick={toggleSidebar}></i>
+            
+                <img src={togglebtn} alt="" onClick={toggleSidebar} className='w-[26px] h-[26px] cursor-pointer' />
             </header>
 
-            <ul className='side-bar-menu text-white mt-[50px] py-[10px] px-[20px] flex flex-col gap-[20px]'>
+            <ul className='side-bar-menu text-gray-500 font-semibold mt-[10px] py-[10px] px-[20px] flex flex-col gap-[20px]'>
                 <li>
                     <NavLink
                         to="/"
                         className={({ isActive }) =>
-                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
+                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                         }
                     >
                         <i className="fa-solid fa-house"></i> <span>Home</span>
@@ -53,10 +58,10 @@ function SideBar({ isOpen, toggleSidebar }) {
                     <NavLink
                         to="/chats"
                         className={({ isActive }) =>
-                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
+                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                         }
                     >
-                        <i className="fa-solid fa-message"></i> <span>Chats</span>
+                        <i className="fa-solid fa-message"></i> <span>Team Inbox</span>
                     </NavLink>
                 </li>
 
@@ -64,7 +69,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                     <NavLink
                         to="/broadCast"
                         className={({ isActive }) =>
-                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
+                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                         }
                     >
                         <i className="fa-solid fa-tower-broadcast"></i> <span>BroadCast</span>
@@ -75,7 +80,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                     <NavLink
                         to="/manageTemplates"
                         className={({ isActive }) =>
-                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
+                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                         }
                     >
                         <i className="fa-solid fa-briefcase"></i> <span>Manage Templates</span>
@@ -85,7 +90,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                 <li>
                     <div
                         onClick={toggleAutomationDropdown}
-                        className="flex items-center justify-between cursor-pointer gap-2 hover:text-amber-600 transition-colors duration-200"
+                        className="flex items-center justify-between cursor-pointer gap-2 hover:text-green-600 transition-colors duration-200"
                     >
                         <div className="flex items-center gap-2">
                             <i className="fa-solid fa-gear"></i> <span className='ml-[16px]'>Automation</span>
@@ -98,7 +103,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                         <ul className='ml-10 mt-4 flex flex-col gap-4 text-sm'>
                             <li>
                                 <NavLink to="/keywordAction" className={({ isActive }) =>
-                                    `${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
+                                    `${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                                 }>
                                     <i className="fa-solid fa-gears"></i>
                                     <span>Keyword Action</span>
@@ -106,7 +111,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                             </li>
                             <li>
                                 <NavLink to="/replyMaterial" className={({ isActive }) =>
-                                    `${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
+                                    `${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                                 }>
                                     <i className="fa-solid fa-reply"></i>
                                     <span>Reply Material</span>
@@ -114,7 +119,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                             </li>
                             <li>
                                 <NavLink to="/chatbot" className={({ isActive }) =>
-                                    `${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
+                                    `${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                                 }>
 
                                     <i className="fa-regular fa-message"></i>
@@ -123,7 +128,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                             </li>
                             <li>
                                 <NavLink to="/rules" className={({ isActive }) =>
-                                    `${isActive ? 'text-amber-600 font-semibold' : 'text-white hover:text-amber-600'}`
+                                    `${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                                 }>
 
                                     <i className="fa-solid fa-layer-group"></i>

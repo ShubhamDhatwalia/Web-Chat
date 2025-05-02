@@ -80,7 +80,7 @@ function KeywordsList({ onOpen, onEdit, onSearch }) {
                                                 {kw.keywords.map((word, i) => (
                                                     <span
                                                         key={i}
-                                                        className="inline-block bg-amber-100 text-amber-600  font-medium px-3 py-1 rounded-full truncate max-w-[150px]"
+                                                        className="inline-block bg-green-100 text-green-600  font-medium px-3 py-1 rounded-full truncate max-w-[150px]"
                                                     >
                                                         {word}
                                                     </span>

@@ -264,11 +264,11 @@ function BroadCast() {
       <div className='flex justify-between gap-[10px] items-stretch'>
         <div className='bg-white p-[15px] rounded-md flex-[66%]'>
           <h2 className='font-bold text-xl mt-4'>Campaign/Broadcasting</h2>
-          <p className='font-semibold text-md mt-[5px] text-gray-600'>
+          <p className='font-semibold text-sm mt-[5px] text-gray-600'>
             Run a Campaign to broadcast your message
           </p>
 
-          <form onSubmit={handleSubmit} className='mt-[30px]'>
+          <form onSubmit={handleSubmit} className=' text-gray-600 mt-[30px]'>
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px]'>
               <TextField
                 label="Campaign Name"
@@ -282,14 +282,14 @@ function BroadCast() {
                 variant="outlined"
                 sx={{
                   '& label.Mui-focused': {
-                    color: '#E17100', // Label color on focus
+                    color: '#00A63E', // Label color on focus
                   },
                   '& .MuiOutlinedInput-root': {
                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#E17100', // Border color on hover
+                      borderColor: '#00A63E', // Border color on hover
                     },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#E17100', // Border color on focus
+                      borderColor: '#00A63E', // Border color on focus
                     },
                     borderRadius: '10px',
                   },
@@ -298,14 +298,14 @@ function BroadCast() {
 
               <FormControl fullWidth required size='small' sx={{
                 '& label.Mui-focused': {
-                  color: '#E17100', // Label color when focused
+                  color: '#00A63E', // Label color when focused
                 },
                 '& .MuiOutlinedInput-root': {
                   '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#E17100', // Border on hover
+                    borderColor: '#00A63E', // Border on hover
                   },
                   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#E17100', // Border on focus
+                    borderColor: '#00A63E', // Border on focus
                   },
                   borderRadius: '10px',
                 },
@@ -329,15 +329,15 @@ function BroadCast() {
                       sx: {
                         '& .MuiMenuItem-root': {
                           '&:hover': {
-                            backgroundColor: '#FFFBEB',
+                            backgroundColor: '#DBFCE7',
 
                           },
                           '&.Mui-selected': {
-                            backgroundColor: '#FEF3C6',
+                            backgroundColor: '#DBFCE7',
 
                           },
                           '&.Mui-selected:hover': {
-                            backgroundColor: '#FEF3C6',
+                            backgroundColor: '#DBFCE7',
 
                           },
                         },
@@ -378,14 +378,14 @@ function BroadCast() {
                   }}
                   sx={{
                     '& label.Mui-focused': {
-                      color: '#E17100',
+                      color: '#00A63E',
                     },
                     '& .MuiOutlinedInput-root': {
                       '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#E17100',
+                        borderColor: '#00A63E',
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#E17100',
+                        borderColor: '#00A63E',
                       },
                       borderRadius: '10px',
                     },
@@ -407,13 +407,13 @@ function BroadCast() {
                       '& .MuiAutocomplete-option': {
                         transition: 'background-color 0.2s',
                         '&:hover': {
-                          backgroundColor: '#FFFBEB',
+                          backgroundColor: '#DBFCE7',
                         },
                         '&[aria-selected="true"]': {
-                          backgroundColor: '#FEF3C6',
+                          backgroundColor: '#DBFCE7',
                         },
                         '&[aria-selected="true"]:hover': {
-                          backgroundColor: '#FEF3C6',
+                          backgroundColor: '#DBFCE7',
                         },
                       },
                     },
@@ -428,7 +428,7 @@ function BroadCast() {
                 <Button
                   variant="outlined"
                   size="small"
-                  className='!border-amber-600 !text-amber-600 hover:!bg-amber-50 mt-2 float-end !font-semibold'
+                  className='!border-green-600 !text-green-600 bg-green-50 hover:!bg-green-100 mt-2 float-end !font-semibold'
                   onClick={() => {
                     navigate("/manageTemplates", { state: { openForm: true } });
                   }}
@@ -447,14 +447,14 @@ function BroadCast() {
                   size="small"
                   sx={{
                     '& label.Mui-focused': {
-                      color: '#E17100', // Label color when focused
+                      color: '#00A63E', // Label color when focused
                     },
                     '& .MuiOutlinedInput-root': {
                       '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#E17100', // Border on hover
+                        borderColor: '#00A63E', // Border on hover
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#E17100', // Border on focus
+                        borderColor: '#00A63E', // Border on focus
                       },
                       borderRadius: '10px',
                     },
@@ -485,13 +485,13 @@ function BroadCast() {
                         sx: {
                           '& .MuiMenuItem-root': {
                             '&:hover': {
-                              backgroundColor: '#FFFBEB',
+                              backgroundColor: '#DBFCE7',
                             },
                             '&.Mui-selected': {
-                              backgroundColor: '#FEF3C6',
+                              backgroundColor: '#DBFCE7',
                             },
                             '&.Mui-selected:hover': {
-                              backgroundColor: '#FEF3C6',
+                              backgroundColor: '#DBFCE7',
                             },
                           },
                         },
@@ -506,9 +506,9 @@ function BroadCast() {
                             checked={formInput.contactList.length === contacts.length}
                             onChange={handleSelectAll}
                             sx={{
-                              color: '#E17100', // Checkbox color
+                              color: '#00A63E', // Checkbox color
                               '&.Mui-checked': {
-                                color: '#E17100',
+                                color: '#00A63E',
                               },
                             }}
                           />
@@ -523,9 +523,9 @@ function BroadCast() {
                         <Checkbox
                           checked={formInput.contactList.includes(contact.number)}
                           sx={{
-                            color: '#E17100', // Checkbox color
+                            color: '#00A63E', // Checkbox color
                             '&.Mui-checked': {
-                              color: '#E17100',
+                              color: '#00A63E',
                             },
                           }}
                         />
@@ -545,7 +545,7 @@ function BroadCast() {
               <div className=' flex flex-1/2 gap-[20px] items-center'>
                 <label
                   htmlFor='fileUpload'
-                  className='cursor-pointer text-nowrap bg-blue-600 hover:bg-blue-700 text-white font-semibold py-[5px] px-[12px] rounded flex items-center gap-2'
+                  className='cursor-pointer text-nowrap border border-green-600 bg-green-50 hover:bg-green-100 text-green-600 font-semibold py-[5px] px-[12px] rounded flex items-center gap-2'
                 >
                   <i className='fa-solid fa-upload'></i>
                   Upload File
@@ -566,7 +566,7 @@ function BroadCast() {
 
                 <button
                   type='button'
-                  className='font-semibold mr-[20px] text-nowrap bg-blue-600 hover:bg-blue-700 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
+                  className='font-semibold mr-[20px] text-nowrap bg-green-50 hover:bg-green-100 text-green-600 border border-green-600 cursor-pointer px-[12px] py-[5px] rounded-md'
                 >
                   Save
                 </button>

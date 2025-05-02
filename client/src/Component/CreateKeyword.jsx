@@ -121,7 +121,7 @@ function CreateKeyword({ onClose, editData }) {
                         sx={{
                             minHeight: 100,
                             '& .MuiStepConnector-line': {
-                                borderColor: '#E17100',
+                                borderColor: '#00A63E',
                                 borderTopWidth: 3,
                                 width: '99%',
                                 borderStyle: 'dashed'
@@ -135,11 +135,11 @@ function CreateKeyword({ onClose, editData }) {
                                 right: 'calc(50 % + 22px) !important',
                             },
                             '& .MuiStepLabel-root .Mui-active': {
-                                color: '#E17100',
+                                color: '#00A63E',
                                 fontWeight: '700',
                             },
                             '& .MuiStepLabel-root .Mui-completed': {
-                                color: '#E17100',
+                                color: '#00A63E',
                                 fontWeight: '700',
                             },
                             '& .MuiStepLabel-label': {
@@ -147,10 +147,10 @@ function CreateKeyword({ onClose, editData }) {
                                 fontSize: '18px',
                             },
                             '& .MuiStepIcon-root.Mui-active': {
-                                color: '#E17100',
+                                color: '#00A63E',
                             },
                             '& .MuiStepIcon-root.Mui-completed': {
-                                color: '#E17100',
+                                color: '#00A63E',
                             },
                             '& .MuiStepIcon-root': {
                                 fontSize: '58px',
@@ -198,7 +198,7 @@ function CreateKeyword({ onClose, editData }) {
                                     <input
                                         type="radio"
                                         name="matchingMethod"
-                                        className="mr-2 accent-orange-600"
+                                        className="mr-2 accent-green-600"
                                         value={method}
                                         checked={keywordConfig.matchingMethod === method}
                                         onChange={(e) =>
@@ -232,25 +232,26 @@ function CreateKeyword({ onClose, editData }) {
                                 sx={{
                                     width: '50%',
                                     height: '10px',
-                                    color: '#E17100',
+                                    color: '#00A63E',
                                     '& .MuiSlider-valueLabel': {
-                                        backgroundColor: '#f9dfc5',
-                                        color: '#E17100',
-                                        border: '1px solid #E17100',
+                                        backgroundColor: '#F0FDF4',
+                                        color: '#00A63E',
+                                        border: '1px solid #00A63E',
                                         borderRadius: '4px',
                                         fontWeight: 'bold',
                                         fontSize: '18px',
                                         '&::before': {
 
-                                            borderRight: '1px solid #E17100',
+                                            borderRight: '1px solid #00A63E',
 
-                                            borderBottom: '1px solid #E17100',
+                                            borderBottom: '1px solid #00A63E',
 
                                         },
                                     },
                                     '& .MuiSlider-thumb': {
                                         '&:hover, &.Mui-focusVisible, &.Mui-active': {
-                                            boxShadow: '0px 0px 0px 8px rgba(225, 113, 0, 0.16)',
+                                            boxShadow: '0px 0px 0px 8px rgba(123, 241, 168, 0.6)'
+
                                         },
                                     },
                                 }}

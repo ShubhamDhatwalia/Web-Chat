@@ -642,7 +642,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
     return (
-        <form onSubmit={handleSubmit} className='max-h-[81vh] px-[10px] py-[10px] overflow-auto'>
+        <form onSubmit={handleSubmit} className='max-h-[81vh] px-[10px] py-[10px] text-gray-600 overflow-auto'>
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[20px] text-md '>
                 <div className="flex-1">
                     <TextField
@@ -657,14 +657,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         onChange={handleChange}
                         sx={{
                             '& label.Mui-focused': {
-                                color: '#E17100', // Label color on focus
+                                color: '#00A63E', // Label color on focus
                             },
                             '& .MuiOutlinedInput-root': {
                                 '&:hover .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#E17100', // Border color on hover
+                                    borderColor: '#00A63E', // Border color on hover
                                 },
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#E17100', // Border color on focus
+                                    borderColor: '#00A63E', // Border color on focus
                                 },
                                 borderRadius: '10px',
                             },
@@ -679,14 +679,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                     <FormControl fullWidth required size="small" sx={{
                         '& label.Mui-focused': {
-                            color: '#E17100', // Label color when focused
+                            color: '#00A63E', // Label color when focused
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border on hover
+                                borderColor: '#00A63E', // Border on hover
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border on focus
+                                borderColor: '#00A63E', // Border on focus
                             },
                             borderRadius: '10px',
                         },
@@ -710,15 +710,15 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                     sx: {
                                         '& .MuiMenuItem-root': {
                                             '&:hover': {
-                                                backgroundColor: '#FFFBEB',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
                                             '&.Mui-selected': {
-                                                backgroundColor: '#FEF3C6',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
                                             '&.Mui-selected:hover': {
-                                                backgroundColor: '#FEF3C6',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
 
@@ -744,14 +744,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                     <FormControl fullWidth required size='small' sx={{
                         '& label.Mui-focused': {
-                            color: '#E17100', // Label color when focused
+                            color: '#00A63E', // Label color when focused
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border on hover
+                                borderColor: '#00A63E', // Border on hover
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border on focus
+                                borderColor: '#00A63E', // Border on focus
                             },
                             borderRadius: '10px',
                         },
@@ -774,15 +774,15 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                     sx: {
                                         '& .MuiMenuItem-root': {
                                             '&:hover': {
-                                                backgroundColor: '#FFFBEB',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
                                             '&.Mui-selected': {
-                                                backgroundColor: '#FEF3C6',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
                                             '&.Mui-selected:hover': {
-                                                backgroundColor: '#FEF3C6',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
                                         },
@@ -808,7 +808,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
             {/* Header/Footer */}
             <h3 className="font-semibold mt-[20px] pt-[20px]">Header/Footer (Optional)</h3>
-            <p className="text-sm font-semibold text-gray-700">Add a title or select media type for the header</p>
+            <p className="text-xs font-semibold text-gray-500">Add a title or select media type for the header</p>
 
 
 
@@ -816,14 +816,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             <div className='mt-8'>
                 <FormControl fullWidth size="small" sx={{
                     '& label.Mui-focused': {
-                        color: '#E17100', // Label color when focused
+                        color: '#00A63E', // Label color when focused
                     },
                     '& .MuiOutlinedInput-root': {
                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#E17100', // Border on hover
+                            borderColor: '#00A63E', // Border on hover
                         },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#E17100', // Border on focus
+                            borderColor: '#00A63E', // Border on focus
                         },
                         borderRadius: '10px',
                     },
@@ -847,15 +847,15 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                 sx: {
                                     '& .MuiMenuItem-root': {
                                         '&:hover': {
-                                            backgroundColor: '#FFFBEB',
+                                            backgroundColor: '#DBFCE7',
 
                                         },
                                         '&.Mui-selected': {
-                                            backgroundColor: '#FEF3C6',
+                                            backgroundColor: '#DBFCE7',
 
                                         },
                                         '&.Mui-selected:hover': {
-                                            backgroundColor: '#FEF3C6',
+                                            backgroundColor: '#DBFCE7',
 
                                         },
 
@@ -875,14 +875,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[30px] text-md'>
                 <FormControl fullWidth size="small" sx={{
                     '& label.Mui-focused': {
-                        color: '#E17100', // Label color when focused
+                        color: '#00A63E', // Label color when focused
                     },
                     '& .MuiOutlinedInput-root': {
                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#E17100', // Border on hover
+                            borderColor: '#00A63E', // Border on hover
                         },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#E17100', // Border on focus
+                            borderColor: '#00A63E', // Border on focus
                         },
                         borderRadius: '10px',
                     },
@@ -906,15 +906,15 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                 sx: {
                                     '& .MuiMenuItem-root': {
                                         '&:hover': {
-                                            backgroundColor: '#FFFBEB',
+                                            backgroundColor: '#DBFCE7',
 
                                         },
                                         '&.Mui-selected': {
-                                            backgroundColor: '#FEF3C6',
+                                            backgroundColor: '#DBFCE7',
 
                                         },
                                         '&.Mui-selected:hover': {
-                                            backgroundColor: '#FEF3C6',
+                                            backgroundColor: '#DBFCE7',
 
                                         },
                                     },
@@ -942,14 +942,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     inputProps={{ maxLength: 60 }}
                     sx={{
                         '& label.Mui-focused': {
-                            color: '#E17100', // Label color on focus
+                            color: '#00A63E', // Label color on focus
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border color on hover
+                                borderColor: '#00A63E', // Border color on hover
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border color on focus
+                                borderColor: '#00A63E', // Border color on focus
                             },
                             borderRadius: '10px',
                         },
@@ -974,14 +974,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         variant="outlined"
                         sx={{
                             width: 'calc(100%)', mt: 2, '& label.Mui-focused': {
-                                color: '#E17100', // Label color on focus
+                                color: '#00A63E', // Label color on focus
                             },
                             '& .MuiOutlinedInput-root': {
                                 '&:hover .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#E17100', // Border color on hover
+                                    borderColor: '#00A63E', // Border color on hover
                                 },
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#E17100', // Border color on focus
+                                    borderColor: '#00A63E', // Border color on focus
                                 },
                                 borderRadius: '10px',
                             },
@@ -999,7 +999,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                         variant="outlined"
                         color="primary"
-                        className='!border-amber-600 !text-amber-600 hover:!bg-amber-50'
+                        className='!border-green-600 !text-green-600 !bg-green-50 hover:!bg-green-100'
                         sx={{
                             fontWeight: 600,
                             fontSize: '14px',
@@ -1050,7 +1050,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
             <h3 className="font-semibold mt-[40px] pt-[10px]">Body</h3>
-            <p className="text-sm font-semibold text-gray-600">Enter the text for your message</p>
+            <p className="text-xs font-semibold text-gray-500">Enter the text for your message</p>
             <TextField
                 required
                 name="messageContent"
@@ -1068,14 +1068,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     backgroundColor: '#f9fafb',
                     borderRadius: '4px',
                     '& label.Mui-focused': {
-                        color: '#E17100', // Label color on focus
+                        color: '#00A63E', // Label color on focus
                     },
                     '& .MuiOutlinedInput-root': {
                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#E17100', // Border color on hover
+                            borderColor: '#00A63E', // Border color on hover
                         },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#E17100', // Border color on focus
+                            borderColor: '#00A63E', // Border color on focus
                         },
                         borderRadius: '10px',
                     },
@@ -1089,7 +1089,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                 variant="outlined"
                 color="primary"
-                className='!border-amber-600 !text-amber-600 hover:!bg-amber-50'
+                className='!border-green-600 !text-green-600 !bg-green-50 hover:!bg-green-100'
                 sx={{
                     fontWeight: 600,
                     fontSize: '14px',
@@ -1114,14 +1114,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                     sx={{
                         '& label.Mui-focused': {
-                            color: '#E17100', // Label color on focus
+                            color: '#00A63E', // Label color on focus
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border color on hover
+                                borderColor: '#00A63E', // Border color on hover
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border color on focus
+                                borderColor: '#00A63E', // Border color on focus
                             },
                             borderRadius: '10px',
                         },
@@ -1148,14 +1148,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     value={val.example}
                     sx={{
                         '& label.Mui-focused': {
-                            color: '#E17100',
+                            color: '#00A63E',
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100',
+                                borderColor: '#00A63E',
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100',
+                                borderColor: '#00A63E',
                             },
                             borderRadius: '10px',
                         },
@@ -1180,14 +1180,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 <div key={i} className="flex gap-2 items-center text-gray-700 text-sm my-2">
                     <FormControl size="small" sx={{
                         width: '150px', mr: 2, '& label.Mui-focused': {
-                            color: '#E17100', // Label color when focused
+                            color: '#00A63E', // Label color when focused
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border on hover
+                                borderColor: '#00A63E', // Border on hover
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#E17100', // Border on focus
+                                borderColor: '#00A63E', // Border on focus
                             },
                             borderRadius: '10px',
                         },
@@ -1209,15 +1209,15 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                                     sx: {
                                         '& .MuiMenuItem-root': {
                                             '&:hover': {
-                                                backgroundColor: '#FFFBEB',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
                                             '&.Mui-selected': {
-                                                backgroundColor: '#FEF3C6',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
                                             '&.Mui-selected:hover': {
-                                                backgroundColor: '#FEF3C6',
+                                                backgroundColor: '#DBFCE7',
 
                                             },
                                         },
@@ -1244,14 +1244,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         onChange={(e) => handleButtonChange(i, 'text', e.target.value)}
                         sx={{
                             width: 200, '& label.Mui-focused': {
-                                color: '#E17100', // Label color on focus
+                                color: '#00A63E', // Label color on focus
                             },
                             '& .MuiOutlinedInput-root': {
                                 '&:hover .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#E17100', // Border color on hover
+                                    borderColor: '#00A63E', // Border color on hover
                                 },
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#E17100', // Border color on focus
+                                    borderColor: '#00A63E', // Border color on focus
                                 },
                                 borderRadius: '10px',
                             },
@@ -1272,14 +1272,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             onChange={(e) => handleButtonChange(i, 'phone_number', e.target.value)}
                             sx={{
                                 width: 280, '& label.Mui-focused': {
-                                    color: '#E17100', // Label color on focus
+                                    color: '#00A63E', // Label color on focus
                                 },
                                 '& .MuiOutlinedInput-root': {
                                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#E17100', // Border color on hover
+                                        borderColor: '#00A63E', // Border color on hover
                                     },
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#E17100', // Border color on focus
+                                        borderColor: '#00A63E', // Border color on focus
                                     },
                                     borderRadius: '10px',
                                 },
@@ -1302,14 +1302,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             onChange={(e) => handleButtonChange(i, 'url', e.target.value)}
                             sx={{
                                 width: 200, '& label.Mui-focused': {
-                                    color: '#E17100', // Label color on focus
+                                    color: '#00A63E', // Label color on focus
                                 },
                                 '& .MuiOutlinedInput-root': {
                                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#E17100', // Border color on hover
+                                        borderColor: '#00A63E', // Border color on hover
                                     },
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#E17100', // Border color on focus
+                                        borderColor: '#00A63E', // Border color on focus
                                     },
                                     borderRadius: '10px',
                                 },
@@ -1328,7 +1328,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 variant="contained"
                 color="primary"
                 size="small"
-                className='!bg-amber-600 hover:!bg-amber-700 !text-lg  !capitalize !rounded-md mt-2'
+                className='!bg-green-50 hover:!bg-green-100 !border !text-green-600 !border-green-600 !text-lg  !capitalize !rounded-md mt-2'
             >
                 + Add Button
             </Button>
