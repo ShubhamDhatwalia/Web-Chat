@@ -55,3 +55,12 @@ textarea {
   stroke: #00A67A;
 }
 
+.items .fill.active{
+  fill: #00A67A;
+  
+}
+
+.items .stroke.active{
+  stroke: #00A67A;
+  
+}
