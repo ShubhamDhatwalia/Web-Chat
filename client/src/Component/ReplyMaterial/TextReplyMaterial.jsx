@@ -1,15 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { addTextReply, removeTextReply, editTextReply } from '../../redux/textReply/textReplySlice.js';
 import edit_icon from '../../assets/edit_icon.svg';
 import delete_icon from '../../assets/delete_icon.svg';
+import { useLocation } from 'react-router-dom';
+import Checkbox from '@mui/material/Checkbox';
+import { grey } from '@mui/material/colors';
+import { addKeyword } from '../../redux/Keywords/keywordSlice.js';
+import { updateKeyword } from '..//../redux/Keywords/keywordSlice.js'
+import { toast } from 'react-toastify';
 
 
 
 
 
 
-function TextReplyMaterial() {
+
+
+function TextReplyMaterial({ onClose, Keywords }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [textMaterial, setTextMaterial] = useState({
@@ -18,6 +26,24 @@ function TextReplyMaterial() {
         content: ""
     })
     const [editIndex, setEditIndex] = useState(null);
+    const [selected, setSelected] = useState([]);
+
+
+
+
+
+    useEffect(() => {
+        if (Array.isArray(Keywords?.replyMaterial)) {
+            setSelected(Keywords.replyMaterial);
+        } else {
+            setSelected([]);
+        }
+    }, [Keywords]);
+
+
+    const { keywords } = useSelector((state) => state.keyword);
+
+
 
 
 
@@ -25,7 +51,11 @@ function TextReplyMaterial() {
 
 
     const { textReplys } = useSelector((state) => state.textReplys);
-   
+
+
+    const location = useLocation();
+    const path = location.pathname;
+
 
 
 
@@ -43,20 +73,21 @@ function TextReplyMaterial() {
         setEditIndex(index);
         setIsOpen(true);
     };
-    
+
     const handleClose = () => {
-        setIsOpen(false);  
+        setIsOpen(false);
         setTextMaterial({ replyType: "text", name: "", content: "" });
-     }
+    }
 
     const handleDelete = (index) => {
         dispatch(removeTextReply(index));
-        
+
     }
+    
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         if (editIndex !== null) {
             dispatch(editTextReply({
                 oldReply: textReplys[editIndex],
@@ -65,12 +96,44 @@ function TextReplyMaterial() {
         } else {
             dispatch(addTextReply(textMaterial));
         }
-    
+
         setIsOpen(false);
         setTextMaterial({ replyType: "text", name: "", content: "" });
         setEditIndex(null);
+
+
+
     };
-    
+
+
+    const handleFinalSubmit = () => {
+        const updatedKeywords = {
+            ...Keywords,
+            replyMaterial: selected,
+        };
+
+
+
+        const existingKeywordIndex = keywords.findIndex(
+            (kw) => kw.id === Keywords.id 
+        );
+
+        if (existingKeywordIndex !== -1) {
+
+            dispatch(updateKeyword({ index: existingKeywordIndex, updatedKeyword: updatedKeywords }));
+            toast.success("Keyword updated successfully");
+
+            onClose(true);
+
+        } else {
+            // Add if it's new
+            dispatch(addKeyword(updatedKeywords));
+            toast.success("Keywords created successfully");
+            onClose(true);
+
+        }
+    };
+
 
 
 
@@ -78,22 +141,51 @@ function TextReplyMaterial() {
     return (
         <>
 
-            <div>
-                <div className='flex items-center justify-between'>
-                    <form action="" className=''>
-                        <div className='search-bar w-full flex items-center max-w-[500px]  relative'>
+            <div className='h-full '>
+                <div className='flex px-4 mt-4 items-center  justify-between'>
+                    <div className='flex items-center gap-6'>
+                        <form action="" className='min-w-[150px]'>
+                            <div className='search-bar w-full flex items-center max-w-[500px]  relative'>
 
-                            <i className="fa-solid fa-magnifying-glass absolute right-4 text-gray-400"></i>
-                            <input type="text" className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[10px] focus:outline-none !font-medium' placeholder='Search here ... '
-                            />
+                                <i className="fa-solid fa-magnifying-glass absolute right-4 text-gray-400"></i>
+                                <input type="text" className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[10px] focus:outline-none !font-medium' placeholder='Search here ... '
+                                />
 
+                            </div>
+
+                        </form>
+
+                        <div className='text-gray-500 font-semibold flex items-center flex-wrap gap-2'>
+                            Selected Material:
+                            {selected?.map((reply, i) => (
+                                <div
+                                    key={i}
+                                    className='text-xs border text-nowrap border-[#FF9933] bg-[#FFFAF5] rounded-md p-2 text-[#FF9933] max-w-[100px] overflow-hidden'
+                                >
+                                    <span>{reply.replyType}</span>:{" "}
+                                    <span className='truncate inline-block overflow-hidden whitespace-nowrap text-ellipsis max-w-[60px] align-bottom'>
+                                        {reply.name}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
-                    </form>
 
 
-                    <button type='button ' className='bg-green-600 cursor-pointer text-white  px-4 py-2 rounded-md hover:bg-green-700 transition duration-200' onClick={() => setIsOpen(true)}>
-                        Add
-                    </button>
+
+                    </div>
+
+
+                    <div className='flex gap-4'>
+                        <button type='button ' className='bg-red-50 border border-red-600 cursor-pointer text-red-600  px-4 py-1 rounded-md hover:bg-red-100 transition duration-200' onClick={onClose}>
+                            Cancel
+                        </button>
+                        <button type='button ' className='bg-green-50 border border-green-600 cursor-pointer text-green-600  px-4 py-1 rounded-md hover:bg-green-100 transition duration-200' onClick={handleFinalSubmit}>
+                            Save
+                        </button>
+                        <button type='button ' className='bg-green-600 cursor-pointer text-white  px-4 py-2 rounded-md hover:bg-green-700 transition duration-200' onClick={() => setIsOpen(true)}>
+                            Add
+                        </button>
+                    </div>
                 </div>
 
 
@@ -134,11 +226,36 @@ function TextReplyMaterial() {
                     </div>
                 )}
 
-                <div className='mt-8 flex gap-4 flex-wrap'>
+                <div className='mt-6 mb-4 flex gap-4 flex-wrap h-[70vh] justify-between px-4 overflow-auto'>
                     {textReplys.map((reply, index) => (
-                        <div key={index} className='bg-white rounded-lg p-4 max-w-[300px] min-h-[200px] w-full hover:drop-shadow-2xl'>
+                        <div key={index} className='bg-white rounded-lg p-4 max-w-[300px] min-h-[200px] w-full hover:drop-shadow-xl'>
                             <div className='flex items-center justify-between gap-4'>
-                                <h4 className='truncate font-semibold text-green-600'>{reply.name}</h4>
+
+                                <Checkbox
+                                    color="success"
+                                    checked={selected.some(item => item.name === reply.name && item.content === reply.content)}
+                                    onChange={(e) => {
+                                        const isChecked = e.target.checked;
+                                        const currentReply = textReplys[index];
+
+                                        setSelected(prev =>
+                                            isChecked
+                                                ? [...prev, currentReply]
+                                                : prev.filter(item => item.name !== currentReply.name || item.content !== currentReply.content)
+                                        );
+                                    }}
+                                    sx={{
+                                        padding: 0,
+                                        '& svg': {
+                                            fontSize: 32,
+                                        },
+                                        color: grey[500],
+                                    }}
+                                />
+
+
+                                <h4 className={` ${path == '/keywordAction' ? 'hidden' : ' truncate font-semibold text-green-600'}`}>{reply.name}</h4>
+
                                 <div className='flex items-center gap-2'>
                                     <div
                                         className='w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 bg-gray-100 cursor-pointer hover:border-green-500'
@@ -150,14 +267,16 @@ function TextReplyMaterial() {
                                     </div>
                                     <div
                                         className='w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 bg-gray-100 cursor-pointer hover:border-red-500'
-                                        onClick={() => {handleDelete(index)}}
+                                        onClick={() => { handleDelete(index) }}
                                     >
                                         <img src={delete_icon} alt="delete" />
                                     </div>
                                 </div>
                             </div>
-                            <div className='mt-4 text-sm'>
-                                <p className='break-words'>{reply.content}</p>
+                            <div className='mt-4 text-sm max-h-[200px] overflow-auto'>
+                                <h4 className={` ${path == '/keywordAction' ? 'text-green-600 truncate font-semibold text-[16px] mt-2' : 'hidden'}`}>{reply.name}</h4>
+
+                                <p className='break-words mt-2'>{reply.content}</p>
                             </div>
                         </div>
                     ))}

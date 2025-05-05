@@ -6,6 +6,8 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Slider from '@mui/material/Slider';
 import { toast } from 'react-toastify';
+import ReplyMaterial from './Pages/ReplyMaterial.jsx';
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -16,14 +18,18 @@ function CreateKeyword({ onClose, editData }) {
     const [popUp, setPopUp] = useState(false);
     const [newKeyword, setNewKeyword] = useState('');
     const modalRef = useRef(null);
-
     const [keywordConfig, setKeywordConfigState] = useState({
+        id: uuidv4(),
         keywords: [],
         matchingMethod: "fuzzy",
         fuzzyThreshold: 70,
         replyMaterial: 'Sample Reply',
     });
     const [activeStep, setActiveStep] = useState(0);
+
+
+
+    const [replyMaterial, setReplyMaterial] = useState(false);
 
 
     const dispatch = useDispatch();
@@ -88,10 +94,9 @@ function CreateKeyword({ onClose, editData }) {
     }, [popUp]);
 
     const handleSubmit = () => {
-        console.log("Final Config:", keywordConfig);
-        dispatch(addKeyword(keywordConfig));
+        
         setActiveStep(prev => prev + 1);
-        toast.success("Keyword added successfully!");
+        setReplyMaterial(true);
 
     };
 
@@ -100,6 +105,7 @@ function CreateKeyword({ onClose, editData }) {
         setNewKeyword('');
     }
 
+   
 
 
 
@@ -107,14 +113,15 @@ function CreateKeyword({ onClose, editData }) {
         <>
             <div className='p-8'>
                 <div
-                    className='inline-block p-2 hover:bg-gray-100 rounded-lg font-semibold cursor-pointer'
+                    className='relative inline text-gray-700 z-20 p-2 hover:bg-gray-100 rounded-lg font-semibold cursor-pointer'
                     onClick={onClose}
                 >
                     <i className='fa-solid fa-arrow-left mr-2'></i>
                     <span>Back</span>
                 </div>
 
-                <div className='mt-8'>
+
+                <div className='mt-2'>
                     <Stepper
                         activeStep={activeStep}
                         alternativeLabel
@@ -165,124 +172,134 @@ function CreateKeyword({ onClose, editData }) {
                     </Stepper>
                 </div>
 
-                <div className='mt-18 bg-gray-100 p-8 rounded-lg'>
-                    <div className='flex flex-wrap gap-6 items-center'>
-                        <h4 className='font-semibold'>Keyword(s):</h4>
+                {replyMaterial === false && (
+                    <div className='mt-18 bg-gray-100 text-gray-700 p-8 rounded-lg'>
+                        <div className='flex flex-wrap gap-6 items-center'>
+                            <h4 className='font-semibold'>Keyword(s):</h4>
 
-                        <ul className='text-gray-700 flex flex-wrap gap-6 items-center'>
-                            {keywordConfig.keywords.map((kw, index) => (
-                                <li key={index} className='flex bg-white py-[9px] max-w-[200px] px-1 pl-3 rounded-lg justify-between items-center'>
-                                    <span className='truncate'>{kw}</span>
-                                    <i
-                                        className="fa-solid fa-xmark ml-2 text-lg text-red-600 bg-red-100 cursor-pointer hover:scale-105 rounded-full px-1 py-[2px]"
-                                        onClick={() => handleDelete(kw)}
-                                    ></i>
-                                </li>
-                            ))}
-                        </ul>
+                            <ul className='text-gray-700 flex flex-wrap gap-6 items-center'>
+                                {keywordConfig.keywords.map((kw, index) => (
+                                    <li key={index} className='flex bg-white py-[9px] max-w-[200px] px-1 pl-3 rounded-lg justify-between items-center'>
+                                        <span className='truncate'>{kw}</span>
+                                        <i
+                                            className="fa-solid fa-xmark ml-2 text-lg text-red-600 bg-red-100 cursor-pointer hover:scale-105 rounded-full px-1 py-[2px]"
+                                            onClick={() => handleDelete(kw)}
+                                        ></i>
+                                    </li>
+                                ))}
+                            </ul>
 
-                        <button
-                            type='button'
-                            onClick={() => setPopUp(true)}
-                            className='border-dashed border-1 text-nowrap py-2 hover:bg-green-50 cursor-pointer px-2 rounded-md font-semibold border-green-600 text-green-600'
-                        >
-                            Add Keyword +
-                        </button>
-                    </div>
-
-                    <div className='mt-18 flex gap-8'>
-                        <h4 className='font-semibold'>Message matching methods:</h4>
-                        <div className="flex gap-8 font-semibold text-gray-700">
-                            {['fuzzy', 'exact', 'contains'].map(method => (
-                                <label key={method}>
-                                    <input
-                                        type="radio"
-                                        name="matchingMethod"
-                                        className="mr-2 accent-green-600"
-                                        value={method}
-                                        checked={keywordConfig.matchingMethod === method}
-                                        onChange={(e) =>
-                                            setKeywordConfigState(prev => ({
-                                                ...prev,
-                                                matchingMethod: e.target.value
-                                            }))
-                                        }
-                                    />
-                                    {method.charAt(0).toUpperCase() + method.slice(1)} matching
-                                </label>
-                            ))}
+                            <button
+                                type='button'
+                                onClick={() => setPopUp(true)}
+                                className='border-dashed border-1 text-nowrap py-2 hover:bg-green-50 cursor-pointer px-2 rounded-md font-semibold border-green-600 text-green-600'
+                            >
+                                Add Keyword +
+                            </button>
                         </div>
-                    </div>
 
-                    {keywordConfig.matchingMethod === "fuzzy" && (
-                        <div className="mt-22">
-                            <Slider
-                                value={keywordConfig.fuzzyThreshold}
-                                onChange={(e, newValue) =>
-                                    setKeywordConfigState(prev => ({
-                                        ...prev,
-                                        fuzzyThreshold: newValue
-                                    }))
-                                }
-                                min={0}
-                                max={100}
-                                step={1}
-                                valueLabelDisplay="on"
-                                valueLabelFormat={(value) => `${value}%`}
-                                sx={{
-                                    width: '50%',
-                                    height: '10px',
-                                    color: '#00A63E',
-                                    '& .MuiSlider-valueLabel': {
-                                        backgroundColor: '#F0FDF4',
+                        <div className='mt-18 flex gap-8'>
+                            <h4 className='font-semibold'>Message matching methods:</h4>
+                            <div className="flex gap-8 font-semibold text-gray-700">
+                                {['fuzzy', 'exact', 'contains'].map(method => (
+                                    <label key={method}>
+                                        <input
+                                            type="radio"
+                                            name="matchingMethod"
+                                            className="mr-2 accent-green-600"
+                                            value={method}
+                                            checked={keywordConfig.matchingMethod === method}
+                                            onChange={(e) =>
+                                                setKeywordConfigState(prev => ({
+                                                    ...prev,
+                                                    matchingMethod: e.target.value
+                                                }))
+                                            }
+                                        />
+                                        {method.charAt(0).toUpperCase() + method.slice(1)} matching
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {keywordConfig.matchingMethod === "fuzzy" && (
+                            <div className="mt-22">
+                                <Slider
+                                    value={keywordConfig.fuzzyThreshold}
+                                    onChange={(e, newValue) =>
+                                        setKeywordConfigState(prev => ({
+                                            ...prev,
+                                            fuzzyThreshold: newValue
+                                        }))
+                                    }
+                                    min={0}
+                                    max={100}
+                                    step={1}
+                                    valueLabelDisplay="on"
+                                    valueLabelFormat={(value) => `${value}%`}
+                                    sx={{
+                                        width: '50%',
+                                        height: '10px',
                                         color: '#00A63E',
-                                        border: '1px solid #00A63E',
-                                        borderRadius: '4px',
-                                        fontWeight: 'bold',
-                                        fontSize: '18px',
-                                        '&::before': {
+                                        '& .MuiSlider-valueLabel': {
+                                            backgroundColor: '#F0FDF4',
+                                            color: '#00A63E',
+                                            border: '1px solid #00A63E',
+                                            borderRadius: '4px',
+                                            fontWeight: 'bold',
+                                            fontSize: '18px',
+                                            '&::before': {
 
-                                            borderRight: '1px solid #00A63E',
+                                                borderRight: '1px solid #00A63E',
 
-                                            borderBottom: '1px solid #00A63E',
+                                                borderBottom: '1px solid #00A63E',
 
+                                            },
                                         },
-                                    },
-                                    '& .MuiSlider-thumb': {
-                                        '&:hover, &.Mui-focusVisible, &.Mui-active': {
-                                            boxShadow: '0px 0px 0px 8px rgba(123, 241, 168, 0.6)'
+                                        '& .MuiSlider-thumb': {
+                                            '&:hover, &.Mui-focusVisible, &.Mui-active': {
+                                                boxShadow: '0px 0px 0px 8px rgba(123, 241, 168, 0.6)'
 
+                                            },
                                         },
-                                    },
-                                }}
-                            />
-                        </div>
-                    )}
+                                    }}
+                                />
+                            </div>
+                        )}
 
-                    <div className='mt-14 flex gap-8'>
-                        <button
-                            type='button'
-                            className='bg-green-600 cursor-pointer hover:bg-green-700 text-white py-2 rounded-md px-2'
-                            onClick={handleSubmit}
-                        >
-                            Next Step
-                        </button>
+                        <div className='mt-14 flex gap-8'>
+                            <button
+                                type='button'
+                                className='bg-green-600 cursor-pointer hover:bg-green-700 text-white py-2 rounded-md px-2'
+                                onClick={handleSubmit}
+                            >
+                                Next Step
+                            </button>
 
 
-                        <button
-                            type="button"
-                            onClick={handleEdit}
-                            className={`text-white py-2 px-2 rounded-md ${!editData || JSON.stringify(editData) === JSON.stringify(keywordConfig)
-                                ? 'bg-gray-400 cursor-not-allowed pointer-events-none'
-                                : 'bg-green-600 hover:bg-green-700 cursor-pointer pointer-events-auto'
-                                }
+                            <button
+                                type="button"
+                                onClick={handleEdit}
+                                className={`text-white py-2 px-2 rounded-md ${!editData || JSON.stringify(editData) === JSON.stringify(keywordConfig)
+                                    ? 'bg-gray-400 cursor-not-allowed pointer-events-none'
+                                    : 'bg-green-600 hover:bg-green-700 cursor-pointer pointer-events-auto'
+                                    }
                             `}
-                        >
-                            Save Changes
-                        </button>
+                            >
+                                Save Changes
+                            </button>
 
-                    </div>
-                </div>
+                        </div>
+                    </div>)}
+
+
+                {replyMaterial && (
+                    <ReplyMaterial Keywords={keywordConfig} onClose={onClose} />
+                )}
+
+
+
+
             </div>
 
             {popUp && (

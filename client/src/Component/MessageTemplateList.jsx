@@ -18,7 +18,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
 
   useEffect(() => {
     dispatch(fetchTemplates());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     setCurrentPage(1);

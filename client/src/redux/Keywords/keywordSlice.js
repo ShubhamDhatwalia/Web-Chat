@@ -12,6 +12,10 @@ const keywordSlice = createSlice({
       state.keywords.push(action.payload);
       localStorage.setItem('keywords', JSON.stringify(state.keywords));
     },
+    updateKeyword: (state, action) => {
+      const { index, updatedKeyword } = action.payload;
+      state.keywords[index] = updatedKeyword;
+    },
     removeKeyword: (state, action) => {
       state.keywords.splice(action.payload, 1); // Remove by index
       localStorage.setItem('keywords', JSON.stringify(state.keywords));
@@ -28,5 +32,5 @@ const keywordSlice = createSlice({
   },
 });
 
-export const { addKeyword, removeKeyword, editKeyword } = keywordSlice.actions;
+export const { addKeyword, removeKeyword, editKeyword, updateKeyword } = keywordSlice.actions;
 export default keywordSlice.reducer;

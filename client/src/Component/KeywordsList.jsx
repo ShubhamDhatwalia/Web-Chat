@@ -57,7 +57,7 @@ function KeywordsList({ onOpen, onEdit, onSearch }) {
 
 
     return (
-        <div className='flex flex-col justify-between '>
+        <div className='flex flex-col justify-between text-gray-700'>
             <div className='mt-0 px-8 max-h-[72vh] min-h-[72vh] overflow-auto'>
                 <table className='table-auto w-full   '>
                     <thead className='text-xl '>
@@ -100,11 +100,23 @@ function KeywordsList({ onOpen, onEdit, onSearch }) {
                                     </td>
 
 
-                                    <td className='py-6 pr-22'>{kw.replyMaterial || 'None'}</td>
+                                    <td className='py-6 pr-22 text-sm flex gap-2 justify-center'>
+                                        {Array.isArray(kw.replyMaterial) && kw.replyMaterial.length > 0 ? (
+                                            kw.replyMaterial.map((item, index) => (
+                                                <div key={index} className='border border-[FF9933] bg-[#FFFAF5] rounded-md inline p-2 text-[#FF9933]'>
+                                                    <strong>{item.replyType}</strong>: <span className='truncate inline-block overflow-hidden whitespace-nowrap text-ellipsis max-w-[60px] align-bottom'>{item.name}</span>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            'None'
+                                        )}
+                                    </td>
+
+
                                     <td className='py-6 text-right'>
                                         <div className='flex gap-4 justify-end'>
-                                            <i className="fa-solid fa-pen-to-square bg-gray-100 p-2 rounded-lg hover:text-blue-600 hover:bg-blue-100 cursor-pointer" onClick={() => handleEdit(index)} ></i>
-                                            <i className="fa-solid fa-trash bg-gray-100 p-2 rounded-lg hover:text-red-600 hover:bg-red-100 cursor-pointer" onClick={() => handleDelete(index)}></i>
+                                            <i className="fa-solid fa-pen-to-square bg-gray-100 p-2 rounded-lg text-blue-500 hover:text-blue-600 hover:bg-blue-100 cursor-pointer" onClick={() => handleEdit(index)} ></i>
+                                            <i className="fa-solid fa-trash bg-gray-100 p-2 rounded-lg text-red-500 hover:text-red-600 hover:bg-red-100 cursor-pointer" onClick={() => handleDelete(index)}></i>
                                         </div>
                                     </td>
                                 </tr>

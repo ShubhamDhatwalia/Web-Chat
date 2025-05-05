@@ -12,8 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 
-const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
-const VITE_PHONE_NUMBER_ID = import.meta.env.VITE_PHONE_NUMBER_ID;
+// const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
+// const VITE_PHONE_NUMBER_ID = import.meta.env.VITE_PHONE_NUMBER_ID;
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
