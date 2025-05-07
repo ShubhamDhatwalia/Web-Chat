@@ -480,6 +480,12 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 formData.append('file', headerImage);
                 formData.append('type', headerImage.type);
                 formData.append('messaging_product', 'whatsapp');
+                
+                console.log(formData);
+
+                for (let pair of formData.entries()) {
+                    console.log(`${pair[0]}:`, pair[1]);
+                }
 
 
                 const uploadResponse = await axios.post(
