@@ -11,7 +11,6 @@ function KeywordAction() {
     const [searchTerm, setSearchTerm] = useState('');
 
 
-    console.log(searchTerm);
 
 
     const handleNewKeyword = () => {
@@ -32,7 +31,7 @@ function KeywordAction() {
         <>
             {isOpen ? <CreateKeyword onClose={() => setIsOpen(false)} editData={editData} /> : (
                 <>
-                    <div className='p-8  mb-[7px] bg-gray-100 flex items-center text-gray-700 justify-between'>
+                    <div className='p-8  mb-[7px] bg-gray-100 flex items-center text-gray-600 justify-between'>
                         <div className='flex items-center gap-12'>
                             <div>
                                 <h2 className='text-2xl font-semibold'>Add Keyword Action List</h2>

@@ -21,12 +21,14 @@ function CreateKeyword({ onClose, editData }) {
     const [keywordConfig, setKeywordConfigState] = useState({
         id: uuidv4(),
         keywords: [],
+        triggered: 0,
         matchingMethod: "fuzzy",
         fuzzyThreshold: 70,
         replyMaterial: 'Sample Reply',
     });
     const [activeStep, setActiveStep] = useState(0);
-
+    
+    
 
 
     const [replyMaterial, setReplyMaterial] = useState(false);
@@ -72,9 +74,6 @@ function CreateKeyword({ onClose, editData }) {
             keywords: prev.keywords.filter(k => k !== kw)
         }));
 
-        dispatch(removeKeyword(kw));
-
-
     };
 
     useEffect(() => {
@@ -93,7 +92,13 @@ function CreateKeyword({ onClose, editData }) {
         };
     }, [popUp]);
 
+    
     const handleSubmit = () => {
+
+        if (keywordConfig.keywords.length === 0) {
+            toast.error("Please add at least one keyword before proceeding.");
+            return;
+        }
         
         setActiveStep(prev => prev + 1);
         setReplyMaterial(true);

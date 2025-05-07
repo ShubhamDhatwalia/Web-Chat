@@ -12,7 +12,7 @@ const textReplySlice = createSlice({
     reducers: {
         addTextReply: (state, action) => {
             state.textReplys.push(action.payload);
-            console.log(state.textReplys);
+           
             localStorage.setItem('textReply', JSON.stringify(state.textReplys));
 
         },

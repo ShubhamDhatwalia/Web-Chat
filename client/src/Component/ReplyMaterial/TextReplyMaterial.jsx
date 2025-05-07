@@ -8,6 +8,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { grey } from '@mui/material/colors';
 import { addKeyword } from '../../redux/Keywords/keywordSlice.js';
 import { updateKeyword } from '..//../redux/Keywords/keywordSlice.js'
+import { addSelectedReply, removeSelectedReply, clearSelectedReplies } from '../../redux/selectedReplies/selectedReplies.js';
 import { toast } from 'react-toastify';
 
 
@@ -21,34 +22,40 @@ function TextReplyMaterial({ onClose, Keywords }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [textMaterial, setTextMaterial] = useState({
-        replyType: "text",
+        replyType: "Text",
         name: "",
         content: ""
     })
     const [editIndex, setEditIndex] = useState(null);
-    const [selected, setSelected] = useState([]);
-
-
-
-
-
-    useEffect(() => {
-        if (Array.isArray(Keywords?.replyMaterial)) {
-            setSelected(Keywords.replyMaterial);
-        } else {
-            setSelected([]);
-        }
-    }, [Keywords]);
-
-
-    const { keywords } = useSelector((state) => state.keyword);
-
-
-
 
 
     const dispatch = useDispatch();
 
+
+
+
+
+    const allKeywords = useSelector((state) => state.keyword.keywords);
+
+    const selectedKeyword = useSelector((state) => state.keyword?.keywords?.find(kw => kw?.id === Keywords?.id));
+
+    const selectedKeywordReplies = selectedKeyword?.replyMaterial;
+
+    const selectedReplies = useSelector((state) => state.selectedReplies.selectedReplies);
+    console.log(selectedReplies)
+
+
+    useEffect(() => {
+        if (selectedKeywordReplies && selectedKeywordReplies.length > 0) {
+           
+            dispatch(addSelectedReply(selectedKeywordReplies));
+        }
+    }, [dispatch, selectedKeywordReplies]);
+
+
+
+
+    const { keywords } = useSelector((state) => state.keyword);
 
     const { textReplys } = useSelector((state) => state.textReplys);
 
@@ -72,18 +79,33 @@ function TextReplyMaterial({ onClose, Keywords }) {
         setTextMaterial(textReplys[index]);
         setEditIndex(index);
         setIsOpen(true);
+
     };
 
     const handleClose = () => {
         setIsOpen(false);
-        setTextMaterial({ replyType: "text", name: "", content: "" });
+        setTextMaterial({ replyType: "Text", name: "", content: "" });
     }
+
+
 
     const handleDelete = (index) => {
-        dispatch(removeTextReply(index));
+        const replyToDelete = textReplys[index];
 
-    }
-    
+        const isUsedInKeywords = allKeywords.some(keyword =>
+            keyword.replyMaterial?.some(material => material.name === replyToDelete.name)
+        );
+
+        if (isUsedInKeywords) {
+            toast.warning("Reply material is in use");
+            return;
+        }
+
+        dispatch(removeTextReply(index));
+        toast.success("Reply material deleted successfully");
+    };
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -93,12 +115,17 @@ function TextReplyMaterial({ onClose, Keywords }) {
                 oldReply: textReplys[editIndex],
                 newReply: textMaterial
             }));
+
+            toast.success("Reply material updated successfully");
+
         } else {
             dispatch(addTextReply(textMaterial));
+            toast.success("Reply material added successfully");
+
         }
 
         setIsOpen(false);
-        setTextMaterial({ replyType: "text", name: "", content: "" });
+        setTextMaterial({ replyType: "Text", name: "", content: "" });
         setEditIndex(null);
 
 
@@ -107,32 +134,44 @@ function TextReplyMaterial({ onClose, Keywords }) {
 
 
     const handleFinalSubmit = () => {
+
         const updatedKeywords = {
             ...Keywords,
-            replyMaterial: selected,
+            replyMaterial: selectedReplies,
         };
 
 
-
-        const existingKeywordIndex = keywords.findIndex(
-            (kw) => kw.id === Keywords.id 
-        );
-
-        if (existingKeywordIndex !== -1) {
-
-            dispatch(updateKeyword({ index: existingKeywordIndex, updatedKeyword: updatedKeywords }));
-            toast.success("Keyword updated successfully");
-
-            onClose(true);
-
-        } else {
-            // Add if it's new
-            dispatch(addKeyword(updatedKeywords));
-            toast.success("Keywords created successfully");
-            onClose(true);
-
+        if (selectedReplies.length === 0) {
+            toast.error("Please select at least one material")
         }
+        else {
+            const existingKeywordIndex = keywords.findIndex(
+                (kw) => kw.id === Keywords.id
+            );
+
+            if (existingKeywordIndex !== -1) {
+
+                dispatch(updateKeyword({ index: existingKeywordIndex, updatedKeyword: updatedKeywords }));
+                toast.success("Keyword updated successfully");
+                dispatch(clearSelectedReplies(null));
+
+                onClose(true);
+
+            } else {
+                // Add if it's new
+                dispatch(addKeyword(updatedKeywords));
+                toast.success("Keywords created successfully");
+                dispatch(clearSelectedReplies(null));
+
+                onClose(true);
+
+            }
+        }
+
+
+
     };
+
 
 
 
@@ -155,20 +194,21 @@ function TextReplyMaterial({ onClose, Keywords }) {
 
                         </form>
 
-                        <div className='text-gray-500 font-semibold flex items-center flex-wrap gap-2'>
+                        {path == '/keywordAction' && (<div className='text-gray-500 font-semibold flex items-center flex-wrap gap-2'>
                             Selected Material:
-                            {selected?.map((reply, i) => (
+                            {selectedReplies?.map((reply, i) => (
                                 <div
                                     key={i}
-                                    className='text-xs border text-nowrap border-[#FF9933] bg-[#FFFAF5] rounded-md p-2 text-[#FF9933] max-w-[100px] overflow-hidden'
+                                    className='text-xs border text-nowrap border-[#FF9933] bg-[#FFFAF5] rounded-md p-2 text-[#FF9933] max-w-[150px]  overflow-hidden'
                                 >
                                     <span>{reply.replyType}</span>:{" "}
                                     <span className='truncate inline-block overflow-hidden whitespace-nowrap text-ellipsis max-w-[60px] align-bottom'>
-                                        {reply.name}
+                                        {reply.name || reply.currentReply.name}
                                     </span>
                                 </div>
                             ))}
                         </div>
+                        )}
 
 
 
@@ -176,12 +216,13 @@ function TextReplyMaterial({ onClose, Keywords }) {
 
 
                     <div className='flex gap-4'>
-                        <button type='button ' className='bg-red-50 border border-red-600 cursor-pointer text-red-600  px-4 py-1 rounded-md hover:bg-red-100 transition duration-200' onClick={onClose}>
-                            Cancel
-                        </button>
-                        <button type='button ' className='bg-green-50 border border-green-600 cursor-pointer text-green-600  px-4 py-1 rounded-md hover:bg-green-100 transition duration-200' onClick={handleFinalSubmit}>
-                            Save
-                        </button>
+                        {path == '/keywordAction' && (<>
+                            <button type='button ' className='bg-red-50 border border-red-600 cursor-pointer text-red-600  px-4 py-1 rounded-md hover:bg-red-100 transition duration-200' onClick={onClose}>
+                                Cancel
+                            </button>
+                            <button type='button ' className='bg-green-50 border border-green-600 cursor-pointer text-green-600  px-4 py-1 rounded-md hover:bg-green-100 transition duration-200' onClick={handleFinalSubmit}>
+                                Save
+                            </button></>)}
                         <button type='button ' className='bg-green-600 cursor-pointer text-white  px-4 py-2 rounded-md hover:bg-green-700 transition duration-200' onClick={() => setIsOpen(true)}>
                             Add
                         </button>
@@ -226,32 +267,37 @@ function TextReplyMaterial({ onClose, Keywords }) {
                     </div>
                 )}
 
-                <div className='mt-6 mb-4 flex gap-4 flex-wrap h-[70vh] justify-between px-4 overflow-auto'>
+                <div className='mt-6 mb-4 grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))] items-start max-h-[70vh] px-4 overflow-auto'>
                     {textReplys.map((reply, index) => (
-                        <div key={index} className='bg-white rounded-lg p-4 max-w-[300px] min-h-[200px] w-full hover:drop-shadow-xl'>
+                        <div key={index} className='bg-white rounded-lg p-4 max-w-[100%] h-[200px]  w-full hover:drop-shadow-xl'>
                             <div className='flex items-center justify-between gap-4'>
 
-                                <Checkbox
-                                    color="success"
-                                    checked={selected.some(item => item.name === reply.name && item.content === reply.content)}
-                                    onChange={(e) => {
-                                        const isChecked = e.target.checked;
-                                        const currentReply = textReplys[index];
+                                {path == '/keywordAction' && (
+                                    <Checkbox
+                                        color="success"
+                                        checked={selectedReplies?.some(item => item.name === reply.name)}
+                                        onChange={(e) => {
+                                            const isChecked = e.target.checked;
+                                            const currentReply = textReplys[index];
 
-                                        setSelected(prev =>
-                                            isChecked
-                                                ? [...prev, currentReply]
-                                                : prev.filter(item => item.name !== currentReply.name || item.content !== currentReply.content)
-                                        );
-                                    }}
-                                    sx={{
-                                        padding: 0,
-                                        '& svg': {
-                                            fontSize: 32,
-                                        },
-                                        color: grey[500],
-                                    }}
-                                />
+                                            if (isChecked) {
+
+                                                dispatch(addSelectedReply(currentReply));
+                                            } else {
+
+                                                dispatch(removeSelectedReply(currentReply));
+                                            }
+                                        }}
+                                        sx={{
+                                            padding: 0,
+                                            '& svg': {
+                                                fontSize: 32,
+                                            },
+                                            color: grey[500],
+                                        }}
+                                    />
+
+                                )}
 
 
                                 <h4 className={` ${path == '/keywordAction' ? 'hidden' : ' truncate font-semibold text-green-600'}`}>{reply.name}</h4>
@@ -273,10 +319,13 @@ function TextReplyMaterial({ onClose, Keywords }) {
                                     </div>
                                 </div>
                             </div>
-                            <div className='mt-4 text-sm max-h-[200px] overflow-auto'>
+                            <div className='mt-4 text-sm '>
                                 <h4 className={` ${path == '/keywordAction' ? 'text-green-600 truncate font-semibold text-[16px] mt-2' : 'hidden'}`}>{reply.name}</h4>
 
-                                <p className='break-words mt-2'>{reply.content}</p>
+                                <div className=' max-h-[100px] leading-4.5 overflow-auto'>
+                                    <p className='break-words mt-2   whitespace-pre-wrap'>{reply.content}</p>
+
+                                </div>
                             </div>
                         </div>
                     ))}

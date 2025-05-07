@@ -57,7 +57,33 @@ export async function sendTextMessage(req, res) {
     }
 }
 
+async function sendTemplateMessage(to, templateName, languageCode = 'en_US') {
+    const url = `https://graph.facebook.com/v17.0/${process.env.PHONE_NUMBER_ID}/messages`;
 
+    const data = {
+        messaging_product: 'whatsapp',
+        to,
+        type: 'template',
+        template: {
+            name: templateName,
+            language: {
+                code: languageCode
+            }
+        }
+    };
+
+    try {
+        const response = await axios.post(url, data, {
+            headers: {
+                Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Template message sent:', response.data);
+    } catch (error) {
+        console.error('Failed to send template message:', error.response?.data || error.message);
+    }
+}
 
 
 // Function to get media URL using media ID
@@ -100,11 +126,14 @@ export async function handleWebhook(req, res) {
 
         if (messageType === 'text') {
             const textContent = message.text.body;
+            if(textContent.LowerCase() === 'hey' || textContent.LowerCase() === 'hi'){
+                console.log("keyword mattched")
+                await sendTemplateMessage(senderId, welcome_template)
+            }
             console.log(`Received text message: ${textContent}`);
         } else if (messageType === 'audio') {
             const audioId = message.audio.id;
             console.log(`Received audio message with ID: ${audioId}`);
-            // Fetch media URL
             const mediaUrl = await getMediaUrl(audioId);
             if (mediaUrl) {
                 console.log(`Audio message URL: ${mediaUrl}`);
@@ -114,14 +143,12 @@ export async function handleWebhook(req, res) {
         }
     }
 
-    // Handle message status updates
     if (statusUpdate) {
         console.log('Message status update:', JSON.stringify(statusUpdate, null, 2));
 
         const { status, id, timestamp, recipient_id } = statusUpdate;
         
         
-        // Custom logic for message status (e.g., store status in database, notify user, etc.)
         if (status === 'delivered') {
             console.log('Message delivered successfully!');
         } else if (status === 'read') {
@@ -129,6 +156,6 @@ export async function handleWebhook(req, res) {
         }
     }
 
-    res.sendStatus(200); // Respond with success
+    res.sendStatus(200); 
 }
 

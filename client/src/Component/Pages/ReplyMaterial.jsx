@@ -28,7 +28,7 @@ function ReplyMaterial({ onClose, Keywords}) {
 
           {selected === 'Text' && <TextReplyMaterial onClose={onClose} Keywords={Keywords} />}
 
-          {selected === 'Templates' && <Templates />}
+          {selected === 'Templates' && <Templates onClose={onClose} Keywords={Keywords} />}
           
 
         </div>
