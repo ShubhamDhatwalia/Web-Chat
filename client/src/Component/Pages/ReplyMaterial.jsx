@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SideBar from '../ReplyMaterial/Sidebar';
 import TextReplyMaterial from '../ReplyMaterial/TextReplyMaterial';
 import Templates from '../ReplyMaterial/Templates';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 
 
@@ -10,10 +12,25 @@ import Templates from '../ReplyMaterial/Templates';
 
 function ReplyMaterial({ onClose, Keywords}) {
   const [selected, setSelected] = useState('Text');
+  const [selectedReplies, setSelectedReplies] = useState([]);
 
- 
 
-  
+
+
+
+  const selectedKeyword = useSelector((state) => state.keyword?.keywords?.find(kw => kw?.id === Keywords?.id));
+
+  const selectedKeywordReplies = selectedKeyword?.replyMaterial;
+
+  useEffect(() => {
+          if (selectedKeywordReplies) {
+              setSelectedReplies(selectedKeywordReplies);
+          }
+      }, [selectedKeywordReplies]);
+   
+
+
+
 
 
   return (
@@ -26,9 +43,9 @@ function ReplyMaterial({ onClose, Keywords}) {
 
         <div className=' flex-grow'>
 
-          {selected === 'Text' && <TextReplyMaterial onClose={onClose} Keywords={Keywords} />}
+          {selected === 'Text' && <TextReplyMaterial onClose={onClose} Keywords={Keywords} selectedReplies={selectedReplies} setSelectedReplies={setSelectedReplies} />}
 
-          {selected === 'Templates' && <Templates onClose={onClose} Keywords={Keywords} />}
+          {selected === 'Templates' && <Templates onClose={onClose} Keywords={Keywords} selectedReplies={selectedReplies} setSelectedReplies={setSelectedReplies} />}
           
 
         </div>

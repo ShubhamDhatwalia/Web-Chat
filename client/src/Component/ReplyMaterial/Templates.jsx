@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTemplates } from '../../redux/templateThunks.js';
-
 import { deleteTemplate } from '../../redux/templateThunks.js';
 import Skeleton from '@mui/material/Skeleton';
 import { addKeyword } from '../../redux/Keywords/keywordSlice.js';
@@ -12,7 +10,6 @@ import { updateKeyword } from '..//../redux/Keywords/keywordSlice.js'
 import { toast } from 'react-toastify';
 import Checkbox from '@mui/material/Checkbox';
 import { grey } from '@mui/material/colors';
-import { addSelectedReply, removeSelectedReply, clearSelectedReplies } from '../../redux/selectedReplies/selectedReplies.js';
 
 
 
@@ -22,7 +19,7 @@ import { addSelectedReply, removeSelectedReply, clearSelectedReplies } from '../
 
 
 
-function Templates({ onClose, Keywords }) {
+function Templates({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -31,26 +28,6 @@ function Templates({ onClose, Keywords }) {
 
 
     const { keywords } = useSelector((state) => state.keyword);
-
-
-    const selectedKeyword = useSelector((state) => state.keyword?.keywords?.find(kw => kw?.id === Keywords?.id));
-
-    const selectedKeywordReplies = selectedKeyword?.replyMaterial;
-
-
-
-    const selectedReplies = useSelector((state) => state.selectedReplies.selectedReplies);
-    console.log(selectedReplies)
-
-
-    useEffect(() => {
-        if (selectedKeywordReplies && selectedKeywordReplies.length > 0) {
-
-            dispatch(addSelectedReply(selectedKeywordReplies));
-        }
-    }, [dispatch, selectedKeywordReplies]);
-
-
 
 
 
@@ -102,22 +79,16 @@ function Templates({ onClose, Keywords }) {
 
                 dispatch(updateKeyword({ index: existingKeywordIndex, updatedKeyword: updatedKeywords }));
                 toast.success("Keyword updated successfully");
-                dispatch(clearSelectedReplies(null));
-
-
                 onClose(true);
 
             } else {
-                // Add if it's new
+                
                 dispatch(addKeyword(updatedKeywords));
-                toast.success("Keywords created successfully");
-                dispatch(clearSelectedReplies(null));
-
+                toast.success("Keywords created successfully");       
                 onClose(true);
 
             }
         }
-
 
 
     };
@@ -241,21 +212,10 @@ function Templates({ onClose, Keywords }) {
                                                         const replyType = 'Template';
 
                                                         if (isChecked) {
-                                                            dispatch(addSelectedReply({
+                                                            setSelectedReplies(prev => [...prev, {replyType, currentReply}]);
 
-
-                                                                replyType,
-                                                                currentReply,
-
-                                                            }));
                                                         } else {
-                                                            dispatch(removeSelectedReply({
-
-
-                                                                replyType,
-                                                                currentReply,
-
-                                                            }));
+                                                           setSelectedReplies(prev => prev.filter(item => item.currentReply?.name !== currentReply.name));
                                                         }
                                                     }}
 

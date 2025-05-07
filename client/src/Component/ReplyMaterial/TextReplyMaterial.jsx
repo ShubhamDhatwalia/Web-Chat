@@ -8,7 +8,6 @@ import Checkbox from '@mui/material/Checkbox';
 import { grey } from '@mui/material/colors';
 import { addKeyword } from '../../redux/Keywords/keywordSlice.js';
 import { updateKeyword } from '..//../redux/Keywords/keywordSlice.js'
-import { addSelectedReply, removeSelectedReply, clearSelectedReplies } from '../../redux/selectedReplies/selectedReplies.js';
 import { toast } from 'react-toastify';
 
 
@@ -18,7 +17,7 @@ import { toast } from 'react-toastify';
 
 
 
-function TextReplyMaterial({ onClose, Keywords }) {
+function TextReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [textMaterial, setTextMaterial] = useState({
@@ -27,31 +26,12 @@ function TextReplyMaterial({ onClose, Keywords }) {
         content: ""
     })
     const [editIndex, setEditIndex] = useState(null);
-
-
     const dispatch = useDispatch();
 
-
-
+    
 
 
     const allKeywords = useSelector((state) => state.keyword.keywords);
-
-    const selectedKeyword = useSelector((state) => state.keyword?.keywords?.find(kw => kw?.id === Keywords?.id));
-
-    const selectedKeywordReplies = selectedKeyword?.replyMaterial;
-
-    const selectedReplies = useSelector((state) => state.selectedReplies.selectedReplies);
-    console.log(selectedReplies)
-
-
-    useEffect(() => {
-        if (selectedKeywordReplies && selectedKeywordReplies.length > 0) {
-           
-            dispatch(addSelectedReply(selectedKeywordReplies));
-        }
-    }, [dispatch, selectedKeywordReplies]);
-
 
 
 
@@ -153,7 +133,7 @@ function TextReplyMaterial({ onClose, Keywords }) {
 
                 dispatch(updateKeyword({ index: existingKeywordIndex, updatedKeyword: updatedKeywords }));
                 toast.success("Keyword updated successfully");
-                dispatch(clearSelectedReplies(null));
+                
 
                 onClose(true);
 
@@ -161,17 +141,12 @@ function TextReplyMaterial({ onClose, Keywords }) {
                 // Add if it's new
                 dispatch(addKeyword(updatedKeywords));
                 toast.success("Keywords created successfully");
-                dispatch(clearSelectedReplies(null));
-
                 onClose(true);
 
             }
         }
 
-
-
     };
-
 
 
 
@@ -282,10 +257,10 @@ function TextReplyMaterial({ onClose, Keywords }) {
 
                                             if (isChecked) {
 
-                                                dispatch(addSelectedReply(currentReply));
+                                                setSelectedReplies(prev => [...prev, currentReply]);
                                             } else {
 
-                                                dispatch(removeSelectedReply(currentReply));
+                                                setSelectedReplies(prev => prev.filter(item => item.name !== currentReply.name));
                                             }
                                         }}
                                         sx={{

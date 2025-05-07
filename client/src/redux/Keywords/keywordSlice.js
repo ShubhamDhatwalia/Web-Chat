@@ -30,61 +30,7 @@ const keywordSlice = createSlice({
         localStorage.setItem('keywords', JSON.stringify(state.keywords));
       }
     },
-    addReplyToKeyword: (state, action) => {
-      const { keywordId, reply } = action.payload;
-
-      const keyword = state.keywords.find(k => k.id === keywordId);
-
-      if (keyword) {
-        if (!Array.isArray(keyword.replyMaterial)) {
-          keyword.replyMaterial = [];
-        }
-
-        // Uniqueness check:
-        const exists = keyword.replyMaterial.some(r => {
-          if (reply.replyType === 'Text') {
-            return r.replyType === 'Text' && r.name === reply.name;
-          } else if (reply.replyType === 'Template') {
-            return (
-              r.replyType === 'Template' &&
-              r.currentReply?.name === reply.currentReply?.name
-            );
-          }
-          return false;
-        });
-
-        if (!exists) {
-          keyword.replyMaterial.push(reply);
-        }
-
-        localStorage.setItem('keywords', JSON.stringify(state.keywords));
-      }
-    },
-
-
-    removeReplyFromKeyword: (state, action) => {
-      const { keywordId, reply } = action.payload;
-
-      const keyword = state.keywords.find(k => k.id === keywordId);
-
-      if (keyword && Array.isArray(keyword.replyMaterial)) {
-        keyword.replyMaterial = keyword.replyMaterial.filter(r => {
-          if (reply.replyType === 'Text') {
-            return !(r.replyType === 'Text' && r.name === reply.name);
-          } else if (reply.replyType === 'Template') {
-            return !(
-              r.replyType === 'Template' &&
-              r.currentReply?.name === reply.currentReply?.name
-            );
-          }
-          return true;
-        });
-
-        localStorage.setItem('keywords', JSON.stringify(state.keywords));
-      }
-    }
-
-
+   
 
   },
 });

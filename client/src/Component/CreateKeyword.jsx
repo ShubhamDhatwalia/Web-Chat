@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { addKeyword, removeKeyword, editKeyword } from "../redux/Keywords/keywordSlice";
+import { editKeyword } from "../redux/Keywords/keywordSlice";
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
@@ -27,8 +27,8 @@ function CreateKeyword({ onClose, editData }) {
         replyMaterial: 'Sample Reply',
     });
     const [activeStep, setActiveStep] = useState(0);
-    
-    
+
+
 
 
     const [replyMaterial, setReplyMaterial] = useState(false);
@@ -40,12 +40,17 @@ function CreateKeyword({ onClose, editData }) {
 
 
     const handleEdit = () => {
+        if (!keywordConfig || keywordConfig.keywords.length == 0) {
+            toast.error("Keyword cannot be empty!");
+            return;
+        }
+
         dispatch(editKeyword({ oldKeyword: editData, newKeyword: keywordConfig }));
         setActiveStep(prev => prev + 1);
         onClose();
         toast.success("Keyword edited successfully!");
-
     };
+
 
     useEffect(() => {
         if (editData) {
@@ -92,14 +97,14 @@ function CreateKeyword({ onClose, editData }) {
         };
     }, [popUp]);
 
-    
+
     const handleSubmit = () => {
 
         if (keywordConfig.keywords.length === 0) {
             toast.error("Please add at least one keyword before proceeding.");
             return;
         }
-        
+
         setActiveStep(prev => prev + 1);
         setReplyMaterial(true);
 
@@ -110,7 +115,7 @@ function CreateKeyword({ onClose, editData }) {
         setNewKeyword('');
     }
 
-   
+
 
 
 
@@ -285,7 +290,7 @@ function CreateKeyword({ onClose, editData }) {
                             <button
                                 type="button"
                                 onClick={handleEdit}
-                                className={`text-white py-2 px-2 rounded-md ${!editData || JSON.stringify(editData) === JSON.stringify(keywordConfig)
+                                className={`text-white py-2 px-2 rounded-md ${!editData || JSON.stringify(editData) === JSON.stringify(keywordConfig) || keywordConfig.keywords.length === 0
                                     ? 'bg-gray-400 cursor-not-allowed pointer-events-none'
                                     : 'bg-green-600 hover:bg-green-700 cursor-pointer pointer-events-auto'
                                     }
