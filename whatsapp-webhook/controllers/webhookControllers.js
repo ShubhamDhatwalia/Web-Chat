@@ -126,7 +126,7 @@ export async function handleWebhook(req, res) {
 
         if (messageType === 'text') {
             const textContent = message.text.body;
-            if(textContent.toLowerCase() === 'hey' || textContent.LowerCase() === 'hi'){
+            if(textContent.toLowerCase() === 'hey' || textContent.toLowerCase() === 'hi'){
                 console.log("keyword mattched")
                 await sendTemplateMessage(senderId, welcome_template);
             }
