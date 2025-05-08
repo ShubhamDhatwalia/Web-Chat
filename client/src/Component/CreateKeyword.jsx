@@ -98,6 +98,7 @@ function CreateKeyword({ onClose, editData }) {
     }, [popUp]);
 
 
+
     const handleSubmit = () => {
 
         if (keywordConfig.keywords.length === 0) {
@@ -110,6 +111,7 @@ function CreateKeyword({ onClose, editData }) {
 
     };
 
+    
     const handleClose = () => {
         setPopUp(false);
         setNewKeyword('');

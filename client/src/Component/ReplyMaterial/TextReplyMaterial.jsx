@@ -26,9 +26,11 @@ function TextReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedRepl
         content: ""
     })
     const [editIndex, setEditIndex] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+
     const dispatch = useDispatch();
 
-    
+
 
 
     const allKeywords = useSelector((state) => state.keyword.keywords);
@@ -43,6 +45,13 @@ function TextReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedRepl
     const location = useLocation();
     const path = location.pathname;
 
+
+
+
+    const filteredReplies = textReplys.filter((reply) =>
+        reply.name.toLowerCase().includes(searchTerm.toLowerCase()) 
+        
+    );
 
 
 
@@ -133,7 +142,7 @@ function TextReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedRepl
 
                 dispatch(updateKeyword({ index: existingKeywordIndex, updatedKeyword: updatedKeywords }));
                 toast.success("Keyword updated successfully");
-                
+
 
                 onClose(true);
 
@@ -162,7 +171,8 @@ function TextReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedRepl
                             <div className='search-bar w-full flex items-center max-w-[500px]  relative'>
 
                                 <i className="fa-solid fa-magnifying-glass absolute right-4 text-gray-400"></i>
-                                <input type="text" className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[10px] focus:outline-none !font-medium' placeholder='Search here ... '
+                                <input type="text" className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[10px] focus:outline-none !font-medium' placeholder='Search here ... ' value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
                                 />
 
                             </div>
@@ -243,7 +253,7 @@ function TextReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedRepl
                 )}
 
                 <div className='mt-6 mb-4 grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))] items-start max-h-[70vh] px-4 overflow-auto'>
-                    {textReplys.map((reply, index) => (
+                    {filteredReplies.map((reply, index) => (
                         <div key={index} className='bg-white rounded-lg p-4 max-w-[100%] h-[200px]  w-full hover:drop-shadow-xl'>
                             <div className='flex items-center justify-between gap-4'>
 

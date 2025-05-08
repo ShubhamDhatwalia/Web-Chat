@@ -9,11 +9,12 @@ import { fetchPhoneNumbers } from '../../redux/phoneNumberThunks';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { addCampaign } from '../../redux/Campaign/campaignSlice';
 
 
 
-// const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
-// const VITE_PHONE_NUMBER_ID = import.meta.env.VITE_PHONE_NUMBER_ID;
+
+
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
@@ -35,6 +36,15 @@ function BroadCast() {
   });
 
 
+  const [editData, setEditData] = useState(null);
+  
+  const [broadcastNow, setBroadcastNow] = useState(null);
+
+  console.log(broadcastNow)
+
+
+  
+
   const { phoneNumbers, loading: numbersLoading, error: numbersError } = useSelector(state => state.phoneNumbers);
 
   useEffect(() => {
@@ -42,6 +52,15 @@ function BroadCast() {
   }, [dispatch]);
 
 
+  useEffect(() => {
+    if (editData) {
+      setFormInput(editData);
+    }
+  }, [editData]);
+
+
+
+  const campaigns = useSelector((state) => state.campaign.campaign);
 
 
   const { templates, loading, error } = useSelector((state) => state.templates);
@@ -59,13 +78,26 @@ function BroadCast() {
 
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    const selectedTemplate = templates.find(t => t.id === formInput.template);
-    console.log(selectedTemplate?.components);
 
-    for (const number of formInput.contactList) {
+  const handleBroadCast = (campaign) => {
+    setBroadcastNow(campaign);
+    handleSubmit();
+  }
+
+
+  const handleEditCampaign = (campaign) => {
+    setEditData(campaign);
+  }
+
+
+  const handleSubmit = async () => {
+
+
+    const selectedTemplate = templates.find(t => t.id === broadcastNow.template);
+
+
+    for (const number of broadcastNow.contactList) {
       const payload = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -98,8 +130,6 @@ function BroadCast() {
           //     ]
           //   });
           // }
-
-
 
 
 
@@ -178,14 +208,13 @@ function BroadCast() {
 
 
 
-      console.log("Final Payload:", payload);
-
 
 
       try {
         const response = await axios.post(`/sendMessage`, payload)
 
-        console.log(`Success for ${number}:`, response.data);
+        toast.success("Broadcast attempt finished.");
+        setBroadcastNow(null);
 
       } catch (error) {
         console.error(`Error for ${number}:`, error);
@@ -193,7 +222,6 @@ function BroadCast() {
       }
     }
 
-    toast.success("Broadcast attempt finished.");
   };
 
 
@@ -242,7 +270,7 @@ function BroadCast() {
     }
   };
 
-  // Handle "Select All" checkbox
+
   const handleSelectAll = () => {
     if (formInput.contactList.length === contacts.length) {
       setFormInput((prev) => ({
@@ -259,16 +287,44 @@ function BroadCast() {
 
 
 
+  const handleSave = () => {
+
+    const exists = campaigns.some(c =>
+      c.campaignName === formInput.campaignName &&
+      JSON.stringify(c) === JSON.stringify(formInput)
+    );
+
+    if (exists) {
+      toast.error("Campaign with identical data already exists");
+      return;
+    }
+
+    dispatch(addCampaign(formInput));
+    toast.success("Campaign saved successfully");
+
+    setFormInput({
+      campaignName: '',
+      whatsappNumber: '',
+      template: '',
+      contactList: [],
+    });
+  };
+
+
+
+
   return (
     <div className='bg-gray-100 px-[10px] py-[10px]'>
       <div className='flex justify-between gap-[10px] items-stretch'>
-        <div className='bg-white p-[15px] rounded-md flex-[66%]'>
-          <h2 className='font-bold text-xl mt-4'>Campaign/Broadcasting</h2>
-          <p className='font-semibold text-sm mt-[5px] text-gray-600'>
-            Run a Campaign to broadcast your message
-          </p>
+        <div className='bg-white p-[15px] pb-[10px] rounded-md flex-[66%]'>
+          <div className='px-2'>
+            <h2 className='font-bold text-xl mt-4'>Campaign/Broadcasting</h2>
+            <p className='font-semibold text-sm mt-[5px] text-gray-600'>
+              Run a Campaign to broadcast your message
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit} className=' text-gray-600 mt-[30px]'>
+          <form onSubmit={() => {handleBroadCast(formInput); handleSave() }} className=' text-gray-600 mt-[30px] px-2'>
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px]'>
               <TextField
                 label="Campaign Name"
@@ -566,7 +622,7 @@ function BroadCast() {
 
                 <button
                   type='button'
-                  className='font-semibold mr-[20px] text-nowrap bg-green-50 hover:bg-green-100 text-green-600 border border-green-600 cursor-pointer px-[12px] py-[5px] rounded-md'
+                  className='font-semibold mr-[20px] text-nowrap bg-green-50 hover:bg-green-100 text-green-600 border border-green-600 cursor-pointer px-[12px] py-[5px] rounded-md' onClick={handleSave}
                 >
                   Save
                 </button>
@@ -576,6 +632,7 @@ function BroadCast() {
                   <button
                     type='submit'
                     className='text-nowrap mr-[20px] font-semibold bg-green-600 hover:bg-green-700 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
+
                   >
                     Broadcast Now
                   </button>
@@ -599,7 +656,7 @@ function BroadCast() {
           </form>
 
           <div className='mt-24'>
-            <CampaignList />
+            <CampaignList onEdit={handleEditCampaign} broadcast={handleBroadCast} />
           </div>
 
         </div>

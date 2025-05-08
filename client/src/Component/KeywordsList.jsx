@@ -14,23 +14,33 @@ function KeywordsList({ onOpen, onEdit, onSearch }) {
     const [currentPage, setCurrentPage] = useState(1);
 
 
-
-
+    
 
 
     const filteredKeywords = keywords.filter((keyword) => {
         if (!onSearch) return true;
-
+    
         const search = onSearch.toLowerCase();
+    
+        const replyMaterialText = keyword.replyMaterial
+            .map((item) =>
+                Object.values(item)
+                    .map((v) => (typeof v === 'string' ? v : ''))
+                    .join(' ')
+            )
+            .join(' ')
+            .toLowerCase();
 
         return (
             keyword.keywords.some((kw) => kw.toLowerCase().includes(search)) ||
             keyword.matchingMethod.toLowerCase().includes(search) ||
-            keyword.replyMaterial.toLowerCase().includes(search) ||
+            replyMaterialText.includes(search) ||
             keyword.triggered?.toString().includes(search) ||
             keyword.fuzzyThreshold.toString().includes(search)
         );
     });
+    
+    
 
     const totalPages = Math.ceil(filteredKeywords.length / limit);
     const currentData = filteredKeywords.slice((currentPage - 1) * limit, currentPage * limit);
@@ -100,10 +110,10 @@ function KeywordsList({ onOpen, onEdit, onSearch }) {
                                     </td>
 
 
-                                    <td className='py-6 pr-22 text-sm flex gap-2 justify-center'>
+                                    <td className='py-6 pr-22 text-sm flex flex-wrap gap-2 justify-center'>
                                         {Array.isArray(kw.replyMaterial) && kw.replyMaterial.length > 0 ? (
                                             kw.replyMaterial.map((item, index) => (
-                                                <div key={index} className='border border-[FF9933] bg-[#FFFAF5] rounded-md inline p-2 text-[#FF9933]'>
+                                                <div key={index} className='border border-[FF9933] bg-[#FFFAF5] text-nowrap rounded-md inline p-2 text-[#FF9933]'>
                                                     <strong>{item.replyType }</strong>: <span className='truncate inline-block overflow-hidden whitespace-nowrap text-ellipsis max-w-[60px] align-bottom'>{item.name || item.currentReply?.name}</span>
                                                 </div>
                                             ))
@@ -145,7 +155,7 @@ function KeywordsList({ onOpen, onEdit, onSearch }) {
             <div className='flex items-center justify-between px-8 py-5 text-sm bg-gray-100'>
                 <div className='flex items-center text-lg font-semibold text-gray-600 gap-2'>
                     <span>Items per page:</span>
-                    <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="border border-gray-300 rounded px-2 py-1">
+                    <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="border focus:outline-none border-gray-300 rounded px-2 py-1">
                         {[2, 3, 10, 20, 50].map((n) => (
                             <option key={n} value={n}>{n}</option>
                         ))}

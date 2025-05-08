@@ -24,17 +24,41 @@ function Templates({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-
-
+    const [searchTerm, setSearchTerm] = useState('');
 
     const { keywords } = useSelector((state) => state.keyword);
-
-
 
 
     useEffect(() => {
         dispatch(fetchTemplates());
     }, []);
+
+    const { templates, loading } = useSelector((state) => state.templates);
+
+
+
+
+
+    const languageMap = {
+        en: 'English',
+        en_US: 'English (US)',
+        hi: 'Hindi',
+      };
+
+      const filteredTemplates = [...templates].reverse().filter((template) => {
+        const search = searchTerm.toLowerCase();
+        return (
+          template.status !== 'REJECTED' && (
+            template.name?.toLowerCase().includes(search) ||
+            template.category?.toLowerCase().includes(search) ||
+            template.status?.toLowerCase().includes(search) ||
+            languageMap[template.language]?.toLowerCase().includes(search) ||
+            template.id?.toLowerCase().includes(search)
+          )
+        );
+      });
+      
+
 
 
     const handleDelete = (e, template) => {
@@ -48,7 +72,6 @@ function Templates({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
     }
 
 
-    const { templates, loading } = useSelector((state) => state.templates);
 
 
 
@@ -82,9 +105,9 @@ function Templates({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
                 onClose(true);
 
             } else {
-                
+
                 dispatch(addKeyword(updatedKeywords));
-                toast.success("Keywords created successfully");       
+                toast.success("Keywords created successfully");
                 onClose(true);
 
             }
@@ -107,7 +130,8 @@ function Templates({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
                             <div className='search-bar w-full flex items-center max-w-[500px]  relative'>
 
                                 <i className="fa-solid fa-magnifying-glass absolute right-4 text-gray-400"></i>
-                                <input type="text" className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[10px] focus:outline-none !font-medium' placeholder='Search here ... '
+                                <input type="text" className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[10px] focus:outline-none !font-medium' placeholder='Search here ... ' value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
                                 />
 
                             </div>
@@ -199,7 +223,7 @@ function Templates({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
 
 
 
-                                (templates.map((template) => (
+                                (filteredTemplates.map((template) => (
                                     <tr key={template.id} className="text-center hover:bg-green-50 font-semibold cursor-pointer text-sm">
                                         <td className="px-[10px] py-4 text-left text-blue-600 flex gap-2 items-center">
                                             {path === '/keywordAction' && (
@@ -212,10 +236,10 @@ function Templates({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
                                                         const replyType = 'Template';
 
                                                         if (isChecked) {
-                                                            setSelectedReplies(prev => [...prev, {replyType, currentReply}]);
+                                                            setSelectedReplies(prev => [...prev, { replyType, currentReply }]);
 
                                                         } else {
-                                                           setSelectedReplies(prev => prev.filter(item => item.currentReply?.name !== currentReply.name));
+                                                            setSelectedReplies(prev => prev.filter(item => item.currentReply?.name !== currentReply.name));
                                                         }
                                                     }}
 
@@ -233,7 +257,7 @@ function Templates({ onClose, Keywords, selectedReplies, setSelectedReplies }) {
                                         </td>
 
                                         <td className="px-[10px]  py-4 text-center">{template.category}</td>
-                                        <td className="px-[10px] py-4 text-center">{template.language}</td>
+                                        <td className="px-[10px] py-4 text-center">{languageMap[template.language] || template.language}</td>
                                         <td className="px-[10px] py-4 text-center"> <span
                                             className={`rounded-2xl py-1 text-white text-center w-[95px] inline-block
                                                 ${template.status === 'APPROVED'
