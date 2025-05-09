@@ -4,62 +4,59 @@ import axios from 'axios';
 
 
 
-
-
-
-
 const welcome_template = {
 
-        name: "welcome_template",
-        language: {
-            code: "en_US"
+    name: "welcome_template",
+    language: {
+        code: "en_US"
+    },
+    components: [
+        {
+            type: "HEADER",
+            parameters: [
+                {
+                    type: "text",
+                    text: "Stark Edge",
+                    parameter_name: "company_name"
+                }
+            ]
         },
-        components: [
-            {
-                type: "HEADER",
-                parameters: [
-                    {
-                        type: "text",
-                        text: "Stark Edge",
-                        parameter_name: "company_name"
-                    }
-                ]
-            },
-            {
-                type: "BODY",
-                parameters: [
-                    {
-                        type: "text",
-                        text: "Stark Edge",
-                        parameter_name: "company_name"
-                    }
-                ]
-            },
-            {
-                type: "BUTTONS",
-                sub_type: "PHONE_NUMBER",
-                index: 0,
-                parameters: [
-                    {
-                        type: "phone_number",
-                        phone_number: "+917876054918"
-                    }
-                ]
-            },
-            {
-                type: "BUTTONS",
-                sub_type: "URL",
-                index: 1,
-                parameters: [
-                    {
-                        type: "text",
-                        text: "https://www.starkedge.com/"
-                    }
-                ]
-            }
-        ]
-    
+        {
+            type: "BODY",
+            parameters: [
+                {
+                    type: "text",
+                    text: "Stark Edge",
+                    parameter_name: "company_name"
+                }
+            ]
+        },
+        {
+            type: "BUTTON",
+            sub_type: "PHONE_NUMBER",
+            index: 0,
+            parameters: [
+                {
+                    type: "phone_number",
+                    phone_number: "+917876054918"
+                }
+            ]
+        },
+        {
+            type: "BUTTON",
+            sub_type: "URL",
+            index: 1,
+            parameters: [
+                {
+                    type: "text",
+                    text: "https://www.starkedge.com/"
+                }
+            ]
+        }
+    ]
+
 };
+
 
 
 
