@@ -157,9 +157,7 @@ export async function handleWebhook(req, res) {
                 await sendTemplateMessage(senderId, testing_chatbot);
             }
 
-            if(textContent.toLowerCase() == 'sure'){
-                await sendTemplateMessage(senderId, testing_chatbot);
-            }
+            
             console.log(`Received text message: ${textContent}`);
         } else if (messageType === 'audio') {
             const audioId = message.audio.id;
@@ -168,6 +166,14 @@ export async function handleWebhook(req, res) {
             if (mediaUrl) {
                 console.log(`Audio message URL: ${mediaUrl}`);
             }
+        }else if(messageType === 'button'){
+
+            const textContent = message.text.body;
+
+            if(textContent.toLowerCase() === 'sure'){
+                await sendTemplateMessage(senderId, testing_chatbot);
+            }
+
         } else {
             console.log(`Received unsupported message type: ${messageType}`);
         }
