@@ -18,7 +18,7 @@ const welcome_template = {
     components: [
         {
             type: "HEADER",
-            format: "TEXT",
+            format: "text",
             text: "{{company_name}}",
             example: {
                 header_text_named_params: [
@@ -30,7 +30,7 @@ const welcome_template = {
             }
         },
         {
-            type: "BODY",
+            type: "body",
             text: "Welcome to {{company_name}}!\n\nWe're thrilled to have you here. At Stark Edge, we’re dedicated to delivering innovative digital solutions that empower businesses to grow and succeed. Whether you're a client, partner, or team member, you're now part of a community that values creativity, commitment, and cutting-edge excellence.\n\nLet’s build something great together!",
             example: {
                 body_text_named_params: [
