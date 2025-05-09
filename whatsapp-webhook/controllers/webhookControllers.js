@@ -9,13 +9,12 @@ import axios from 'axios';
 
 
 const welcome_template = {
-    id: "1357288615490464",
+    
     name: "welcome_template",
     category: "MARKETING",
     language: "en_US",
     parameter_format: "NAMED",
     status: "APPROVED",
-    createdAt: "2025-05-07T09:24:50.252Z",
     components: [
         {
             type: "HEADER",
