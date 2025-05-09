@@ -30,28 +30,6 @@ const welcome_template = {
           }
         ]
       },
-      {
-        type: "BUTTON",
-        sub_type: "VOICE_CALL",
-        index: 0,
-        parameters: [
-          {
-            type: "text",
-            text: "+917876054918"
-          }
-        ]
-      },
-      {
-        type: "BUTTON",
-        sub_type: "URL",
-        index: 1,
-        parameters: [
-          {
-            type: "text",
-            text: "https://www.starkedge.com/"
-          }
-        ]
-      }
     ]
   };
   
