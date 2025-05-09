@@ -37,15 +37,13 @@ function BroadCast() {
 
 
   const [editData, setEditData] = useState(null);
-  
+
   const [broadcastNow, setBroadcastNow] = useState(null);
 
-  console.log(broadcastNow)
 
-
-  
 
   const { phoneNumbers, loading: numbersLoading, error: numbersError } = useSelector(state => state.phoneNumbers);
+
 
   useEffect(() => {
     dispatch(fetchPhoneNumbers());
@@ -65,6 +63,8 @@ function BroadCast() {
 
   const { templates, loading, error } = useSelector((state) => state.templates);
 
+
+
   useEffect(() => {
     dispatch(fetchTemplates());
   }, [dispatch]);
@@ -81,8 +81,7 @@ function BroadCast() {
 
 
   const handleBroadCast = (campaign) => {
-    setBroadcastNow(campaign);
-    handleSubmit();
+    handleSubmit(campaign);
   }
 
 
@@ -91,13 +90,19 @@ function BroadCast() {
   }
 
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (broadcast, e) => {
 
 
-    const selectedTemplate = templates.find(t => t.id === broadcastNow.template);
+    if (e) {
+      e.preventDefault();
+    }
 
 
-    for (const number of broadcastNow.contactList) {
+    const selectedTemplate = templates.find(t => t.id === broadcast?.template);
+    console.log(selectedTemplate);
+
+
+    for (const number of broadcast.contactList) {
       const payload = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -204,24 +209,17 @@ function BroadCast() {
           }
 
         });
-      }
-
-
-
-
+      } 
 
       try {
         const response = await axios.post(`/sendMessage`, payload)
-
-        toast.success("Broadcast attempt finished.");
-        setBroadcastNow(null);
 
       } catch (error) {
         console.error(`Error for ${number}:`, error);
         toast.error(`Failed for ${number}: ${error.response?.data?.error?.error?.message}`);
       }
     }
-
+    toast.success("Broadcast attempt finished.");
   };
 
 
@@ -288,9 +286,17 @@ function BroadCast() {
 
 
   const handleSave = () => {
+    const { campaignName, whatsappNumber, template, contactList } = formInput;
 
+    // Check if any field is empty
+    if (!campaignName || !whatsappNumber || !template || contactList.length === 0) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    // Check for duplicate campaign
     const exists = campaigns.some(c =>
-      c.campaignName === formInput.campaignName &&
+      c.campaignName === campaignName &&
       JSON.stringify(c) === JSON.stringify(formInput)
     );
 
@@ -324,7 +330,7 @@ function BroadCast() {
             </p>
           </div>
 
-          <form onSubmit={() => {handleBroadCast(formInput); handleSave() }} className=' text-gray-600 mt-[30px] px-2'>
+          <form className=' text-gray-600 mt-[30px] px-2'>
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px]'>
               <TextField
                 label="Campaign Name"
@@ -632,6 +638,7 @@ function BroadCast() {
                   <button
                     type='submit'
                     className='text-nowrap mr-[20px] font-semibold bg-green-600 hover:bg-green-700 text-white cursor-pointer px-[12px] py-[5px] rounded-md'
+                    onClick={(e) => { handleSubmit(formInput, e); handleSave(); }}
 
                   >
                     Broadcast Now

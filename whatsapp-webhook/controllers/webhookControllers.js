@@ -6,6 +6,62 @@ import axios from 'axios';
 
 
 
+
+
+const welcome_template = {
+    id: "1357288615490464",
+    name: "welcome_template",
+    category: "MARKETING",
+    language: "en_US",
+    parameter_format: "NAMED",
+    status: "APPROVED",
+    createdAt: "2025-05-07T09:24:50.252Z",
+    components: [
+        {
+            type: "HEADER",
+            format: "TEXT",
+            text: "{{company_name}}",
+            example: {
+                header_text_named_params: [
+                    {
+                        param_name: "company_name",
+                        example: "Stark Edge"
+                    }
+                ]
+            }
+        },
+        {
+            type: "BODY",
+            text: "Welcome to {{company_name}}!\n\nWe're thrilled to have you here. At Stark Edge, we’re dedicated to delivering innovative digital solutions that empower businesses to grow and succeed. Whether you're a client, partner, or team member, you're now part of a community that values creativity, commitment, and cutting-edge excellence.\n\nLet’s build something great together!",
+            example: {
+                body_text_named_params: [
+                    {
+                        param_name: "company_name",
+                        example: "Stark Edge"
+                    }
+                ]
+            }
+        },
+        {
+            type: "BUTTONS",
+            buttons: [
+                {
+                    type: "PHONE_NUMBER",
+                    text: "Call Now",
+                    phone_number: "+917876054918"
+                },
+                {
+                    type: "URL",
+                    text: "Vist Us",
+                    url: "https://www.starkedge.com/"
+                }
+            ]
+        }
+    ]
+};
+
+
+
 export function verifyWebhook(req, res) {
     console.log('Received verification request:', req.query);
 
@@ -86,7 +142,6 @@ async function sendTemplateMessage(to, templateName, languageCode = 'en_US') {
 }
 
 
-// Function to get media URL using media ID
 async function getMediaUrl(mediaId) {
     const url = `https://graph.facebook.com/v13.0/${mediaId}`;
     try {
@@ -104,13 +159,12 @@ async function getMediaUrl(mediaId) {
 
 
 
-// Function to handle the incoming webhook
 export async function handleWebhook(req, res) {
     const body = req.body;
-    
+
     if (!body.entry || !body.entry[0].changes) {
         console.error('Invalid webhook structure:', body);
-        return res.sendStatus(400); 
+        return res.sendStatus(400);
     }
 
     const change = body.entry[0].changes[0];
@@ -126,9 +180,9 @@ export async function handleWebhook(req, res) {
 
         if (messageType === 'text') {
             const textContent = message.text.body;
-            if(textContent.toLowerCase() === 'hey' || textContent.toLowerCase() === 'hi'){
+            if (textContent.toLowerCase() === 'hey' || textContent.toLowerCase() === 'hi') {
                 console.log("keyword mattched")
-                await sendTemplateMessage(senderId, 'welcome_template');
+                await sendTemplateMessage(senderId, welcome_template);
             }
             console.log(`Received text message: ${textContent}`);
         } else if (messageType === 'audio') {
@@ -147,8 +201,8 @@ export async function handleWebhook(req, res) {
         console.log('Message status update:', JSON.stringify(statusUpdate, null, 2));
 
         const { status, id, timestamp, recipient_id } = statusUpdate;
-        
-        
+
+
         if (status === 'delivered') {
             console.log('Message delivered successfully!');
         } else if (status === 'read') {
@@ -156,6 +210,6 @@ export async function handleWebhook(req, res) {
         }
     }
 
-    res.sendStatus(200); 
+    res.sendStatus(200);
 }
 
