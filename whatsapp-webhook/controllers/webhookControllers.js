@@ -11,10 +11,8 @@ import axios from 'axios';
 const welcome_template = {
     
     name: "welcome_template",
-    category: "MARKETING",
     language: "en_US",
-    parameter_format: "NAMED",
-    status: "APPROVED",
+    
     components: [
         {
             type: "HEADER",
