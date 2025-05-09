@@ -156,6 +156,10 @@ export async function handleWebhook(req, res) {
                 console.log("keyword mattched")
                 await sendTemplateMessage(senderId, testing_chatbot);
             }
+
+            if(textContent.toLowerCase() == 'sure'){
+                await sendTemplateMessage(senderId, testing_chatbot);
+            }
             console.log(`Received text message: ${textContent}`);
         } else if (messageType === 'audio') {
             const audioId = message.audio.id;
