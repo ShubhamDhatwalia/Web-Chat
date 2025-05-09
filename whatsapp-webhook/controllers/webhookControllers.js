@@ -10,54 +10,57 @@ import axios from 'axios';
 
 const welcome_template = {
 
-    name: "welcome_template",
-
-    language: {
-        code: "en_US"
-    },
-    components: [
-        {
-            type: "HEADER",
-            format: "text",
-            text: "{{company_name}}",
-            example: {
-                header_text_named_params: [
+        name: "welcome_template",
+        language: {
+            code: "en_US"
+        },
+        components: [
+            {
+                type: "HEADER",
+                parameters: [
                     {
-                        param_name: "company_name",
-                        example: "Stark Edge"
+                        type: "text",
+                        text: "Stark Edge",
+                        parameter_name: "company_name"
+                    }
+                ]
+            },
+            {
+                type: "BODY",
+                parameters: [
+                    {
+                        type: "text",
+                        text: "Stark Edge",
+                        parameter_name: "company_name"
+                    }
+                ]
+            },
+            {
+                type: "BUTTONS",
+                sub_type: "PHONE_NUMBER",
+                index: 0,
+                parameters: [
+                    {
+                        type: "phone_number",
+                        phone_number: "+917876054918"
+                    }
+                ]
+            },
+            {
+                type: "BUTTONS",
+                sub_type: "URL",
+                index: 1,
+                parameters: [
+                    {
+                        type: "text",
+                        text: "https://www.starkedge.com/"
                     }
                 ]
             }
-        },
-        {
-            type: "body",
-            text: "Welcome to {{company_name}}!\n\nWe're thrilled to have you here. At Stark Edge, we’re dedicated to delivering innovative digital solutions that empower businesses to grow and succeed. Whether you're a client, partner, or team member, you're now part of a community that values creativity, commitment, and cutting-edge excellence.\n\nLet’s build something great together!",
-            example: {
-                body_text_named_params: [
-                    {
-                        param_name: "company_name",
-                        example: "Stark Edge"
-                    }
-                ]
-            }
-        },
-        {
-            type: "BUTTONS",
-            buttons: [
-                {
-                    type: "PHONE_NUMBER",
-                    text: "Call Now",
-                    phone_number: "+917876054918"
-                },
-                {
-                    type: "URL",
-                    text: "Visit Us",
-                    url: "https://www.starkedge.com/"
-                }
-            ]
-        }
-    ]
+        ]
+    
 };
+
 
 
 

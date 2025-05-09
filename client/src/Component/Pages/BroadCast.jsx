@@ -211,6 +211,8 @@ function BroadCast() {
         });
       } 
 
+      console.log(payload);
+
       try {
         const response = await axios.post(`/sendMessage`, payload)
 
