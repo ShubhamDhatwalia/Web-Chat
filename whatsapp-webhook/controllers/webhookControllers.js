@@ -113,19 +113,14 @@ export async function sendTextMessage(req, res) {
     }
 }
 
-async function sendTemplateMessage(to, templateName, languageCode = 'en_US') {
+async function sendTemplateMessage(to, template, languageCode = 'en_US') {
     const url = `https://graph.facebook.com/v17.0/${process.env.PHONE_NUMBER_ID}/messages`;
 
     const data = {
         messaging_product: 'whatsapp',
         to,
         type: 'template',
-        template: {
-            name: templateName,
-            language: {
-                code: languageCode
-            }
-        }
+        template: template
     };
 
     try {
@@ -182,7 +177,7 @@ export async function handleWebhook(req, res) {
             const textContent = message.text.body;
             if (textContent.toLowerCase() === 'hey' || textContent.toLowerCase() === 'hi') {
                 console.log("keyword mattched")
-                await sendTemplateMessage(senderId, welcome_template.name);
+                await sendTemplateMessage(senderId, welcome_template);
             }
             console.log(`Received text message: ${textContent}`);
         } else if (messageType === 'audio') {
