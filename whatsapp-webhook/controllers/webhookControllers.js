@@ -11,7 +11,9 @@ import axios from 'axios';
 const welcome_template = {
     
     name: "welcome_template",
-    language: "en_US",
+    language: {
+        code: "en_US"
+    },
     
     components: [
         {
