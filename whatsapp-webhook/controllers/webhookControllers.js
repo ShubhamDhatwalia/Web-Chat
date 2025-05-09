@@ -9,56 +9,56 @@ import axios from 'axios';
 
 
 const welcome_template = {
-    
     name: "welcome_template",
     language: {
-        code: "en_US"
+      code: "en_US"
     },
-    
     components: [
-        {
-            type: "HEADER",
-            format: "TEXT",
-            text: "{{company_name}}",
-            example: {
-                header_text_named_params: [
-                    {
-                        param_name: "company_name",
-                        example: "Stark Edge"
-                    }
-                ]
-            }
-        },
-        {
-            type: "BODY",
-            text: "Welcome to {{company_name}}!\n\nWe're thrilled to have you here. At Stark Edge, we’re dedicated to delivering innovative digital solutions that empower businesses to grow and succeed. Whether you're a client, partner, or team member, you're now part of a community that values creativity, commitment, and cutting-edge excellence.\n\nLet’s build something great together!",
-            example: {
-                body_text_named_params: [
-                    {
-                        param_name: "company_name",
-                        example: "Stark Edge"
-                    }
-                ]
-            }
-        },
-        {
-            type: "BUTTONS",
-            buttons: [
-                {
-                    type: "PHONE_NUMBER",
-                    text: "Call Now",
-                    phone_number: "+917876054918"
-                },
-                {
-                    type: "URL",
-                    text: "Vist Us",
-                    url: "https://www.starkedge.com/"
-                }
-            ]
-        }
+      {
+        type: "header",
+        parameters: [
+          {
+            type: "text",
+            text: "Stark Edge"
+          }
+        ]
+      },
+      {
+        type: "body",
+        parameters: [
+          {
+            type: "text",
+            text: "Welcome to Stark Edge!\n\nWe're thrilled to have you here. At Stark Edge, we’re dedicated to delivering innovative digital solutions that empower businesses to grow and succeed. Whether you're a client, partner, or team member, you're now part of a community that values creativity, commitment, and cutting-edge excellence.\n\nLet’s build something great together!"
+          }
+        ]
+      },
+      {
+        type: "button",
+        sub_type: "phone_number",
+        parameters: [
+          {
+            type: "payload",
+            payload: "+917876054918"
+          }
+        ]
+      },
+      {
+        type: "button",
+        sub_type: "url",
+        parameters: [
+          {
+            type: "text",
+            text: "Visit Us"
+          },
+          {
+            type: "url",
+            url: "https://www.starkedge.com/"
+          }
+        ]
+      }
     ]
-};
-
+  };
+  
 
 
 export function verifyWebhook(req, res) {
