@@ -182,7 +182,7 @@ export async function handleWebhook(req, res) {
             const textContent = message.text.body;
             if (textContent.toLowerCase() === 'hey' || textContent.toLowerCase() === 'hi') {
                 console.log("keyword mattched")
-                await sendTemplateMessage(senderId, welcome_template);
+                await sendTemplateMessage(senderId, welcome_template.name);
             }
             console.log(`Received text message: ${textContent}`);
         } else if (messageType === 'audio') {
