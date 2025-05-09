@@ -7,32 +7,32 @@ import axios from 'axios';
 const testing_chatbot = {
     name: "testing_chatbot",
     language: {
-      code: "en_US"
+        code: "en_US"
     },
     components: [
-      {
-        type: "HEADER",
-        parameters: [
-          {
-            type: "text",
-            text: "Stark Edge",
-            parameter_name: "company_name"
-          }
-        ]
-      },
-      {
-        type: "BODY",
-        parameters: [
-          {
-            type: "text",
-            text: "Stark Edge",
-            parameter_name: "company_name"
-          }
-        ]
-      },
+        {
+            type: "HEADER",
+            parameters: [
+                {
+                    type: "text",
+                    text: "Stark Edge",
+                    parameter_name: "company_name"
+                }
+            ]
+        },
+        {
+            type: "BODY",
+            parameters: [
+                {
+                    type: "text",
+                    text: "Stark Edge",
+                    parameter_name: "company_name"
+                }
+            ]
+        },
     ]
-  };
-  
+};
+
 
 
 
@@ -157,7 +157,7 @@ export async function handleWebhook(req, res) {
                 await sendTemplateMessage(senderId, testing_chatbot);
             }
 
-            
+
             console.log(`Received text message: ${textContent}`);
         } else if (messageType === 'audio') {
             const audioId = message.audio.id;
@@ -166,11 +166,11 @@ export async function handleWebhook(req, res) {
             if (mediaUrl) {
                 console.log(`Audio message URL: ${mediaUrl}`);
             }
-        }else if(messageType === 'button'){
+        } else if (messageType === 'button') {
 
-            const textContent = message.text.body;
+            const textContent = message.button.text;
 
-            if(textContent.toLowerCase() === 'sure'){
+            if (textContent.toLowerCase() === 'sure') {
                 await sendTemplateMessage(senderId, testing_chatbot);
             }
 
