@@ -4,8 +4,8 @@ import axios from 'axios';
 
 
 
-const welcome_template = {
-    name: "welcome_template",
+const testing_chatbot = {
+    name: "testing_chatbot",
     language: {
       code: "en_US"
     },
@@ -154,7 +154,7 @@ export async function handleWebhook(req, res) {
             const textContent = message.text.body;
             if (textContent.toLowerCase() === 'hey' || textContent.toLowerCase() === 'hi') {
                 console.log("keyword mattched")
-                await sendTemplateMessage(senderId, welcome_template);
+                await sendTemplateMessage(senderId, testing_chatbot);
             }
             console.log(`Received text message: ${textContent}`);
         } else if (messageType === 'audio') {
