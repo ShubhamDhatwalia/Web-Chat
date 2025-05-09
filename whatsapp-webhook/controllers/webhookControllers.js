@@ -60,6 +60,35 @@ export function verifyWebhook(req, res) {
 
 
 
+export async function sendSimpleTextMessage(to, text) {
+    const url = `https://graph.facebook.com/v17.0/${process.env.PHONE_NUMBER_ID}/messages`;
+  
+    const data = {
+      messaging_product: "whatsapp",
+      to,
+      type: "text",
+      text: {
+        body: text
+      }
+    };
+  
+    try {
+      const response = await axios.post(url, data, {
+        headers: {
+          Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
+          "Content-Type": "application/json"
+        }
+      });
+  
+      console.log("Text message sent:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to send text message:", error.response?.data || error.message);
+      throw error;
+    }
+  }
+  
+
 
 
 export async function sendTextMessage(req, res) {
@@ -171,7 +200,7 @@ export async function handleWebhook(req, res) {
             const textContent = message.button.text;
 
             if (textContent.toLowerCase() === 'sure') {
-                await sendTemplateMessage(senderId, testing_chatbot);
+                await sendSimpleTextMessage(senderId, "We will reach you soon on Call");
             }
 
         } else {
