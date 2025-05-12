@@ -229,22 +229,22 @@ function TextReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedRepl
                             </div>
 
 
-                            <form action="">
+                            <form onSubmit={handleSubmit}>
                                 <div className='flex flex-col gap-2 mt-8'>
                                     <label htmlFor="" className='font-semibold text-gray-700 text-sm'>Material Name</label>
-                                    <input type="text" placeholder='Please input' className=' focus:outline-none text-sm bg-gray-100 rounded-lg p-2' name='name' value={textMaterial.name} onChange={handleChange} />
+                                    <input type="text" required placeholder='Please input' className=' focus:outline-none text-sm bg-gray-100 rounded-lg p-2' name='name' value={textMaterial.name} onChange={handleChange} />
                                 </div>
 
 
 
                                 <div className='flex flex-col gap-2 mt-8'>
                                     <label htmlFor="" className='font-semibold text-gray-700 text-sm'>Material Content</label>
-                                    <textarea id="" className='bg-gray-100 rounded-lg p-2 text-sm focus:outline-none' rows={5} placeholder='Please input' name='content' value={textMaterial.content} onChange={handleChange}></textarea>
+                                    <textarea id="" required className='bg-gray-100 rounded-lg p-2 text-sm focus:outline-none' rows={5} placeholder='Please input' name='content' value={textMaterial.content} onChange={handleChange}></textarea>
                                 </div>
 
 
 
-                                <button type='submit' className='bg-green-600 hover:bg-green-700 cursor-pointer rounded-lg px-4 py-2 text-white mt-6 float-right' onClick={handleSubmit}>Save</button>
+                                <button type='submit' className='bg-green-600 hover:bg-green-700 cursor-pointer rounded-lg px-4 py-2 text-white mt-6 float-right' >Save</button>
                             </form>
 
                         </div>
