@@ -13,13 +13,22 @@ import ReactFlow, {
 
 import 'reactflow/dist/style.css';
 import Sidebar from './Sidebar.jsx';
-import CustomNode from './CustomNode.jsx';
+import CustomNode from './Nodes/CustomNode.jsx';
+import QuestionNodeForm from './Nodes/QuestionNodeForm.jsx';
+import MessageNodeForm from './Nodes/MessageNodeForm.jsx';
+import TemplateNodeFrom from './Nodes/TemplateNodeFrom.jsx';
+
+
 
 const nodeTypes = {
     custom: CustomNode
 };
 
-function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }) {
+
+
+
+
+function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, setEditNode }) {
     const { getViewport } = useReactFlow();
 
     const handleAddNode = (label, subType) => {
@@ -40,15 +49,16 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
                 label,
                 subType,
                 content: {},
-                onOpenMenu: handleOpenMenu
+                setNodes,
+                setEditNode,
             }
         };
         setNodes((nds) => [...nds, newNode]);
     };
 
-    console.log(nodes )
-    console.log(edges)
-    
+    // console.log(nodes )
+    // console.log(edges)
+
     const onConnect = useCallback(
         (params) => {
 
@@ -57,9 +67,7 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
         },
         [setEdges]
     );
-    const handleOpenMenu = () => {
-        console.log('Open menu triggered');
-    };
+
 
     return (
         <>
@@ -72,7 +80,7 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
                     nodeTypes={nodeTypes}
-                    defaultViewport={{ x: 0, y: 0, zoom: 10 }}
+                    defaultViewport={{ x: 0, y: 0, zoom: 0.1 }}
                     fitView
 
 
@@ -107,9 +115,13 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
     );
 }
 
+
 function Flowbuilder() {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+    // Instead of editNodeId, store full node
+    const [editNode, setEditNode] = useState(null);
+
 
     return (
         <ReactFlowProvider>
@@ -121,8 +133,23 @@ function Flowbuilder() {
                     edges={edges}
                     setEdges={setEdges}
                     onEdgesChange={onEdgesChange}
+                    setEditNode={setEditNode}
+                    
                 />
             </div>
+
+            {editNode?.data?.subType === 'question' && (
+                <QuestionNodeForm node={editNode} onClose={() => setEditNode(null)} />
+            )}
+
+            {editNode?.data?.subType === 'message' && (
+                <MessageNodeForm node={editNode} onClose={() => setEditNode(null)} />
+            )}
+
+            {editNode?.data?.subType === 'template' && (
+                <TemplateNodeFrom node={editNode} onClose={() => setEditNode(null)} />
+            )}
+
         </ReactFlowProvider>
     );
 }

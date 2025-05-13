@@ -65,6 +65,9 @@ textarea {
 
 }
 
+.react-flow__pane {
+    pointer-events: fill !important;
+}
 
 .react-flow__panel.react-flow__minimap.bottom.right{
   background-color: #fff;
