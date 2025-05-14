@@ -51,6 +51,7 @@ function CustomNode({ data }) {
     };
 
 
+    
 
 
 
@@ -78,7 +79,7 @@ function CustomNode({ data }) {
 
 
 
-                <div className='cursor-all-scroll'>
+                <div className='cursor-all-scroll bg-white rounded-lg'>
                     <div className={`flex  justify-between items-center  mb-2  p-2  rounded-t-lg  text-white ${subType === 'question' ? 'bg-[#F79431]' : ''}  ${subType === 'message' ? 'bg-[#E25866]' : ''}  ${subType === 'template' ? 'bg-[#6C7ED6]' : ''} `}>
                         <div className='flex items-center gap-2'>
 

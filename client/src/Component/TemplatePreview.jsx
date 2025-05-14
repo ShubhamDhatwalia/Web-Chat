@@ -56,6 +56,7 @@ function TemplatePreview({ templateId, liveTemplateData }) {
         }
     }, [templateId, liveTemplateData]);
 
+    
     const replaceVariables = (text, component, parameterFormat) => {
         if (!text || !component.example) return text;
     

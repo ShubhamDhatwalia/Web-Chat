@@ -119,6 +119,8 @@ export async function sendTextMessage(req, res) {
     }
 }
 
+
+
 async function sendTemplateMessage(to, template, languageCode = 'en_US') {
     const url = `https://graph.facebook.com/v17.0/${process.env.PHONE_NUMBER_ID}/messages`;
 

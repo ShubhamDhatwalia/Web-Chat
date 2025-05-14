@@ -17,7 +17,7 @@ import CustomNode from './Nodes/CustomNode.jsx';
 import QuestionNodeForm from './Nodes/QuestionNodeForm.jsx';
 import MessageNodeForm from './Nodes/MessageNodeForm.jsx';
 import TemplateNodeFrom from './Nodes/TemplateNodeFrom.jsx';
-
+import DeleteEdgeModel from './DeleteEdgeModel.jsx';
 
 
 const nodeTypes = {
@@ -56,6 +56,8 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
         setNodes((nds) => [...nds, newNode]);
     };
 
+    const [edgeToDelete, setEdgeToDelete] = useState(null);
+
     // console.log(nodes )
     // console.log(edges)
 
@@ -69,9 +71,21 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
     );
 
 
+
+    const handleConfirmDeleteEdge = () => {
+        setEdges((eds) => eds.filter((e) => e.id !== edgeToDelete.id));
+        setEdgeToDelete(null);
+    };
+
+    const onEdgeClick = useCallback((event, edge) => {
+        event.stopPropagation();
+        setEdgeToDelete(edge);
+    }, []);
+
+
+
     return (
         <>
-            <Sidebar onAddNode={handleAddNode} />
             <div className="flex-1 h-[calc(100vh-60px)]">
                 <ReactFlow
                     nodes={nodes}
@@ -81,6 +95,7 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
                     onConnect={onConnect}
                     nodeTypes={nodeTypes}
                     defaultViewport={{ x: 0, y: 0, zoom: 0.1 }}
+                    onEdgeClick={onEdgeClick}
                     fitView
 
 
@@ -111,6 +126,14 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
                     <Background variant="lines" gap={80} size={20} color="#EEF0F6" />
                 </ReactFlow>
             </div>
+            <Sidebar onAddNode={handleAddNode} />
+
+            <DeleteEdgeModel
+                open={!!edgeToDelete}
+                onClose={() => setEdgeToDelete(null)}
+                onConfirm={handleConfirmDeleteEdge}
+            />
+
         </>
     );
 }
@@ -134,7 +157,7 @@ function Flowbuilder() {
                     setEdges={setEdges}
                     onEdgesChange={onEdgesChange}
                     setEditNode={setEditNode}
-                    
+
                 />
             </div>
 
