@@ -9,13 +9,12 @@ function CustomNode({ data }) {
     const { label, subType, id, content, setNodes, setEditNode } = data;
     const [nodeTooltip, setNodeTooltip] = useState(false);
 
-
+    
 
     const nodeRef = useRef(null);
 
     const handleClickOutside = (event) => {
 
-        console.log(event.target);
         if (nodeRef.current && !nodeRef.current.contains(event.target)) {
             setNodeTooltip(false);
         }
@@ -58,7 +57,7 @@ function CustomNode({ data }) {
     return (
         <>
 
-            <div  className={`rounded-lg shadow-xl  w-[300px] relative  hover:shadow-2xl `}>
+            <div  className={`rounded-lg shadow-xl  w-[320px] relative  hover:shadow-2xl `}>
 
 
 
@@ -119,10 +118,10 @@ function CustomNode({ data }) {
                             <QuestionNode />
                         )}
                         {subType === 'message' && (
-                            <MessageNode />
+                            <MessageNode data={data}/>
                         )}
                         {subType === 'template' && (
-                            <TemplateNode />
+                            <TemplateNode data={data} />
                         )}
                     </div>
 

@@ -1,4 +1,3 @@
-// Flowbuilder.jsx
 import React, { useState, useCallback } from 'react';
 import ReactFlow, {
     Background,
@@ -18,6 +17,12 @@ import QuestionNodeForm from './Nodes/QuestionNodeForm.jsx';
 import MessageNodeForm from './Nodes/MessageNodeForm.jsx';
 import TemplateNodeFrom from './Nodes/TemplateNodeFrom.jsx';
 import DeleteEdgeModel from './DeleteEdgeModel.jsx';
+import { MarkerType } from 'reactflow';
+
+import {
+    applyNodeChanges,
+    applyEdgeChanges,
+} from 'reactflow';
 
 
 const nodeTypes = {
@@ -58,14 +63,23 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
 
     const [edgeToDelete, setEdgeToDelete] = useState(null);
 
-    // console.log(nodes )
-    // console.log(edges)
+
 
     const onConnect = useCallback(
         (params) => {
 
-            const edge = { ...params, animated: true };
+            const edge = {
+                ...params,
+                animated: true,
+                style: { stroke: '#7C7D7D', strokeWidth: 3 },
+                markerEnd: {
+                    type: MarkerType.ArrowClosed,
+                    color: '#00A63E',
+                },
+            };
+
             setEdges((eds) => addEdge(edge, eds));
+
         },
         [setEdges]
     );
@@ -81,6 +95,7 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
         event.stopPropagation();
         setEdgeToDelete(edge);
     }, []);
+
 
 
 
@@ -139,11 +154,52 @@ function FlowCanvas({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesCh
 }
 
 
-function Flowbuilder() {
-    const [nodes, setNodes, onNodesChange] = useNodesState([]);
-    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-    // Instead of editNodeId, store full node
+function Flowbuilder({ onFlowChange, chatbot }) {
+    const [nodes, setNodes, onNodesChange] = useNodesState(chatbot.flow.nodes || []);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(chatbot.flow.edges || []);
     const [editNode, setEditNode] = useState(null);
+
+
+    console.log(chatbot);
+
+
+
+
+
+
+    const updateNodeData = (nodeId, newData) => {
+        setNodes((nds) =>
+            nds.map((node) =>
+                node.id === nodeId
+                    ? {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            ...newData,
+                        },
+                    }
+                    : node
+            )
+        );
+    };
+
+    const handleNodesChange = (changes) => {
+        const updatedNodes = applyNodeChanges(changes, nodes);
+        setNodes(updatedNodes);
+        onFlowChange({ nodes: updatedNodes, edges });
+    };
+
+    const handleEdgesChange = (changes) => {
+        const updatedEdges = applyEdgeChanges(changes, edges);
+        setEdges(updatedEdges);
+        onFlowChange({ nodes, edges: updatedEdges });
+    };
+
+
+    React.useEffect(() => {
+        onFlowChange({ nodes, edges });
+    }, [nodes, edges]);
+
 
 
     return (
@@ -152,10 +208,10 @@ function Flowbuilder() {
                 <FlowCanvas
                     nodes={nodes}
                     setNodes={setNodes}
-                    onNodesChange={onNodesChange}
+                    onNodesChange={handleNodesChange}
                     edges={edges}
                     setEdges={setEdges}
-                    onEdgesChange={onEdgesChange}
+                    onEdgesChange={handleEdgesChange}
                     setEditNode={setEditNode}
 
                 />
@@ -166,11 +222,11 @@ function Flowbuilder() {
             )}
 
             {editNode?.data?.subType === 'message' && (
-                <MessageNodeForm node={editNode} onClose={() => setEditNode(null)} />
+                <MessageNodeForm node={editNode} onClose={() => setEditNode(null)} updateNodeData={updateNodeData} />
             )}
 
             {editNode?.data?.subType === 'template' && (
-                <TemplateNodeFrom node={editNode} onClose={() => setEditNode(null)} />
+                <TemplateNodeFrom node={editNode} onClose={() => setEditNode(null)} updateNodeData={updateNodeData} />
             )}
 
         </ReactFlowProvider>

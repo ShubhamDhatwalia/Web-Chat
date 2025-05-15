@@ -22,6 +22,10 @@ function Chatbot() {
     triggered: 0,
     finished: 0,
     lastUpdated: new Date().toISOString(),
+    flow: {
+      nodes: [],
+      edges: [],
+    }
   })
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,7 +48,7 @@ function Chatbot() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleClose()
+    setPopUp(false);
     // dispatch(addChatbot(chatbot));
     // toast.success("Chatbot added successfully!");
     setShowFlowbuilder(true);
@@ -52,6 +56,16 @@ function Chatbot() {
 
   }
 
+  const handleFlowChange = (updatedFlow) => {
+  setChatbot(prev => ({
+    ...prev,
+    lastUpdated: new Date().toISOString(), // update timestamp if needed
+    flow: {
+      ...prev.flow,
+      ...updatedFlow, // merge nodes/edges
+    },
+  }));
+};
 
 
 
@@ -128,13 +142,8 @@ function Chatbot() {
       )}
 
 
-
-
-
-
-
       {showFlowbuilder === true && (
-        <Flowbuilder />
+        <Flowbuilder chatbot = {chatbot} onFlowChange={handleFlowChange} />
       )}
     </>
   )

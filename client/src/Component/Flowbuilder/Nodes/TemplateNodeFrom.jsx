@@ -3,9 +3,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchTemplates } from '../../../redux/templateThunks';
 import { TextField, Autocomplete } from '@mui/material';
 
-function TemplateNodeFrom({ onClose, node }) {
+
+
+
+
+function TemplateNodeFrom({ onClose, node, updateNodeData }) {
     const dispatch = useDispatch();
 
+
+    
     const [formInput, setFormInput] = useState({
         template: '',
     });
@@ -29,13 +35,15 @@ function TemplateNodeFrom({ onClose, node }) {
 
 
 
+
+
     useEffect(() => {
         const selected = templates.find((t) => t.id === formInput.template) || null;
         setSelectedTemplate(selected);
     }, [templates, formInput.template]);
 
 
-    console.log(selectedTemplate);
+    
 
 
     const header = selectedTemplate?.components.find((comp) => comp.type === 'HEADER');
@@ -53,12 +61,33 @@ function TemplateNodeFrom({ onClose, node }) {
         ));
     };
 
-    console.log(selectedTemplate);
-    console.log(header);
-    console.log(body);
-    console.log(footer);
-    console.log(buttons);
+    // console.log(selectedTemplate);
+    // console.log(header);
+    // console.log(body);
+    // console.log(footer);
+    // console.log(buttons);
 
+
+   const handleSubmit = () => {
+    const updatedNode = {
+        ...node,
+        data: {
+            ...node.data,
+            content: {
+                ...node.data.content,
+                template: selectedTemplate,
+            }
+        }
+    };
+
+    updateNodeData(node.id, updatedNode.data);
+
+    onClose();
+};
+
+
+
+    
 
 
     return (
@@ -224,8 +253,8 @@ function TemplateNodeFrom({ onClose, node }) {
 
 
                 <div className='mt-6 flex gap-4 items-center justify-end'>
-                    <button type='button' className='px-3 py-1 rounded-md bg-gray-100 cursor-pointer hover:bg-gray-200'>Cancel</button>
-                    <button type='submit' className='px-3 py-1 rounded-md bg-green-500 cursor-pointer hover:bg-green-600 text-white'>Save</button>
+                    <button type='button' className='px-3 py-1 rounded-md bg-gray-100 cursor-pointer hover:bg-gray-200' onClick={onClose}>Cancel</button>
+                    <button type='submit' className='px-3 py-1 rounded-md bg-green-500 cursor-pointer hover:bg-green-600 text-white' onClick={handleSubmit}>Save</button>
                 </div>
             </div>
 
