@@ -9,6 +9,8 @@ function CustomNode({ data }) {
     const { label, subType, id, content, setNodes, setEditNode } = data;
     const [nodeTooltip, setNodeTooltip] = useState(false);
 
+    console.log(data);
+
     
 
     const nodeRef = useRef(null);

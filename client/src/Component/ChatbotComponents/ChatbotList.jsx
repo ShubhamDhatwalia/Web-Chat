@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeChatbot } from '../../redux/Chatbot/ChatbotSlice..js';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -12,11 +13,7 @@ function ChatbotList({ onSearch }) {
 
     const dispatch = useDispatch();
     const Chatbots = useSelector((state) => state.chatbot.Chatbots)
-
-
-
-
-
+    const navigate = useNavigate();
 
 
 
@@ -50,9 +47,13 @@ function ChatbotList({ onSearch }) {
 
 
     const handleDelete = (index) => {
-            dispatch(removeChatbot(index));
-            toast.success("Chatbot removed successfully!");
-        };
+        dispatch(removeChatbot(index));
+        toast.success("Chatbot removed successfully!");
+    };
+
+    const handleEdit = (chatbotId) => {
+        navigate('/chatbot/flowbuilder', { state: { chatbotId } });
+    };
 
 
     return (
@@ -92,8 +93,8 @@ function ChatbotList({ onSearch }) {
 
                                         <td className='py-4 text-right'>
                                             <div className='flex gap-4 justify-end'>
-                                                <i className="fa-solid fa-pen-to-square bg-gray-100 p-2 rounded-lg text-blue-500 hover:text-blue-600 hover:bg-blue-100 cursor-pointer" ></i>
-                                                <i className="fa-solid fa-trash bg-gray-100 p-2 rounded-lg text-red-500 hover:text-red-600 hover:bg-red-100 cursor-pointer"  onClick={() => handleDelete(index)}></i>
+                                                <i className="fa-solid fa-pen-to-square bg-gray-100 p-2 rounded-lg text-blue-500 hover:text-blue-600 hover:bg-blue-100 cursor-pointer" onClick={() => handleEdit(chatbot.id)} ></i>
+                                                <i className="fa-solid fa-trash bg-gray-100 p-2 rounded-lg text-red-500 hover:text-red-600 hover:bg-red-100 cursor-pointer" onClick={() => handleDelete(index)}></i>
                                             </div>
                                         </td>
                                     </tr>

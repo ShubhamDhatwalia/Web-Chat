@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ChatbotList from '../ChatbotComponents/ChatbotList.jsx'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import { addChatbot } from '../../redux/Chatbot/ChatbotSlice..js';
 import { toast } from 'react-toastify';
-import Flowbuilder from '../Flowbuilder/Flowbuilder.jsx';
-
-
-
 
 
 
@@ -14,6 +12,7 @@ import Flowbuilder from '../Flowbuilder/Flowbuilder.jsx';
 function Chatbot() {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [popUp, setPopUp] = useState(false);
 
@@ -31,8 +30,7 @@ function Chatbot() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFlowbuilder, setShowFlowbuilder] = useState(false);
 
-
-
+  const chatbots = useSelector(state => state.chatbot.Chatbots);
 
   const handleClose = () => {
     setPopUp(false);
@@ -46,26 +44,61 @@ function Chatbot() {
   }
 
 
+  const formRef = useRef(null);
+
+  const handleClickOutside = (event) => {
+
+    if (formRef.current && !formRef.current.contains(event.target)) {
+      setPopUp(false);
+    }
+  };
+
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const newChatbot = {
+      ...chatbot,
+      id: uuidv4(),
+      lastUpdated: new Date().toISOString()
+    };
+
+    const exists = chatbots.some(bot => bot.name === newChatbot.name);
+
+    if (exists) {
+      toast.error('Chatbot with this name already exists!');
+      return;
+    }
+
+    dispatch(addChatbot(newChatbot));
     setPopUp(false);
-    // dispatch(addChatbot(chatbot));
-    // toast.success("Chatbot added successfully!");
-    setShowFlowbuilder(true);
 
-
-  }
+    navigate('/chatbot/flowbuilder', {
+      state: {
+        chatbotId: newChatbot.id,
+      },
+    });
+  };
 
   const handleFlowChange = (updatedFlow) => {
-  setChatbot(prev => ({
-    ...prev,
-    lastUpdated: new Date().toISOString(), // update timestamp if needed
-    flow: {
-      ...prev.flow,
-      ...updatedFlow, // merge nodes/edges
-    },
-  }));
-};
+    setChatbot(prev => ({
+      ...prev,
+      lastUpdated: new Date().toISOString(),
+      flow: {
+        ...prev.flow,
+        ...updatedFlow,
+      },
+    }));
+  };
 
 
 
@@ -110,7 +143,7 @@ function Chatbot() {
 
             {popUp && (
               <div className='fixed inset-0 bg-black/70 z-50 flex items-center justify-center'>
-                <div className='p-4 bg-white rounded-lg shadow-lg border border-gray-20 min-w-[330px]'>
+                <div ref={formRef} className='p-4 bg-white rounded-lg shadow-lg border border-gray-20 min-w-[330px]'>
 
                   <div className='flex justify-between items-center border-b border-gray-300 pb-2'>
                     <h4 className='font-semibold text-gray-800 text-lg'>Add Chatbot</h4>
@@ -118,7 +151,7 @@ function Chatbot() {
                   </div>
 
                   <form onSubmit={handleSubmit}>
-                    <h5 className='font-semibold text-sm mt-8'>Chatbot Name</h5>
+                    <h5 className='font-semibold text-sm mt-6'>Chatbot Name</h5>
 
                     <input required type="text" className='w-full text-sm bg-gray-100 px-2 py-2 mt-1 rounded-md focus:outline-none ' placeholder='Please input a chatbot name' value={chatbot.name} onChange={(e) => setChatbot({ ...chatbot, name: e.target.value })} />
 
@@ -142,9 +175,6 @@ function Chatbot() {
       )}
 
 
-      {showFlowbuilder === true && (
-        <Flowbuilder chatbot = {chatbot} onFlowChange={handleFlowChange} />
-      )}
     </>
   )
 }

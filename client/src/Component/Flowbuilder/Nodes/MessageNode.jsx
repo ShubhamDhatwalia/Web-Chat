@@ -12,19 +12,19 @@ function MessageNode({ data }) {
 
     console.log(data);
 
-   useEffect(() => {
-    if (image instanceof File) {
-        const objectUrl = URL.createObjectURL(image);
-        setImageSrc(objectUrl);
+    useEffect(() => {
+        if (image instanceof File) {
+            const objectUrl = URL.createObjectURL(image);
+            setImageSrc(objectUrl);
 
-        return () => URL.revokeObjectURL(objectUrl);
-    } else if (typeof image === 'string') {
-        setImageSrc(image);
-    } else {
-        // If image is null or undefined, clear the imageSrc
-        setImageSrc(null);
-    }
-}, [image]);
+            return () => URL.revokeObjectURL(objectUrl);
+        } else if (typeof image === 'string') {
+            setImageSrc(image);
+        } else {
+
+            setImageSrc(null);
+        }
+    }, [image]);
 
 
 

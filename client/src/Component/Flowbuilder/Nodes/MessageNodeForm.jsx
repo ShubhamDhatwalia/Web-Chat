@@ -36,17 +36,13 @@ function MessageNodeForm({ onClose, node, updateNodeData }) {
         }
 
         if (content.image) {
-            if (content.image instanceof File) {
-                setImageFile(content.image);
-                setImagePreview(URL.createObjectURL(content.image));
-            }
-            else if (typeof content.image === 'string') {
+            if (typeof content.image === 'string') {
+                setImageFile(content.image);    // Now imageFile is base64 string or URL string
                 setImagePreview(content.image);
             }
-
-            setShowImageInput(true);
         }
     }, [node]);
+
 
 
     const handleMessage = () => {
@@ -57,13 +53,27 @@ function MessageNodeForm({ onClose, node, updateNodeData }) {
         setShowImageInput(true);
     };
 
-    const handleFileChange = (e) => {
+
+    const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+
+
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            setImageFile(file);
-            setImagePreview(URL.createObjectURL(file));
+            const base64 = await fileToBase64(file);  // Convert to base64 string
+            setImageFile(base64); // Save base64 string instead of File object
+            setImagePreview(base64); // Show preview using base64 string
         }
     };
+
 
 
     const handleSubmit = () => {
@@ -74,14 +84,14 @@ function MessageNodeForm({ onClose, node, updateNodeData }) {
                 content: {
                     ...node.data.content,
                     message: message,
-                    image: imageFile,
-                }
-            }
+                    image: imageFile, // base64 string
+                },
+            },
         };
 
         updateNodeData(node.id, updatedNode.data);
-
         onClose();
+
     }
 
 
@@ -89,7 +99,7 @@ function MessageNodeForm({ onClose, node, updateNodeData }) {
 
     return (
         <div className='fixed inset-0 bg-black/70 z-50 flex items-center justify-center'>
-            <div  ref={formRef} className='p-4 bg-white rounded-lg shadow-lg border border-gray-200 w-[350px] relative z-50 max-h-[90vh] overflow-y-auto'>
+            <div ref={formRef} className='p-4 bg-white rounded-lg shadow-lg border border-gray-200 w-[350px] relative z-50 max-h-[90vh] overflow-y-auto'>
                 <div className='flex justify-between items-center pb-4'>
                     <h4 className='font-semibold text-lg'>Set a message</h4>
                     <i

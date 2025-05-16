@@ -111,7 +111,7 @@ function CreateKeyword({ onClose, editData }) {
 
     };
 
-    
+
     const handleClose = () => {
         setPopUp(false);
         setNewKeyword('');

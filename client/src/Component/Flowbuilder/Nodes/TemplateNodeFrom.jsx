@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTemplates } from '../../../redux/templateThunks';
 import { TextField, Autocomplete } from '@mui/material';
@@ -11,7 +11,7 @@ function TemplateNodeFrom({ onClose, node, updateNodeData }) {
     const dispatch = useDispatch();
 
 
-    
+
     const [formInput, setFormInput] = useState({
         template: '',
     });
@@ -34,6 +34,38 @@ function TemplateNodeFrom({ onClose, node, updateNodeData }) {
     };
 
 
+    useEffect(() => {
+        if (node?.data?.content?.template?.id) {
+            setFormInput({
+                template: node.data.content.template.id,
+            });
+        }
+    }, [node]);
+
+
+
+
+    const formRef = useRef(null);
+
+    const handleClickOutside = (event) => {
+        const autocompletePopup = document.querySelector('[role="presentation"]');
+
+        if (
+            formRef.current &&
+            !formRef.current.contains(event.target) &&
+            !(autocompletePopup && autocompletePopup.contains(event.target))
+        ) {
+            onClose();
+        }
+    };
+
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
 
 
@@ -43,7 +75,6 @@ function TemplateNodeFrom({ onClose, node, updateNodeData }) {
     }, [templates, formInput.template]);
 
 
-    
 
 
     const header = selectedTemplate?.components.find((comp) => comp.type === 'HEADER');
@@ -61,38 +92,34 @@ function TemplateNodeFrom({ onClose, node, updateNodeData }) {
         ));
     };
 
-    // console.log(selectedTemplate);
-    // console.log(header);
-    // console.log(body);
-    // console.log(footer);
-    // console.log(buttons);
 
 
-   const handleSubmit = () => {
-    const updatedNode = {
-        ...node,
-        data: {
-            ...node.data,
-            content: {
-                ...node.data.content,
-                template: selectedTemplate,
+
+    const handleSubmit = () => {
+        const updatedNode = {
+            ...node,
+            data: {
+                ...node.data,
+                content: {
+                    ...node.data.content,
+                    template: selectedTemplate,
+                }
             }
-        }
+        };
+
+        updateNodeData(node.id, updatedNode.data);
+
+        onClose();
     };
 
-    updateNodeData(node.id, updatedNode.data);
-
-    onClose();
-};
 
 
 
-    
 
 
     return (
         <div className='fixed inset-0 bg-black/70 z-50 flex items-center justify-center'>
-            <div className='p-4 bg-white rounded-lg shadow-lg border border-gray-200 min-w-[330px] relative z-50'>
+            <div ref={formRef} className='p-4 bg-white rounded-lg shadow-lg border border-gray-200 min-w-[330px] relative z-50 max-h-[90vh] overflow-y-auto'>
                 <div className='flex justify-between items-center  pb-4'>
                     <h4 className='font-semibold text-lg'>Set a Template</h4>
                     <i
@@ -254,7 +281,7 @@ function TemplateNodeFrom({ onClose, node, updateNodeData }) {
 
                 <div className='mt-6 flex gap-4 items-center justify-end'>
                     <button type='button' className='px-3 py-1 rounded-md bg-gray-100 cursor-pointer hover:bg-gray-200' onClick={onClose}>Cancel</button>
-                    <button type='submit' className='px-3 py-1 rounded-md bg-green-500 cursor-pointer hover:bg-green-600 text-white' onClick={handleSubmit}>Save</button>
+                    <button type='submit' className='px-3 py-1 rounded-md bg-green-600 cursor-pointer hover:bg-green-700 text-white' onClick={handleSubmit}>Save</button>
                 </div>
             </div>
 
