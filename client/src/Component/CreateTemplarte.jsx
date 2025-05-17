@@ -9,7 +9,7 @@ import { TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@m
 const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
 const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
 
- 
+
 
 
 function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
@@ -292,9 +292,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 components: liveComponents
             };
 
-            onTemplateChange(livePreviewData); // Update the live preview with the new data
+            onTemplateChange(livePreviewData);
         }
-    }, [formInput, buttons, sampleValues]); // Ensure to watch for sampleValues changes as well
+    }, [formInput, buttons, sampleValues]);
 
 
     useEffect(() => {
@@ -316,11 +316,10 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 parameter_format: templateData?.parameter_format || 'POSITIONAL',
             });
 
-            // Handle named and positional parameters based on the parameter_format
             if (templateData.parameter_format === "NAMED") {
 
                 console.log(headerComponent?.example?.header_text_named_params[0].example)
-                // Extract named parameters
+
                 setSampleValues({
                     header_text: headerComponent?.example?.header_text_named_params?.map(param => ({
                         param_name: param.param_name,
@@ -453,7 +452,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     }
 
                     headerComponent.example = {
-                        header_text: headerExamples[0] // only one variable is allowed in header
+                        header_text: headerExamples[0] 
                     };
                 } else {
                     headerComponent.example = {
@@ -473,14 +472,13 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         const phone_id = 637230059476897;
 
 
-        // Handle HEADER (IMAGE)
         if (headerOption === "IMAGE" && headerImage) {
             try {
                 const formData = new FormData();
                 formData.append('file', headerImage);
                 formData.append('type', headerImage.type);
                 formData.append('messaging_product', 'whatsapp');
-                
+
                 console.log(formData);
 
                 for (let pair of formData.entries()) {

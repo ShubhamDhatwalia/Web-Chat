@@ -122,9 +122,6 @@ function ChatbotList({ onSearch }) {
 
 
 
-
-
-
                 <div className='flex items-center justify-between px-8 py-5 text-sm bg-gray-100'>
                     <div className='flex items-center text-lg font-semibold text-gray-500 gap-2'>
                         <span>Items per page:</span>

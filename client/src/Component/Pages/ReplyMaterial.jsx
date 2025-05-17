@@ -4,13 +4,15 @@ import TextReplyMaterial from '../ReplyMaterial/TextReplyMaterial';
 import Templates from '../ReplyMaterial/Templates';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import ChatbotReplyMaterial from '../ReplyMaterial/ChatbotReplyMaterial';
 
 
 
 
 
 
-function ReplyMaterial({ onClose, Keywords}) {
+
+function ReplyMaterial({ onClose, Keywords }) {
   const [selected, setSelected] = useState('Text');
   const [selectedReplies, setSelectedReplies] = useState([]);
 
@@ -23,11 +25,13 @@ function ReplyMaterial({ onClose, Keywords}) {
   const selectedKeywordReplies = selectedKeyword?.replyMaterial;
 
   useEffect(() => {
-          if (selectedKeywordReplies) {
-              setSelectedReplies(selectedKeywordReplies);
-          }
-      }, [selectedKeywordReplies]);
-   
+    if (selectedKeywordReplies) {
+      setSelectedReplies(selectedKeywordReplies);
+    }
+  }, [selectedKeywordReplies]);
+
+
+  console.log(selected);
 
 
 
@@ -46,7 +50,10 @@ function ReplyMaterial({ onClose, Keywords}) {
           {selected === 'Text' && <TextReplyMaterial onClose={onClose} Keywords={Keywords} selectedReplies={selectedReplies} setSelectedReplies={setSelectedReplies} />}
 
           {selected === 'Templates' && <Templates onClose={onClose} Keywords={Keywords} selectedReplies={selectedReplies} setSelectedReplies={setSelectedReplies} />}
-          
+
+
+          {selected === 'Chatbots' && <ChatbotReplyMaterial onClose={onClose} Keywords={Keywords} selectedReplies={selectedReplies} setSelectedReplies={setSelectedReplies} />}
+
 
         </div>
 

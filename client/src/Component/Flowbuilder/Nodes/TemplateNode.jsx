@@ -1,4 +1,8 @@
 import React from 'react'
+import { Handle, Position } from 'reactflow';
+
+
+
 
 function TemplateNode({ data }) {
 
@@ -98,6 +102,29 @@ function TemplateNode({ data }) {
               })}
             </div>
           )}
+
+
+
+
+
+
+
+
+
+
+
+          <Handle
+            type="target"
+            position={Position.Left}
+            className='!bg-[#4A5565] !w-[10px] !h-[10px] '
+
+          />
+          <Handle
+            type="source"
+            position={Position.Right}
+            style={{ background: '#00A63E', width: 12, height: 12, borderRadius: '50%' }}
+            className='bg-[#00A63E] !w-[12px] !h-[12px]'
+          />
         </div>
       )}
     </>

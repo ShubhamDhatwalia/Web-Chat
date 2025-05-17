@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Handle, Position } from 'reactflow';
 import QuestionNode from './QuestionNode';
 import TemplateNode from './TemplateNode';
 import MessageNode from './MessageNode';
@@ -11,7 +10,7 @@ function CustomNode({ data }) {
 
     console.log(data);
 
-    
+
 
     const nodeRef = useRef(null);
 
@@ -32,7 +31,6 @@ function CustomNode({ data }) {
 
     const handleNodeTooltip = (id, subType) => {
         setNodeTooltip(!nodeTooltip);
-        // console.log(id + subType);
     }
 
     const handleDeleteNode = (id) => {
@@ -52,22 +50,20 @@ function CustomNode({ data }) {
     };
 
 
-    
+
 
 
 
     return (
         <>
 
-            <div  className={`rounded-lg shadow-xl  w-[320px] relative  hover:shadow-2xl `}>
-
-
+            <div className={`rounded-lg shadow-xl  w-[320px] relative  hover:shadow-2xl `}>
 
                 {nodeTooltip && (
                     <>
                         <div ref={nodeRef} className='p-2 cursor-default bg-white rounded-md shadow-2xl absolute top-[-100px] right-0 w-[120px]'>
 
-                            <ul  className='flex flex-col gap-2 text-sm font-semibold'>
+                            <ul className='flex flex-col gap-2 text-sm font-semibold'>
                                 <li className=' cursor-pointer items hover:text-green-600 flex gap-2 py-2 border-b-1 border-gray-200' onClick={() => handleEditNode(id)}> <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.3753 9.16041C12.6078 9.74959 10.2511 7.39287 10.8402 5.62533M11.5664 4.89913L7.75841 8.70716C6.10291 10.3627 4.92846 12.437 4.36063 14.7083L4.17663 15.4443C4.11929 15.6736 4.32702 15.8814 4.55635 15.824L5.29236 15.64C7.56369 15.0722 9.638 13.8977 11.2935 12.2422L15.1015 8.43421C15.5703 7.96543 15.8337 7.32963 15.8337 6.66667C15.8337 5.28614 14.7145 4.16699 13.334 4.16699C12.671 4.16699 12.0352 4.43035 11.5664 4.89913Z" className='stroke' stroke="#333" stroke-width="1.25"></path></svg>Edit</li>
 
 
@@ -117,10 +113,10 @@ function CustomNode({ data }) {
 
                     <div className="text-xs p-2 text-gray-600">
                         {subType === 'question' && (
-                            <QuestionNode />
+                            <QuestionNode data={data} />
                         )}
                         {subType === 'message' && (
-                            <MessageNode data={data}/>
+                            <MessageNode data={data} />
                         )}
                         {subType === 'template' && (
                             <TemplateNode data={data} />
@@ -128,19 +124,9 @@ function CustomNode({ data }) {
                     </div>
 
 
-                    {/* Handles */}
-                    <Handle
-                        type="target"
-                        position={Position.Left}
-                        className='!bg-[#4A5565] !w-[10px] !h-[10px] '
 
-                    />
-                    <Handle
-                        type="source"
-                        position={Position.Right}
-                        style={{ background: '#00A63E', width: 12, height: 12, borderRadius: '50%' }}
-                        className='bg-[#00A63E] !w-[12px] !h-[12px]'
-                    />
+
+
                 </div>
 
 

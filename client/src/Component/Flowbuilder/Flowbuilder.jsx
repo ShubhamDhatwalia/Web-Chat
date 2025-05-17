@@ -301,7 +301,7 @@ function Flowbuilder() {
                 />
             </div>
 
-            {editNode?.data?.subType === 'question' && <QuestionNodeForm node={editNode} onClose={() => setEditNode(null)} />}
+            {editNode?.data?.subType === 'question' && <QuestionNodeForm node={editNode} onClose={() => setEditNode(null)} updateNodeData={updateNodeData} />}
 
             {editNode?.data?.subType === 'message' && (
                 <MessageNodeForm node={editNode} onClose={() => setEditNode(null)} updateNodeData={updateNodeData} />
