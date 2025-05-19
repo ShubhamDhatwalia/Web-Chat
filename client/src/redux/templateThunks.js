@@ -7,6 +7,81 @@ const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
 
 
 
+export const createTemplate = createAsyncThunk(
+  'templates/createTemplate',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `https://graph.facebook.com/v22.0/${businessId}/message_templates`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const newTemplate = {
+        ...response.data,
+        createdAt: new Date().toISOString() // ✅ Add creation timestamp
+      };
+
+
+      const existing = JSON.parse(localStorage.getItem('whatsappTemplates') || '[]');
+      const updated = [newTemplate, ...existing];
+      localStorage.setItem('whatsappTemplates', JSON.stringify(updated));
+
+      return newTemplate;
+    } catch (error) {
+      toast.error('Failed to create template.');
+      return rejectWithValue(error.response?.data?.error?.message || error.message);
+    }
+  }
+);
+
+
+export const editTemplate = createAsyncThunk(
+  'templates/editTemplate',
+  async ({ id, payload }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `https://graph.facebook.com/v22.0/${id}`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const updatedTemplate = response.data;
+
+      const existing = JSON.parse(localStorage.getItem('whatsappTemplates') || '[]');
+      const updated = existing.map((t) =>
+        t.id === id
+          ? {
+            ...t,
+            ...updatedTemplate,
+            createdAt: new Date().toISOString() 
+          }
+          : t
+      );
+      localStorage.setItem('whatsappTemplates', JSON.stringify(updated));
+
+      return updatedTemplate;
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to update template.');
+      return rejectWithValue(error.response?.data?.error?.message || error.message);
+    }
+  }
+);
+
+
+
+
 export const fetchTemplates = createAsyncThunk(
   'templates/fetchTemplates',
   async (_, { rejectWithValue }) => {

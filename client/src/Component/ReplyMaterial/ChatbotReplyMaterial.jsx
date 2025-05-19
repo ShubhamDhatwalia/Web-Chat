@@ -193,7 +193,7 @@ function ChatbotReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedR
                         />
 
                       )}
-                      {chatbot.name}
+                      <div className='cursor-pointer hover:underline' onClick={() => handleEdit(chatbot.id)}>{chatbot.name}</div>
                     </td>
 
                     <td className='py-4 pr-22'>{chatbot.triggered}</td>

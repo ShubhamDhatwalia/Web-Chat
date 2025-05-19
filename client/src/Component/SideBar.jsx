@@ -7,7 +7,7 @@ import togglebtn from '../assets/togglebtn.png';
 
 function SideBar({ isOpen, toggleSidebar }) {
     const [isAutomationOpen, setAutomationOpen] = useState(false);
-    
+
     const location = useLocation();
 
     const isAutomationPath = [
@@ -20,7 +20,7 @@ function SideBar({ isOpen, toggleSidebar }) {
 
     useEffect(() => {
         setAutomationOpen(isAutomationPath);
-    },[location.pathname, isAutomationPath]);
+    }, [location.pathname, isAutomationPath]);
 
 
 
@@ -38,7 +38,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                 <a href="#">
                     <div className={`logo text-black font-bold text-2xl ${isOpen ? 'visible' : 'hidden'}`}>Web <span className='text-green-600'>Chat</span></div>
                 </a>
-            
+
                 <img src={togglebtn} alt="" onClick={toggleSidebar} className='w-[26px] h-[26px] cursor-pointer' />
             </header>
 
@@ -137,6 +137,18 @@ function SideBar({ isOpen, toggleSidebar }) {
                             </li>
                         </ul>
                     )}
+                </li>
+
+
+                <li>
+                    <NavLink
+                        to="/contacts"
+                        className={({ isActive }) =>
+                            `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
+                        }
+                    >
+                        <i class="fa-regular fa-address-book"></i> <span>Contact</span>
+                    </NavLink>
                 </li>
             </ul>
         </div>

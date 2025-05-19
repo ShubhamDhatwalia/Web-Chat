@@ -13,7 +13,7 @@ import Chatbot from './Component/Pages/Chatbot';
 import Rules from './Component/Pages/Rules';
 import { ToastContainer } from 'react-toastify';
 import Flowbuilder from './Component/Flowbuilder/Flowbuilder';
-
+import Contact from './Component/Pages/Contact';
 
 
 function App() {
@@ -36,6 +36,8 @@ function App() {
             <Route path='/chatbot' element={<Chatbot />} />
             <Route path='/rules' element={<Rules />} />
             <Route path='/chatbot/flowbuilder' element={<Flowbuilder />} />
+            <Route path='/contacts' element={<Contact />} />
+
 
           </Route>
 

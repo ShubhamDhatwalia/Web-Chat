@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTemplates, deleteTemplate,  } from '../redux/templateThunks.js';
+import { fetchTemplates, deleteTemplate, } from '../redux/templateThunks.js';
 import { toast } from 'react-toastify';
 import Skeleton from '@mui/material/Skeleton';
 
@@ -60,7 +60,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
   const handleDelete = (e, template) => {
     e.stopPropagation();
     dispatch(deleteTemplate(template));
-    
+
   };
 
   const handleEdit = (e, template) => {
@@ -121,7 +121,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
                     className={`group text-nowrap text-center hover:bg-green-50 font-semibold cursor-pointer text-sm ${selectedTemplateId === template.id ? 'bg-green-50' : ''
                       }`}
                   >
-                    <td className="px-[10px] py-4 text-left text-blue-500">{template.name}</td>
+                    <td className="px-[10px] py-4 text-left text-blue-500 cursor-pointer hover:underline" onClick={(e) => handleEdit(e, template)}>{template.name}</td>
                     <td className="px-[10px] py-4">{template.category}</td>
                     <td className="px-[10px] py-4">{languageMap[template.language] || template.language}</td>
                     <td className="px-[10px] py-4">

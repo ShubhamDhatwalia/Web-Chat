@@ -77,7 +77,7 @@ function ChatbotList({ onSearch }) {
                                 currentData.map((chatbot, index) => (
                                     <tr key={index} className=' text-center '>
                                         <td className='py-4 pr-1 text-left text-blue-600 max-w-[400px]'>
-                                            {chatbot.name}
+                                            <div className='cursor-pointer hover:underline' onClick={() => handleEdit(chatbot.id)}>{chatbot.name}</div>
                                         </td>
 
                                         <td className='py-4 pr-22'>{chatbot.triggered}</td>

@@ -3,6 +3,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
+import { createTemplate, editTemplate} from '../redux/templateThunks.js';
+import { useDispatch } from 'react-redux';
 
 
 
@@ -25,9 +27,9 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         parameter_format: 'POSITIONAL',
     });
 
+    const dispatch = useDispatch();
 
-
-    console.log(onTemplateChange);
+    console.log(templateData);
 
 
     const [sampleValues, setSampleValues] = useState({
@@ -79,7 +81,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
         const otherFieldValue =
             name === 'headerText' ? formInput.messageContent : formInput.headerText;
 
-        // Combined check: current and other field
         const combinedValue = value + ' ' + otherFieldValue;
 
         if (isPosition && namedRegex.test(combinedValue)) {
@@ -94,7 +95,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
         const existingVariables = extractVariableList(value, formInput.parameter_format);
 
-        // Skip if variable already exists
         if (existingVariables.includes(insertText.replace(/[{}]/g, ''))) return;
 
         const newText = value.slice(0, start) + insertText + value.slice(end);
@@ -137,7 +137,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             const nextVar = getNextVariableNumber(currentText);
             insertAtCursor('headerText', `{{${nextVar}}}`);
 
-            // Update sample values
             setSampleValues(prev => ({
                 ...prev,
                 header_text: [...prev.header_text, '']
@@ -146,7 +145,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             const nextVar = getNextVariableName(currentText, 'header');
             insertAtCursor('headerText', `{{${nextVar}}}`);
 
-            // Update sample values
             setSampleValues(prev => ({
                 ...prev,
                 header_text: [...prev.header_text, '']
@@ -161,7 +159,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             const nextVar = getNextVariableNumber(currentText);
             insertAtCursor('messageContent', `{{${nextVar}}}`);
 
-            // Update sample values
             setSampleValues(prev => ({
                 ...prev,
                 body_text: [...prev.body_text, '']
@@ -170,7 +167,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             const nextVar = getNextVariableName(currentText, 'body');
             insertAtCursor('messageContent', `{{${nextVar}}}`);
 
-            // Update sample values
             setSampleValues(prev => ({
                 ...prev,
                 body_text: [...prev.body_text, '']
@@ -212,7 +208,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
             const liveComponents = [];
 
-            // Handle HEADER (TEXT or IMAGE)
             if (headerOption === 'TEXT' && headerText.trim()) {
                 liveComponents.push({
                     type: 'HEADER',
@@ -246,7 +241,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 });
             }
 
-            // Handle BODY
             if (messageContent.trim()) {
                 const bodyExample =
                     parameter_format === 'NAMED'
@@ -268,7 +262,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             }
 
 
-            // Handle FOOTER (if exists)
             if (footerText?.trim()) {
                 liveComponents.push({
                     type: 'FOOTER',
@@ -276,7 +269,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 });
             }
 
-            // Handle BUTTONS (if any)
             if (buttons.length > 0) {
                 liveComponents.push({
                     type: 'BUTTONS',
@@ -433,7 +425,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
         const components = [];
 
-        // Handle HEADER (TEXT)
         if (headerOption === "TEXT" && headerText.trim()) {
             const headerVars = extractVariableList(headerText, parameter_format);
 
@@ -452,7 +443,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     }
 
                     headerComponent.example = {
-                        header_text: headerExamples[0] 
+                        header_text: headerExamples[0]
                     };
                 } else {
                     headerComponent.example = {
@@ -520,7 +511,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             }
         }
 
-        // Handle BODY
         if (messageContent.trim()) {
             const bodyVars = extractVariableList(messageContent, parameter_format);
 
@@ -560,7 +550,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
 
-        // Handle FOOTER (if exists)
         if (footerText?.trim()) {
             components.push({
                 type: "FOOTER",
@@ -568,7 +557,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             });
         }
 
-        // Handle BUTTONS (if any)
         if (buttons.length > 0) {
             components.push({
                 type: "BUTTONS",
@@ -588,37 +576,23 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
         console.log(payload);
 
-        try {
-            const response = await axios.post(
-                `https://graph.facebook.com/v22.0/${businessId}/message_templates`,
-                payload,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${accessToken}`,
-                    }
-                }
-            );
+        
 
-            const existingTemplates = JSON.parse(localStorage.getItem('whatsappTemplates')) || [];
-            const newTemplate = {
-                id: response.data.id || Date.now(),
-                name: payload.name,
-                category: payload.category,
-                language: payload.language,
-                parameter_format: payload.parameter_format,
-                components: payload.components,
-                createdAt: new Date().toISOString()
-            };
-            localStorage.setItem('whatsappTemplates', JSON.stringify([...existingTemplates, newTemplate]));
-            toast.success("Template created successfully!");
+        try {
+            if (templateData) {
+                await dispatch(editTemplate({ id: templateData.id, payload })).unwrap();
+                toast.success("Template updated successfully!");
+            } else {
+                await dispatch(createTemplate(payload)).unwrap();
+                toast.success("Template created successfully!");
+            }
 
             onSuccess();
         } catch (error) {
-            console.log(JSON.stringify(error.response?.data, null, 2));
-
-            toast.error(error.response?.data?.error?.error_user_msg || "Error creating template. Please try again.");
+            toast.error(error || "Failed to save template.");
         }
+
+
     };
 
 

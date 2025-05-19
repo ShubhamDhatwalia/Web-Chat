@@ -97,7 +97,7 @@ function FlowCanvas({ chatbot, nodes, setNodes, onNodesChange, edges, setEdges, 
     }, []);
 
     const handleCancel = () => {
-        navigate('/chatbot');
+        navigate(-1);
     };
 
     const handleSaveChatbotFlow = () => {

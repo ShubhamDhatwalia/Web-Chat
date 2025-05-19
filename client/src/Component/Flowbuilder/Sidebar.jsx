@@ -6,7 +6,7 @@ function Sidebar({ onAddNode }) {
             <div className='p-4 flex flex-col gap-4'>
 
 
-                <div className='bg-[#E25866] rounded-sm p-3 text-white font-semibold flex cursor-pointer 'onClick={() => onAddNode('Message', 'message')} >
+                <div className='bg-[#E25866] rounded-sm p-3 text-white font-semibold flex cursor-pointer ' onClick={() => onAddNode('Message', 'message')} >
                     <div className='max-w-[150px]'>
                         <h3>Send a message</h3>
                         <p className='text-xs font-medium mt-2'>With no response required from visitor</p>
@@ -25,8 +25,8 @@ function Sidebar({ onAddNode }) {
 
                 <div className='bg-[#F79431] rounded-sm p-3 text-white font-semibold flex cursor-pointer ' onClick={() => onAddNode('Question', 'question')}>
                     <div className='max-w-[150px]'>
-                        <h3>Ask a question</h3>
-                        <p className='text-xs font-medium mt-2'>Ask question and store user input in variable</p>
+                        <h3>Buttons</h3>
+                        <p className='text-xs font-medium mt-2'>Choices based on buttons (Maximum of 3 choices)</p>
                     </div>
 
                     <div className='float-right' >
