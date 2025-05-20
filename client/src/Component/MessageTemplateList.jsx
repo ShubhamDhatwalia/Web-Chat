@@ -69,7 +69,7 @@ function MessageTemplateList({ onSuccess, onSelectTemplateId, selectedTemplateId
   };
 
   return (
-    <div className="mt-[30px] rounded-md min-h-[78vh] flex flex-col text-gray-600 justify-between">
+    <div className="mt-[30px] rounded-md h-[calc(100vh-210px)]  flex flex-col text-gray-600 justify-between">
       <div>
         <div className="pb-2 p-[10px]">
           <input

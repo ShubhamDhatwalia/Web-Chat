@@ -38,7 +38,7 @@ function ManageTemplates() {
 
 
   return (
-    <div className='bg-gray-100 px-[10px] py-[10px] '>
+    <div className='bg-gray-100 px-[10px] py-[10px] h-[calc(100vh-60px)] '>
       <div className='flex justify-between gap-[10px] items-stretch'>
         <div className='bg-white p-[15px]  rounded-md flex-[66%] '>
           <div className='flex mt-4 p-[10px] justify-between items-center'>

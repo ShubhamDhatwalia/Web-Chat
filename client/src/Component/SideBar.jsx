@@ -142,7 +142,7 @@ function SideBar({ isOpen, toggleSidebar }) {
 
                 <li>
                     <NavLink
-                        to="/contacts"
+                        to="/contact"
                         className={({ isActive }) =>
                             `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                         }

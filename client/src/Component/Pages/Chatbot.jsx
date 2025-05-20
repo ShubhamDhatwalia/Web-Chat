@@ -109,10 +109,10 @@ function Chatbot() {
 
       {showFlowbuilder === false && (
         <>
-          <div className='p-6 py-[23px]  mb-[7px] bg-gray-100 flex items-center text-gray-600 justify-between'>
+          <div className='p-6 py-[23px]  mb-[4px] bg-gray-100 flex items-center text-gray-600 justify-between'>
             <div className='flex items-center gap-12'>
               <div>
-                <h2 className='text-2xl font-semibold'>Chatbots</h2>
+                <h2 className='text-3xl font-semibold'>Chatbots</h2>
                 <p className='text-xs mt-2 font-semibold text-gray-600'><span className='font-semibold text-sm text-gray-600'>Note: </span>Select a chatbot below and make it your own by customising it.
                 </p>
               </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeChatbot } from '../../redux/Chatbot/ChatbotSlice..js';
 import { toast } from 'react-toastify';
@@ -59,10 +59,10 @@ function ChatbotList({ onSearch }) {
     return (
         <>
 
-            <div className='flex flex-col justify-between text-gray-500'>
-                <div className='mt-0 px-8 max-h-[74vh] min-h-[74vh] overflow-auto'>
+            <div className='flex flex-col justify-between h-[calc(100vh-175px)] text-gray-500'>
+                <div className='mt-0 px-8 flex flex-col justify-between h-full overflow-auto'>
                     <table className='table-auto w-full   '>
-                        <thead className='text-lg '>
+                        <thead className='text-lg text-gray-600'>
                             <tr className="sticky top-0 z-10 border-b border-gray-300 bg-white text-center text-nowrap ">
                                 <th className="py-6 pr-22 text-left font-semibold">Name</th>
                                 <th className='py-6 pr-22 text-center font-semibold'>Triggered</th>

@@ -4,9 +4,8 @@ import phoneNumberReducer from './phoneNumberSlice.js';
 import keywordReducer from './Keywords/keywordSlice.js';
 import textReplyReducer from './textReply/textReplySlice.js';
 import campaignReducer from './Campaign/campaignSlice.js';
-import ChatbotReducer from'./Chatbot/ChatbotSlice..js';
-
-
+import ChatbotReducer from './Chatbot/ChatbotSlice..js';
+import ContactReducer from './contacts/contactSlice.js';
 
 
 
@@ -18,6 +17,7 @@ export const store = configureStore({
     textReplys: textReplyReducer,
     campaign: campaignReducer,
     chatbot: ChatbotReducer,
+    contact: ContactReducer,
   },
 });
 

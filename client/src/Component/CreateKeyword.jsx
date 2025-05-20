@@ -102,7 +102,7 @@ function CreateKeyword({ onClose, editData }) {
     const handleSubmit = () => {
 
         if (keywordConfig.keywords.length === 0) {
-            toast.error("Please add at least one keyword before proceeding.");
+            toast.info("Please add at least one keyword before proceeding.");
             return;
         }
 

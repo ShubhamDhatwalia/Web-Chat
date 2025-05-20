@@ -91,18 +91,19 @@ function BroadCast() {
 
 
   const handleSubmit = async (broadcast, e) => {
-
-
-    if (e) {
-      e.preventDefault();
-    }
-
+    if (e) e.preventDefault();
 
     const selectedTemplate = templates.find(t => t.id === broadcast?.template);
     console.log(selectedTemplate);
 
+    if (!selectedTemplate) {
+      return;
+    }
 
-    for (const number of broadcast.contactList) {
+    toast.success("Broadcast started");
+
+    // Prepare an array to hold all send message promises
+    const sendPromises = broadcast.contactList.map(async number => {
       const payload = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -117,27 +118,9 @@ function BroadCast() {
         }
       };
 
-
       // Dynamically add components based on selectedTemplate
-
       if (selectedTemplate?.components) {
-        selectedTemplate.components.forEach((component) => {
-          // if (component.type === "HEADER" && component.format === "IMAGE") {
-          //   payload.template.components.push({
-          //     type: "header",
-          //     parameters: [
-          //       {
-          //         type: "image",
-          //         image: {
-          //           link: selectedTemplate?.components[0].example.header_handle[0] || "https://example.com/default.jpg" // or collected from UI
-          //         }
-          //       }
-          //     ]
-          //   });
-          // }
-
-
-
+        selectedTemplate.components.forEach(component => {
           // HEADER
           if (component.type === "HEADER") {
             const headerParams = [];
@@ -149,11 +132,9 @@ function BroadCast() {
                   type: "text",
                   text: param.example,
                   parameter_name: param.param_name
-
                 });
               });
             }
-
             // Positional format
             else if (component?.example?.header_text?.[0]) {
               const exampleHeader = component.example.header_text[0];
@@ -182,11 +163,9 @@ function BroadCast() {
                   type: "text",
                   text: param.example,
                   parameter_name: param.param_name
-
                 });
               });
             }
-
             // Positional format
             else if (component?.example?.body_text?.[0]) {
               const exampleBody = component.example.body_text[0];
@@ -207,22 +186,25 @@ function BroadCast() {
               });
             }
           }
-
         });
-      } 
+      }
 
       console.log(payload);
 
       try {
-        const response = await axios.post(`/sendMessage`, payload)
-
+        await axios.post(`/sendMessage`, payload);
       } catch (error) {
         console.error(`Error for ${number}:`, error);
         toast.error(`Failed for ${number}: ${error.response?.data?.error?.error?.message}`);
       }
-    }
+    });
+
+    // Wait for all message sends to finish
+    await Promise.all(sendPromises);
+
     toast.success("Broadcast attempt finished.");
   };
+
 
 
 
@@ -290,20 +272,18 @@ function BroadCast() {
   const handleSave = () => {
     const { campaignName, whatsappNumber, template, contactList } = formInput;
 
-    // Check if any field is empty
     if (!campaignName || !whatsappNumber || !template || contactList.length === 0) {
-      toast.error("All fields are required.");
+      toast.info("All fields are required.");
       return;
     }
 
-    // Check for duplicate campaign
     const exists = campaigns.some(c =>
       c.campaignName === campaignName &&
       JSON.stringify(c) === JSON.stringify(formInput)
     );
 
     if (exists) {
-      toast.error("Campaign with identical data already exists");
+      toast.warning("Campaign with identical data already exists");
       return;
     }
 

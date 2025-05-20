@@ -69,7 +69,7 @@ function CampaignList({onEdit, broadcast}) {
                             ) : (
                                 currentData.map((item, index) => (
                                     <tr key={item.id || index} className="text-center  font-semibold">
-                                        <td className="text-left py-4  text-blue-500">{item.campaignName || '-'}</td>
+                                        <td className="text-left py-4  text-blue-500 hover:underline cursor-pointer" onClick={() => handleEdit(index)}>{item.campaignName || '-'}</td>
                                         <td>{item.contactList.length || '-'}</td>
                                         <td>{item.totalCount || 0}</td>
                                         <td>{item.readCount || 0}</td>

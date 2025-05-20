@@ -131,7 +131,7 @@ function TextReplyMaterial({ onClose, Keywords, selectedReplies, setSelectedRepl
 
 
         if (selectedReplies.length === 0) {
-            toast.error("Please select at least one material")
+            toast.info("Please select at least one material")
         }
         else {
             const existingKeywordIndex = keywords.findIndex(

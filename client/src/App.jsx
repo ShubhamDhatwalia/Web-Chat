@@ -22,7 +22,7 @@ function App() {
   return (
     <>
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={1000} />
 
       <BrowserRouter>
         <Routes>
@@ -36,7 +36,7 @@ function App() {
             <Route path='/chatbot' element={<Chatbot />} />
             <Route path='/rules' element={<Rules />} />
             <Route path='/chatbot/flowbuilder' element={<Flowbuilder />} />
-            <Route path='/contacts' element={<Contact />} />
+            <Route path='/contact' element={<Contact />} />
 
 
           </Route>

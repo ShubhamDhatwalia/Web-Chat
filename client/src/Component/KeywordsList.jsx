@@ -67,8 +67,8 @@ function KeywordsList({ onOpen, onEdit, onSearch }) {
 
 
     return (
-        <div className='flex flex-col justify-between text-gray-600'>
-            <div className='mt-0 px-8 max-h-[72vh] min-h-[72vh] overflow-auto'>
+        <div className='flex flex-col justify-between h-[calc(100vh-192px)] text-gray-600'>
+            <div className='mt-0 px-8 flex flex-col justify-between overflow-auto'>
                 <table className='table-auto w-full   '>
                     <thead className='text-xl '>
                         <tr className="sticky top-0 z-10 border-b border-gray-300 bg-white text-center text-nowrap ">
