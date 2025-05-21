@@ -10,6 +10,8 @@ function Contact() {
     const [formData, setFormData] = useState({ name: '', phone: '' });
     const [attributes, setAttributes] = useState([]);
     const [errors, setErrors] = useState({ name: '', phone: '' });
+    const [searchTerm, setSearchTerm] = useState('');
+
     const dispatch = useDispatch();
 
     const contacts = useSelector((state) => state.contact.contacts);
@@ -110,6 +112,8 @@ function Contact() {
                                 type="text"
                                 className='w-full bg-white rounded-md pl-[10px] pr-[40px] py-[14px] focus:outline-none !font-medium'
                                 placeholder='Search here ... '
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </form>
@@ -199,7 +203,7 @@ function Contact() {
                                 ))}
                             </div>
 
-                            <div className='flex justify-end mt-8 gap-4'>
+                            <div className='flex justify-end mt-8 gap-4 '>
                                 <button
                                     type="button"
                                     className='bg-red-600 text-white px-4 py-1 rounded-md hover:bg-red-700 transition duration-200 cursor-pointer'
@@ -222,8 +226,8 @@ function Contact() {
 
 
 
-            <div className='mt-4 p-4 px-8'>
-                <ContactList />
+            <div className='mt-4  h-[calc(100vh-292px)]  '>
+                <ContactList onSearch={searchTerm}/>
             </div>
         </>
     );

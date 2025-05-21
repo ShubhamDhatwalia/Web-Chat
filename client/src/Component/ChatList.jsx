@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { use, useEffect } from 'react';
+import profile_icon from '../assets/profile_icon.svg'
 
 const chatData = [
   {
@@ -99,28 +100,38 @@ const chatData = [
   },
 ];
 
-function ChatList() {
+function ChatList({ onSelectUser, selectedUser }) {
+  console.log(onSelectUser);
+  console.log(selectedUser);
+
+  useEffect(() => {
+    if (!selectedUser) {
+      onSelectUser(chatData[0]);
+    }
+  }, [selectedUser]);
+
+
+
   return (
     <ul>
       {chatData.map((chat) => (
         <li
           key={chat.id}
-          className='  '
+          onClick={() => onSelectUser(chat)}
+          className='cursor-pointer hover:bg-green-50 px-2 '
         >
-          <div className='flex justify-between items-stretch h-[55px]  cursor-pointer hover:bg-blue-100'>
-            <div className='flex items-center flex-grow '>
-              <i className="fa-solid fa-circle-user text-gray-500 text-4xl"></i>
-
+          <div className='flex justify-between items-stretch h-[70px]'>
+            <div className='flex items-center flex-grow'>
+              <img src={profile_icon} alt="" />
               <div className='ml-[10px] flex flex-col justify-center border-b border-gray-300 w-full h-full'>
-                <h2 className='UserName font-bold'>{chat.name}</h2>
+                <h2 className='UserName font-semibold'>{chat.name}</h2>
                 {chat.message && (
-                  <p className='text-gray-500 font-semibold text-sm'>{chat.message}</p>
+                  <p className='text-gray-500 font-semibold text-xs'>{chat.message}</p>
                 )}
               </div>
             </div>
-
-            <div className='border-b border-gray-300  pl-2 whitespace-nowrap'>
-              <p className='timeStamp text-gray-500 text-xs font-semibold'>{chat.time}</p>
+            <div className='border-b border-gray-300 pl-2 whitespace-nowrap flex items-end'>
+              <p className='timeStamp text-gray-500 text-xs font-semibold mr-2'>{chat.time}</p>
             </div>
           </div>
         </li>
@@ -128,5 +139,6 @@ function ChatList() {
     </ul>
   );
 }
+
 
 export default ChatList;

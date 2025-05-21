@@ -72,6 +72,7 @@ function CreateKeyword({ onClose, editData }) {
         setNewKeyword('');
         setPopUp(false);
     };
+    
 
     const handleDelete = (kw) => {
         setKeywordConfigState(prev => ({
@@ -80,6 +81,7 @@ function CreateKeyword({ onClose, editData }) {
         }));
 
     };
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
