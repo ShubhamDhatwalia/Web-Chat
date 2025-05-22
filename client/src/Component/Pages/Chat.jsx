@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FaComments, FaPhoneAlt } from 'react-icons/fa';
-import ChatList from "../ChatList.jsx";
+import ChatList from "../Chat/ChatList.jsx";
 import profile_icon from '../../assets/profile_icon.svg'
 import EmojiPicker from 'emoji-picker-react';
 import Templates from '../Chat/Templates.jsx';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import UserProfileDetails from '../Chat/UserProfileDetails.jsx';
 
 
 
@@ -79,6 +79,7 @@ function Chat() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage('');
     if (message.trim() === '') return;
 
     const payload = {
@@ -97,7 +98,7 @@ function Chat() {
 
     try {
       await axios.post(`/sendTextMessage`, payload);
-      toast.success("Template sent successfully");
+      toast.success("Message sent successfully");
     } catch (error) {
       console.error(error);
     }
@@ -111,7 +112,7 @@ function Chat() {
     <div className='bg-gray-100 h-[calc(100vh-60px)] w-full'>
       <div className='bg-white rounded-md flex'>
         {/* Sidebar */}
-        <div className='flex-[10%] border-r border-gray-300'>
+        <div className='flex-[15%] border-r border-gray-300'>
           <div className='flex items-center gap-[10px] px-2 mt-3'>
             <form className='flex-grow'>
               <input
@@ -156,7 +157,7 @@ function Chat() {
         </div>
 
         {/* Main chat area */}
-        <div className='flex-[60%] px-[5px]'>
+        <div className='flex-[50%] '>
           <div className='bg-[url("./assets/whatsapp-bg.jpg")] bg-no-repeat bg-center bg-cover opacity-70 w-full h-full relative'>
             {selectedUser ? (
               <>
@@ -230,6 +231,11 @@ function Chat() {
               </div>
             )}
           </div>
+        </div>
+
+
+        <div className='flex-[10%] border-l border-gray-300 p-4'>
+          <UserProfileDetails selectedUser={selectedUser} />
         </div>
       </div>
     </div>

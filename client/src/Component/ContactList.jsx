@@ -59,9 +59,9 @@ function ContactList({ onSearch }) {
                                     <td className=" py-4 text-left">{contact.name}</td>
                                     <td className=" py-4">{contact.phone}</td>
                                     <td className="py-4"> {contact.source || 'N/A'} </td>
-                                    <td className=" py-4">
+                                    <td className=" py-4 max-w-[200px]">
                                         {contact.attributes && contact.attributes.length > 0 ? (
-                                            <ul className="text-center">
+                                            <ul className="text-center flex justify-center flex-wrap gap-4">
                                                 {contact.attributes.map((attr, i) => (
                                                     <li key={i} >
                                                         <span className='bg-gray-100 rounded-md px-2 py-1'>{attr.name}:  <span className='text-sm'>{attr.value}</span> </span>

@@ -5,6 +5,9 @@ import { addContact } from '../../redux/contacts/contactSlice';
 import { toast } from 'react-toastify';
 import ContactList from '../ContactList.jsx'
 
+
+
+
 function Contact() {
     const [isopen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({ name: '', phone: '' });
@@ -227,7 +230,7 @@ function Contact() {
 
 
             <div className='mt-4  h-[calc(100vh-292px)]  '>
-                <ContactList onSearch={searchTerm}/>
+                <ContactList onSearch={searchTerm} />
             </div>
         </>
     );

@@ -2,48 +2,27 @@ import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-
-
-
-
-
 function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
 
-
     const [template, setTemplate] = useState(null);
+    const [variableInputs, setVariableInputs] = useState({});
 
-
-
+    // Updated replaceVariables to use live variableInputs instead of example values
     const replaceVariables = (text, component, parameterFormat) => {
-        if (!text || !component.example) return text;
+        if (!text) return text;
 
         if (parameterFormat === 'POSITIONAL') {
-            let values = [];
-
-            if (component.type === 'HEADER') {
-                const headerValues = component.example?.header_text;
-                values = Array.isArray(headerValues[0]) ? headerValues[0] : headerValues;
-            } else if (component.type === 'BODY') {
-                const bodyValues = component.example?.body_text;
-                values = Array.isArray(bodyValues[0]) ? bodyValues[0] : bodyValues;
-            }
-
-            return text.replace(/{{(\d+)}}/g, (match, index) => values?.[parseInt(index) - 1] || match);
+            return text.replace(/{{(\d+)}}/g, (match, index) => {
+                // key format HEADER-1 or BODY-1 etc
+                const key = `${component.type}-${index}`;
+                return variableInputs[key] !== undefined ? variableInputs[key] : match;
+            });
         }
 
         if (parameterFormat === 'NAMED') {
-            let namedValues = [];
-
-            // Support both header and body
-            if (component.type === 'HEADER') {
-                namedValues = component.example?.header_text_named_params || [];
-            } else if (component.type === 'BODY') {
-                namedValues = component.example?.body_text_named_params || [];
-            }
-
             return text.replace(/{{(\w+)}}/g, (match, key) => {
-                const param = namedValues.find((p) => p.param_name === key);
-                return param?.example || match;
+                const variableKey = `${component.type}-${key}`;
+                return variableInputs[variableKey] !== undefined ? variableInputs[variableKey] : match;
             });
         }
 
@@ -57,13 +36,54 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
             const matched = templates.find((t) => t.id === templateId);
             setTemplate(matched || null);
 
-            console.log(templates)
-            console.log(storedTemplates)
+            if (matched) {
+                const inputFields = {};
+
+                matched.components.forEach(component => {
+                    if (component.type === "HEADER" || component.type === "BODY") {
+                        if (matched.parameter_format === "POSITIONAL") {
+                            const text = component.text || '';
+                            const matches = [...text.matchAll(/{{(\d+)}}/g)];
+
+                            let values = [];
+
+                            if (component.type === 'HEADER') {
+                                const headerValues = component.example?.header_text;
+                                values = Array.isArray(headerValues[0]) ? headerValues[0] : headerValues;
+                            } else if (component.type === 'BODY') {
+                                const bodyValues = component.example?.body_text;
+                                values = Array.isArray(bodyValues[0]) ? bodyValues[0] : bodyValues;
+                            }
+
+                            matches.forEach((match) => {
+                                const index = parseInt(match[1], 10);
+                                inputFields[`${component.type}-${index}`] = values?.[index - 1] || '';
+                            });
+                        } else if (matched.parameter_format === "NAMED") {
+                            const text = component.text || '';
+                            const matches = [...text.matchAll(/{{(\w+)}}/g)];
+
+                            let namedValues = [];
+
+                            if (component.type === 'HEADER') {
+                                namedValues = component.example?.header_text_named_params || [];
+                            } else if (component.type === 'BODY') {
+                                namedValues = component.example?.body_text_named_params || [];
+                            }
+
+                            matches.forEach((match) => {
+                                const paramName = match[1];
+                                const param = namedValues.find(p => p.param_name === paramName);
+                                inputFields[`${component.type}-${paramName}`] = param?.example || '';
+                            });
+                        }
+                    }
+                });
+
+                setVariableInputs(inputFields);
+            }
         }
-
-
     }, [templateId]);
-
 
     const header = template?.components.find((comp) => comp.type === 'HEADER');
     const body = template?.components.find((comp) => comp.type === 'BODY');
@@ -80,11 +100,7 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
         ));
     };
 
-
-
-
     const modalRef = useRef(null);
-
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -99,16 +115,10 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
         }
     };
 
-
-
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-
-
-
+        onClose();
         const payload = {
             messaging_product: "whatsapp",
             recipient_type: "individual",
@@ -123,29 +133,29 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
             }
         };
 
-        // Dynamically add components based on selectedTemplate
         if (template?.components) {
             template.components.forEach(component => {
-                // HEADER
                 if (component.type === "HEADER") {
                     const headerParams = [];
 
-                    // Named variable format
-                    if (component?.example?.header_text_named_params) {
-                        component.example.header_text_named_params.forEach(param => {
-                            headerParams.push({
-                                type: "text",
-                                text: param.example,
-                                parameter_name: param.param_name
-                            });
+                    if (template.parameter_format === "POSITIONAL") {
+                        Object.entries(variableInputs).forEach(([key, val]) => {
+                            if (key.startsWith("HEADER-")) {
+                                headerParams.push({
+                                    type: "text",
+                                    text: val
+                                });
+                            }
                         });
-                    }
-                    // Positional format
-                    else if (component?.example?.header_text?.[0]) {
-                        const exampleHeader = component.example.header_text[0];
-                        headerParams.push({
-                            type: "text",
-                            text: exampleHeader
+                    } else if (template.parameter_format === "NAMED") {
+                        Object.entries(variableInputs).forEach(([key, val]) => {
+                            if (key.startsWith("HEADER-")) {
+                                headerParams.push({
+                                    type: "text",
+                                    text: val,
+                                    parameter_name: key.split("-")[1]
+                                });
+                            }
                         });
                     }
 
@@ -157,31 +167,28 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
                     }
                 }
 
-                // BODY
                 if (component.type === "BODY") {
                     const bodyParams = [];
 
-                    // Named variable format
-                    if (component?.example?.body_text_named_params) {
-                        component.example.body_text_named_params.forEach(param => {
-                            bodyParams.push({
-                                type: "text",
-                                text: param.example,
-                                parameter_name: param.param_name
-                            });
-                        });
-                    }
-                    // Positional format
-                    else if (component?.example?.body_text?.[0]) {
-                        const exampleBody = component.example.body_text[0];
-                        if (Array.isArray(exampleBody)) {
-                            exampleBody.forEach(value => {
+                    if (template.parameter_format === "POSITIONAL") {
+                        Object.entries(variableInputs).forEach(([key, val]) => {
+                            if (key.startsWith("BODY-")) {
                                 bodyParams.push({
                                     type: "text",
-                                    text: value
+                                    text: val
                                 });
-                            });
-                        }
+                            }
+                        });
+                    } else if (template.parameter_format === "NAMED") {
+                        Object.entries(variableInputs).forEach(([key, val]) => {
+                            if (key.startsWith("BODY-")) {
+                                bodyParams.push({
+                                    type: "text",
+                                    text: val,
+                                    parameter_name: key.split("-")[1]
+                                });
+                            }
+                        });
                     }
 
                     if (bodyParams.length > 0) {
@@ -194,52 +201,44 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
             });
         }
 
-        console.log(payload);
-
         try {
             await axios.post(`/sendTemplateMessages`, payload);
             toast.success("Template sent successfully");
         } catch (error) {
             console.error(error);
+            toast.error("Failed to send template");
         }
-
-
     };
-
-
-
-
-
 
     return (
         <>
             <div ref={modalRef}>
 
-                <div className=' p-2 bg-white   rounded-md'>
+                <div className='p-2 bg-white rounded-md max-h-[500px] overflow-y-auto '>
 
                     {template && (
                         <div className='flex items-center justify-between mb-8 pb-2 border-b border-gray-300'>
                             <h4 className='font-semibold text-lg'>{template.name}</h4>
 
                             <i
-                                className='fa-solid fa-xmark text-2xl cursor-pointer hover:scale-110 text-red-600 ' onClick={() => onClose()}
-
+                                className='fa-solid fa-xmark text-2xl cursor-pointer hover:scale-110 text-red-600'
+                                onClick={() => onClose()}
                             ></i>
                         </div>
                     )}
 
                     {/* Header */}
                     {header && header.format === 'TEXT' && (
-                        <h2 className='font-bold text-md mb-2 break-words  '>
+                        <h2 className='font-bold text-md mb-2 break-words'>
                             {replaceVariables(header.text, header, template.parameter_format)}
                         </h2>
                     )}
                     {header && header.format === 'IMAGE' && (
-                        <div className=' overflow-hidden mb-2'>
+                        <div className='overflow-hidden mb-2'>
                             <img
                                 src={header.imagePreview || header.example?.header_handle?.[0] || ''}
                                 alt="Header"
-                                className="w-full  rounded-sm"
+                                className="w-full rounded-sm"
                             />
                         </div>
                     )}
@@ -300,22 +299,31 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
                         </div>
                     )}
 
-
-
-
-
-
-
+                    {/* Inputs */}
+                    <div className='mt-4'>
+                        {Object.entries(variableInputs).map(([key, value]) => (
+                            <div key={key} className="mb-2">
+                                <label className="block text-xs text-gray-900 font-semibold mb-1">{key.replace(/^(HEADER|BODY)-/, '')}</label>
+                                <input
+                                    type="text"
+                                    className="border border-gray-300 p-1 w-full rounded focus:outline-1 focus:outline-green"
+                                    value={value}
+                                    onChange={(e) => setVariableInputs(prev => ({ ...prev, [key]: e.target.value }))}
+                                />
+                            </div>
+                        ))}
+                    </div>
 
                     <div className='mt-6 flex gap-4 items-center justify-end'>
-                        <button type='button' className='px-3 py-1 rounded-md bg-gray-100 cursor-pointer hover:bg-gray-200' onClick={() => onBack(null)}>Back</button>
-                        <button type='submit' className='px-3 py-1 rounded-md bg-green-600 cursor-pointer hover:bg-green-700 text-white' onClick={(e) => handleSubmit(e)} >Send</button>
+                        <button type='button' className='px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer font-semibold'  onClick={() => onBack()}>Back</button>
+                        <button type='submit' className='px-3 py-1 rounded-md bg-green-600 hover:bg-green-700 text-white cursor-pointer font-semibold'  onClick={handleSubmit} >Send</button>
                     </div>
-                </div>
 
+                   
+                </div>
             </div>
         </>
-    )
+    );
 }
 
-export default TemplatesPreview
+export default TemplatesPreview;
