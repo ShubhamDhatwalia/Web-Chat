@@ -197,7 +197,7 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
         console.log(payload);
 
         try {
-            await axios.post(`/sendMessage`, payload);
+            await axios.post(`/sendTemplateMessages`, payload);
             toast.success("Template sent successfully");
         } catch (error) {
             console.error(error);

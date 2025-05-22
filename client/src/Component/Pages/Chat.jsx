@@ -77,7 +77,7 @@ function Chat() {
   }
 
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (message.trim() === '') return;
 
@@ -94,7 +94,7 @@ function Chat() {
 
 
     try {
-      await axios.post(`/sendSimpleTextMessage`, payload);
+      await axios.post(`/sendTextMessage`, payload);
       toast.success("Template sent successfully");
     } catch (error) {
       console.error(error);

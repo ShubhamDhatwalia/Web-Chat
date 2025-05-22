@@ -1,12 +1,12 @@
 import { Router } from 'express';
 const router = Router();
-import { verifyWebhook, handleWebhook, sendTextMessage, sendSimpleTextMessage } from '../controllers/webhookControllers.js';
+import { verifyWebhook, handleWebhook, sendTemplateMessages, sendSimpleTextMessage } from '../controllers/webhookControllers.js';
 
 
 router.get('/webhook', verifyWebhook);
 router.post('/webhook', handleWebhook);
-router.post('/sendMessage', sendTextMessage);
-router.post('/sendSimpleTextMessage', sendSimpleTextMessage); // For sending messages to a specific user
+router.post('/sendTemplateMessages', sendTemplateMessages);
+router.post('/sendTextMessage', sendSimpleTextMessage); // For sending messages to a specific user
 
 
 

@@ -60,38 +60,93 @@ export function verifyWebhook(req, res) {
 
 
 
+
+async function sendTemplateMessage(to, template, languageCode = 'en_US') {
+    const url = `https://graph.facebook.com/v17.0/${process.env.PHONE_NUMBER_ID}/messages`;
+
+    const data = {
+        messaging_product: 'whatsapp',
+        to,
+        type: 'template',
+        template: template
+    };
+
+    try {
+        const response = await axios.post(url, data, {
+            headers: {
+                Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Template message sent:', response.data);
+    } catch (error) {
+        console.error('Failed to send template message:', error.response?.data || error.message);
+    }
+}
+
+
 export async function sendSimpleTextMessage(to, text) {
     const url = `https://graph.facebook.com/v17.0/${process.env.PHONE_NUMBER_ID}/messages`;
-  
+
     const data = {
-      messaging_product: "whatsapp",
-      to,
-      type: "text",
-      text: {
-        body: text
-      }
-    };
-  
-    try {
-      const response = await axios.post(url, data, {
-        headers: {
-          Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
-          "Content-Type": "application/json"
+        messaging_product: "whatsapp",
+        to,
+        type: "text",
+        text: {
+            body: text
         }
-      });
-  
-      console.log("Text message sent:", response.data);
-      return response.data;
+    };
+
+    try {
+        const response = await axios.post(url, data, {
+            headers: {
+                Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        console.log("Text message sent:", response.data);
+        return response.data;
     } catch (error) {
-      console.error("Failed to send text message:", error.response?.data || error.message);
-      throw error;
+        console.error("Failed to send text message:", error.response?.data || error.message);
+        throw error;
     }
-  }
-  
+}
 
 
 
-export async function sendTextMessage(req, res) {
+export async function sendTextMessages(req, res) {
+    const { to, type, text, template } = req.body;
+
+    const url = `https://graph.facebook.com/v22.0/${process.env.PHONE_NUMBER_ID}/messages`;
+
+    const data = {
+        messaging_product: 'whatsapp',
+        to,
+        type,
+        ...(type === 'template' ? { template } : { text })
+    };
+
+    try {
+        const response = await axios.post(url, data, {
+            headers: {
+                Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('Message sent:', response.data);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Failed to send message:', error.response?.data || error.message);
+        res.status(500).json({ error: error.response?.data || error.message });
+    }
+}
+
+
+
+
+export async function sendTemplateMessages(req, res) {
     const { to, template } = req.body;
 
     const url = `https://graph.facebook.com/v22.0/${process.env.PHONE_NUMBER_ID}/messages`;
@@ -121,28 +176,6 @@ export async function sendTextMessage(req, res) {
 
 
 
-async function sendTemplateMessage(to, template, languageCode = 'en_US') {
-    const url = `https://graph.facebook.com/v17.0/${process.env.PHONE_NUMBER_ID}/messages`;
-
-    const data = {
-        messaging_product: 'whatsapp',
-        to,
-        type: 'template',
-        template: template
-    };
-
-    try {
-        const response = await axios.post(url, data, {
-            headers: {
-                Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        console.log('Template message sent:', response.data);
-    } catch (error) {
-        console.error('Failed to send template message:', error.response?.data || error.message);
-    }
-}
 
 
 async function getMediaUrl(mediaId) {

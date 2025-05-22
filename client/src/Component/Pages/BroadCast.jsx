@@ -192,7 +192,7 @@ function BroadCast() {
       console.log(payload);
 
       try {
-        await axios.post(`/sendMessage`, payload);
+        await axios.post(`/sendTemplateMessages`, payload);
       } catch (error) {
         console.error(`Error for ${number}:`, error);
         toast.error(`Failed for ${number}: ${error.response?.data?.error?.error?.message}`);
