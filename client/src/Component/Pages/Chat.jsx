@@ -93,6 +93,8 @@ function Chat() {
     };
 
 
+    console.log(payload);
+
     try {
       await axios.post(`/sendTextMessage`, payload);
       toast.success("Template sent successfully");
