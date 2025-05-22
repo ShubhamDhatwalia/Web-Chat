@@ -4,6 +4,10 @@ import ChatList from "../ChatList.jsx";
 import profile_icon from '../../assets/profile_icon.svg'
 import EmojiPicker from 'emoji-picker-react';
 import Templates from '../Chat/Templates.jsx';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
+
 
 
 function Chat() {
@@ -17,6 +21,7 @@ function Chat() {
   const modalRef = useRef(null);
 
 
+  console.log(message);
 
   const tabs = [
     { id: 'chats', label: 'Chats', icon: <FaComments /> },
@@ -70,6 +75,35 @@ function Chat() {
 
     setShowTemplates((prev) => !prev);
   }
+
+
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    if (message.trim() === '') return;
+
+    const payload = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: selectedUser.phone,
+      type: "text",
+      text: {
+        preview_url: true,
+        body: message,
+      }
+    };
+
+
+    try {
+      await axios.post(`/sendSimpleTextMessage`, payload);
+      toast.success("Template sent successfully");
+    } catch (error) {
+      console.error(error);
+    }
+
+  }
+
+
+
 
   return (
     <div className='bg-gray-100 h-[calc(100vh-60px)] w-full'>
@@ -164,7 +198,7 @@ function Chat() {
                       placeholder='Type a message'
                     ></textarea>
                   </form>
-                  <div className='bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600'>
+                  <div className='bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600' onClick={(e) => handleSubmit(e)}>
                     <i className="fa-regular fa-paper-plane p-[10px] text-xl text-white"></i>
                   </div>
 
@@ -173,7 +207,7 @@ function Chat() {
                     <>
                       <div className="absolute bottom-[0px] left-[0px] right-0 z-10 p-4 bg-white rounded-md shadow-lg">
 
-                        <Templates onClose={(setShowTemplates)} />
+                        <Templates onClose={(setShowTemplates)} selectedUser={selectedUser} />
 
                       </div>
                     </>

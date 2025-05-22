@@ -5,7 +5,7 @@ import TemplatePreview from '../Chat/TemplatesPreview.jsx';
 import { useNavigate } from 'react-router-dom';
 
 
-function templates({ onClose }) {
+function templates({ onClose, selectedUser }) {
 
     const [selectedTemplateId, setSelectedTemplateId] = useState(null);
     const modalRef = useRef(null);
@@ -105,6 +105,7 @@ function templates({ onClose }) {
                     templateId={selectedTemplateId}
                     onClose={onClose}
                     onBack={(setSelectedTemplateId)}
+                    selectedUser={selectedUser}
 
                 />
             )}

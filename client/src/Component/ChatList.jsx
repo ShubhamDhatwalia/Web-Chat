@@ -7,6 +7,7 @@ const chatData = [
     name: 'Thakur',
     message: 'Plan A',
     time: '03:30 PM',
+    phone: '+917876054918',
   },
   {
     id: 2,
@@ -118,7 +119,8 @@ function ChatList({ onSelectUser, selectedUser }) {
         <li
           key={chat.id}
           onClick={() => onSelectUser(chat)}
-          className='cursor-pointer hover:bg-green-50 px-2 '
+          className={`cursor-pointer hover:bg-green-50 px-2 ${selectedUser?.id === chat.id ? 'bg-green-100' : ''
+            }`}
         >
           <div className='flex justify-between items-stretch h-[70px]'>
             <div className='flex items-center flex-grow'>

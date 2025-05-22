@@ -1,11 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-function TemplatesPreview({ templateId, onClose, onBack }) {
+
+
+
+
+
+function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
 
 
     const [template, setTemplate] = useState(null);
-
-
 
 
 
@@ -76,7 +81,6 @@ function TemplatesPreview({ templateId, onClose, onBack }) {
     };
 
 
-    console.log(template);
 
 
     const modalRef = useRef(null);
@@ -94,6 +98,115 @@ function TemplatesPreview({ templateId, onClose, onBack }) {
             onClose();
         }
     };
+
+
+
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+
+
+
+        const payload = {
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to: selectedUser.phone,
+            type: "template",
+            template: {
+                name: template?.name || '',
+                language: {
+                    code: template?.language || 'en_US'
+                },
+                components: []
+            }
+        };
+
+        // Dynamically add components based on selectedTemplate
+        if (template?.components) {
+            template.components.forEach(component => {
+                // HEADER
+                if (component.type === "HEADER") {
+                    const headerParams = [];
+
+                    // Named variable format
+                    if (component?.example?.header_text_named_params) {
+                        component.example.header_text_named_params.forEach(param => {
+                            headerParams.push({
+                                type: "text",
+                                text: param.example,
+                                parameter_name: param.param_name
+                            });
+                        });
+                    }
+                    // Positional format
+                    else if (component?.example?.header_text?.[0]) {
+                        const exampleHeader = component.example.header_text[0];
+                        headerParams.push({
+                            type: "text",
+                            text: exampleHeader
+                        });
+                    }
+
+                    if (headerParams.length > 0) {
+                        payload.template.components.push({
+                            type: "HEADER",
+                            parameters: headerParams
+                        });
+                    }
+                }
+
+                // BODY
+                if (component.type === "BODY") {
+                    const bodyParams = [];
+
+                    // Named variable format
+                    if (component?.example?.body_text_named_params) {
+                        component.example.body_text_named_params.forEach(param => {
+                            bodyParams.push({
+                                type: "text",
+                                text: param.example,
+                                parameter_name: param.param_name
+                            });
+                        });
+                    }
+                    // Positional format
+                    else if (component?.example?.body_text?.[0]) {
+                        const exampleBody = component.example.body_text[0];
+                        if (Array.isArray(exampleBody)) {
+                            exampleBody.forEach(value => {
+                                bodyParams.push({
+                                    type: "text",
+                                    text: value
+                                });
+                            });
+                        }
+                    }
+
+                    if (bodyParams.length > 0) {
+                        payload.template.components.push({
+                            type: "BODY",
+                            parameters: bodyParams
+                        });
+                    }
+                }
+            });
+        }
+
+        console.log(payload);
+
+        try {
+            await axios.post(`/sendMessage`, payload);
+            toast.success("Template sent successfully");
+        } catch (error) {
+            console.error(error);
+        }
+
+
+    };
+
+
 
 
 
@@ -196,7 +309,7 @@ function TemplatesPreview({ templateId, onClose, onBack }) {
 
                     <div className='mt-6 flex gap-4 items-center justify-end'>
                         <button type='button' className='px-3 py-1 rounded-md bg-gray-100 cursor-pointer hover:bg-gray-200' onClick={() => onBack(null)}>Back</button>
-                        <button type='submit' className='px-3 py-1 rounded-md bg-green-600 cursor-pointer hover:bg-green-700 text-white'  >Send</button>
+                        <button type='submit' className='px-3 py-1 rounded-md bg-green-600 cursor-pointer hover:bg-green-700 text-white' onClick={(e) => handleSubmit(e)} >Send</button>
                     </div>
                 </div>
 
