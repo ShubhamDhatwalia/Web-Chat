@@ -1,50 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from '../../redux/contacts/contactSlice';
+import { addContact, updateContact } from '../../redux/contacts/contactSlice';
 import { toast } from 'react-toastify';
-import ContactList from '../ContactList.jsx'
+import ContactList from '../Contact/ContactList.jsx';
+import { useLocation } from 'react-router-dom';
 
 
 
 
 function Contact() {
-    const [isopen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({ name: '', phone: '' });
     const [attributes, setAttributes] = useState([]);
     const [errors, setErrors] = useState({ name: '', phone: '' });
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedContact, setSelectedContact] = useState(null);
+    const location = useLocation();
 
     const dispatch = useDispatch();
-
     const contacts = useSelector((state) => state.contact.contacts);
-    console.log('Contacts:', contacts);
 
-    const handleAddContact = () => setIsOpen(true);
+    useEffect(() => {
+        if (selectedContact) {
+            setFormData({ name: selectedContact.name, phone: selectedContact.phone });
+            setAttributes(selectedContact.attributes || []);
+            setIsOpen(true);
+        }
+    }, [selectedContact]);
+
+    const handleAddContact = () => {
+        setSelectedContact(null);
+        setFormData({ name: '', phone: '' });
+        setAttributes([]);
+        setIsOpen(true);
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: '' }));
     };
 
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.name.trim()) {
-            newErrors.name = 'Name is required.';
-        }
-
+        if (!formData.name.trim()) newErrors.name = 'Name is required.';
         const phoneRegex = /^\+?[0-9]{7,15}$/;
-
         if (!formData.phone.trim()) {
             newErrors.phone = 'Phone number is required.';
         } else if (!phoneRegex.test(formData.phone.trim())) {
             newErrors.phone = 'Phone number must be 7–15 digits.';
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -60,13 +66,11 @@ function Contact() {
     };
 
     const handleDeleteAttribute = (index) => {
-        const filtered = attributes.filter((_, i) => i !== index);
-        setAttributes(filtered);
+        setAttributes(attributes.filter((_, i) => i !== index));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         if (!validateForm()) return;
 
         const contactData = {
@@ -74,19 +78,29 @@ function Contact() {
             attributes: attributes.filter(attr => attr.name.trim() && attr.value.trim())
         };
 
+        const isNew = !selectedContact;
+        const duplicate = contacts.find(
+            contact =>
+                contact.phone === contactData.phone &&
+                (!selectedContact || selectedContact.phone !== contact.phone)
+        );
 
-        const existingContact = contacts.find(contact => contact.phone === contactData.phone);
-        if (existingContact) {
+        if (duplicate) {
             toast.error('Contact with this phone number already exists!');
             return;
         }
 
-        console.log('Submitted Contact:', contactData);
-        dispatch(addContact(contactData));
+        if (isNew) {
+            dispatch(addContact(contactData));
+        } else {
+            console.log(contactData);
+            dispatch(updateContact({ phone: selectedContact.phone, updatedData: contactData }));
+        }
 
         setFormData({ name: '', phone: '' });
         setAttributes([]);
         setErrors({});
+        setSelectedContact(null);
         setIsOpen(false);
     };
 
@@ -94,8 +108,21 @@ function Contact() {
         setFormData({ name: '', phone: '' });
         setAttributes([]);
         setErrors({});
+        setSelectedContact(null);
         setIsOpen(false);
     };
+
+
+
+    useEffect(() => {
+        if (location.state?.isOpen) {
+            setIsOpen(true);
+        }
+        if (location.state?.selectedUser) {
+            setSelectedContact(location.state.selectedUser);
+        }
+    }, [location.state]);
+
 
 
     return (
@@ -122,22 +149,20 @@ function Contact() {
                     </form>
                 </div>
 
-                <div>
-                    <button
-                        type='button'
-                        className='bg-green-600 cursor-pointer text-white text-lg px-4 py-3 rounded-md hover:bg-green-700 transition duration-200'
-                        onClick={handleAddContact}
-                    >
-                        Add Contact
-                    </button>
-                </div>
+                <button
+                    type='button'
+                    className='bg-green-600 cursor-pointer text-white text-lg px-4 py-3 rounded-md hover:bg-green-700 transition duration-200'
+                    onClick={handleAddContact}
+                >
+                    Add Contact
+                </button>
             </div>
 
-            {isopen && (
-                <div className='fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50'>
+            {isOpen && (
+                <div className='fixed inset-0 bg-black/80 flex items-center justify-center z-50'>
                     <div className='bg-white rounded-lg shadow-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto'>
                         <div className='flex justify-between items-center pb-4'>
-                            <h4 className='font-semibold text-lg'>Add Contact</h4>
+                            <h4 className='font-semibold text-lg'>{selectedContact ? 'Edit Contact' : 'Add Contact'}</h4>
                             <i
                                 className='fa-solid fa-xmark text-2xl cursor-pointer hover:scale-110 text-red-600'
                                 onClick={handleCancel}
@@ -167,6 +192,7 @@ function Contact() {
                                     placeholder='Enter your phone number with country code (+XX)'
                                     value={formData.phone}
                                     onChange={handleInputChange}
+                                    disabled={!!selectedContact}
                                 />
                                 {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                             </div>
@@ -206,7 +232,7 @@ function Contact() {
                                 ))}
                             </div>
 
-                            <div className='flex justify-end mt-8 gap-4 '>
+                            <div className='flex justify-end mt-8 gap-4'>
                                 <button
                                     type="button"
                                     className='bg-red-600 text-white px-4 py-1 rounded-md hover:bg-red-700 transition duration-200 cursor-pointer'
@@ -218,7 +244,7 @@ function Contact() {
                                     type="submit"
                                     className='bg-green-600 text-white px-4 py-1 rounded-md hover:bg-green-700 transition duration-200 cursor-pointer'
                                 >
-                                    Add
+                                    {selectedContact ? 'Update' : 'Add'}
                                 </button>
                             </div>
                         </form>
@@ -226,11 +252,11 @@ function Contact() {
                 </div>
             )}
 
-
-
-
-            <div className='mt-4  h-[calc(100vh-292px)]  '>
-                <ContactList onSearch={searchTerm} />
+            <div className='mt-4 h-[calc(100vh-292px)]'>
+                <ContactList
+                    onSearch={searchTerm}
+                    setSelectedContact={setSelectedContact}
+                />
             </div>
         </>
     );

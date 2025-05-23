@@ -14,16 +14,16 @@ function ManageTemplates() {
 
   const handleFormModel = () => {
     if (isOpen) {
-      
+
       setLiveTemplateData(null);
       setEditingTemplate(null);
       setSelectedTemplateId(null);
     }
     setIsOpen(!isOpen);
   };
-  
+
   const handleEdit = (template) => {
-    
+
     setEditingTemplate(template);
     setIsOpen(true);
   };

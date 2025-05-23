@@ -2,15 +2,15 @@ import React from 'react'
 import profile_icon from '../../assets/profile_icon.svg'
 import Tags from './Tags';
 import Notes from './Notes';
-
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 
 
 function UserProfileDetails({ selectedUser }) {
 
+    const navigate = useNavigate();
 
-    console.log(selectedUser);
 
     return (
         <>
@@ -30,7 +30,9 @@ function UserProfileDetails({ selectedUser }) {
                         <h3 className='font-semibold text-gray-700'>Contact Info</h3>
                     </div>
 
-                    <div className='p-1 rounded-full bg-gray-100 cursor-pointer hover:bg-green-100'>
+                    <div className='p-1 rounded-full bg-gray-100 cursor-pointer hover:bg-green-100' onClick={() => {
+                        navigate("/contact", { state: { isOpen: true, selectedUser } });
+                    }}>
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.20001 13.0346H13.2M2.80005 13.0346L5.71071 12.4481C5.86522 12.417 6.0071 12.3409 6.11853 12.2294L12.6343 5.71007C12.9467 5.3975 12.9465 4.89084 12.6338 4.57853L11.2536 3.19981C10.941 2.88764 10.4346 2.88785 10.1224 3.20029L3.60589 9.72032C3.49468 9.83159 3.41875 9.97318 3.38758 10.1274L2.80005 13.0346Z" stroke="#505451" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                     </div>
                 </div>
@@ -83,7 +85,7 @@ function UserProfileDetails({ selectedUser }) {
 
             <div className='border-b border-gray-300 py-4'>
 
-              <Notes selectedUser={selectedUser} />
+                <Notes selectedUser={selectedUser} />
 
             </div>
         </>

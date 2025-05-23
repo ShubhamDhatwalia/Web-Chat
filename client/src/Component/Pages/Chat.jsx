@@ -9,19 +9,17 @@ import { toast } from 'react-toastify';
 import UserProfileDetails from '../Chat/UserProfileDetails.jsx';
 
 
-
 function Chat() {
   const [activeTab, setActiveTab] = useState('chats');
   const [selectedUser, setSelectedUser] = useState(null);
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [showTemplates, setShowTemplates] = useState(false);
 
   const modalRef = useRef(null);
 
-
-  console.log(message);
 
   const tabs = [
     { id: 'chats', label: 'Chats', icon: <FaComments /> },
@@ -108,17 +106,19 @@ function Chat() {
 
 
 
+
   return (
     <div className='bg-gray-100 h-[calc(100vh-60px)] w-full'>
       <div className='bg-white rounded-md flex'>
-        {/* Sidebar */}
         <div className='flex-[15%] border-r border-gray-300'>
           <div className='flex items-center gap-[10px] px-2 mt-3'>
             <form className='flex-grow'>
               <input
                 type="text"
-                className='border border-gray-400 rounded-sm w-full px-[10px] py-[5px] focus:outline-none'
+                className='border border-gray-400 rounded-sm w-full px-[10px] py-[5px] text-sm focus:outline-none'
                 placeholder='Search by any Keyword, Name, Phone'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </form>
             <div className='bg-gray-200 flex items-center justify-center p-[5px] border border-gray-400 rounded-sm cursor-pointer'>
@@ -126,7 +126,6 @@ function Chat() {
             </div>
           </div>
 
-          {/* Tabs */}
           <div className='mt-[30px]'>
             <div className="flex px-2">
               {tabs.map((tab) => (
@@ -148,7 +147,7 @@ function Chat() {
             <div className="mt-[15px]">
               {activeTab === 'chats' && (
                 <div className='h-[calc(100vh-195px)] overflow-y-auto'>
-                  <ChatList onSelectUser={setSelectedUser} selectedUser={selectedUser} />
+                  <ChatList onSelectUser={setSelectedUser} selectedUser={selectedUser} onSearch={searchTerm} />
                 </div>
               )}
               {activeTab === 'calls' && <div className='h-[77vh] overflow-y-auto'>Calls content here</div>}

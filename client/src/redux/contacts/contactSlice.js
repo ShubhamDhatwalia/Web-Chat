@@ -18,6 +18,22 @@ const contactSlice = createSlice({
             state.contacts = state.contacts.filter(contact => contact.phone !== action.payload);
             localStorage.setItem('contacts', JSON.stringify(state.contacts));
         },
+        updateContact: (state, action) => {
+            const { phone, updatedData } = action.payload;
+            const index = state.contacts.findIndex(contact => contact.phone === phone);
+            if (index !== -1) {
+                state.contacts[index] = {
+                    ...state.contacts[index],
+                    ...updatedData,
+                };
+                localStorage.setItem('contacts', JSON.stringify(state.contacts));
+                toast.success('Contact updated successfully');
+            } else {
+                toast.error('Contact not found');
+            }
+        },
+
+
         addTags: (state, action) => {
             const { phone, tags } = action.payload;
             const contact = state.contacts.find(contact => contact.phone === phone);
@@ -72,5 +88,5 @@ const contactSlice = createSlice({
     }
 });
 
-export const { addContact, deleteContact, addTags, removeTags, addNotes, removeNotes, updateNote } = contactSlice.actions;
+export const { addContact, deleteContact, updateContact, addTags, removeTags, addNotes, removeNotes, updateNote } = contactSlice.actions;
 export default contactSlice.reducer;

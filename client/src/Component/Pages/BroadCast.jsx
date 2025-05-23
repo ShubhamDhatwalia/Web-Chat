@@ -199,7 +199,6 @@ function BroadCast() {
       }
     });
 
-    // Wait for all message sends to finish
     await Promise.all(sendPromises);
 
     toast.success("Broadcast attempt finished.");
