@@ -192,7 +192,7 @@ async function getMediaUrl(mediaId) {
 
 export async function handleWebhook(req, res) {
     const body = req.body;
-    console.log(body + " body ::: ") ;
+    console.log(JSON.stringify(body) + " body ::: ") ;
 
     if (!body.entry || !body.entry[0].changes) {
         console.error('Invalid webhook structure:', body);
