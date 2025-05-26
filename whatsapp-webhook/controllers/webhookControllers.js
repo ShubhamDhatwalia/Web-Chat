@@ -118,7 +118,7 @@ export async function sendSimpleTextMessage(to, text) {
 export async function sendTextMessages(req, res) {
     console.log(req.body);
     const payload = req.body;
-    
+
     try {
         const response = await axios.post(
             `https://graph.facebook.com/v18.0/${process.env.PHONE_NUMBER_ID}/messages`,
@@ -192,7 +192,7 @@ async function getMediaUrl(mediaId) {
 
 export async function handleWebhook(req, res) {
     const body = req.body;
-    console.log(JSON.stringify(body) + " body ::: ") ;
+    console.log(JSON.stringify(body) + " body ::: ");
 
     if (!body.entry || !body.entry[0].changes) {
         console.error('Invalid webhook structure:', body);
@@ -201,6 +201,7 @@ export async function handleWebhook(req, res) {
 
     const change = body.entry[0].changes[0];
     const message = change?.value?.messages?.[0];
+    const contact = change?.value?.contacts?.[0];
     const statusUpdate = change?.value?.statuses?.[0];
 
     if (message) {
@@ -209,6 +210,9 @@ export async function handleWebhook(req, res) {
         const senderId = message.from;
         const messageId = message.id;
         const messageType = message.type;
+        const senderName = contact?.profile?.name || "Unknown";
+
+        console.log('Sender Name:', senderName);
 
         if (messageType === 'text') {
             const textContent = message.text.body;
