@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
-import { createTemplate, editTemplate} from '../redux/templateThunks.js';
+import { createTemplate, editTemplate } from '../redux/templateThunks.js';
 import { useDispatch } from 'react-redux';
 
 
@@ -576,7 +576,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
         console.log(payload);
 
-        
+
 
         try {
             if (templateData) {
@@ -620,7 +620,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
     return (
-        <form onSubmit={handleSubmit} className='max-h-[81vh] px-[10px] py-[10px] text-gray-600 overflow-auto'>
+        <form onSubmit={handleSubmit} className='max-h-[80vh] px-[10px] py-[10px] text-gray-600 overflow-auto'>
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[20px] text-md '>
                 <div className="flex-1">
                     <TextField
@@ -657,20 +657,20 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                     <FormControl fullWidth required size="small" sx={{
                         '& label.Mui-focused': {
-                            color: '#00A63E', // Label color when focused
+                            color: '#00A63E',
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border on hover
+                                borderColor: '#00A63E',
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border on focus
+                                borderColor: '#00A63E',
                             },
                             borderRadius: '10px',
                         },
                         '& .MuiSelect-select': {
                             '&:focus': {
-                                backgroundColor: 'transparent', // Prevent weird background on focus
+                                backgroundColor: 'transparent',
                             },
 
                         },
@@ -722,20 +722,20 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                     <FormControl fullWidth required size='small' sx={{
                         '& label.Mui-focused': {
-                            color: '#00A63E', // Label color when focused
+                            color: '#00A63E',
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border on hover
+                                borderColor: '#00A63E',
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border on focus
+                                borderColor: '#00A63E',
                             },
                             borderRadius: '10px',
                         },
                         '& .MuiSelect-select': {
                             '&:focus': {
-                                backgroundColor: 'transparent', // Prevent weird background on focus
+                                backgroundColor: 'transparent',
                             },
                         },
                     }}>
@@ -794,20 +794,20 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             <div className='mt-8'>
                 <FormControl fullWidth size="small" sx={{
                     '& label.Mui-focused': {
-                        color: '#00A63E', // Label color when focused
+                        color: '#00A63E',
                     },
                     '& .MuiOutlinedInput-root': {
                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#00A63E', // Border on hover
+                            borderColor: '#00A63E',
                         },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#00A63E', // Border on focus
+                            borderColor: '#00A63E',
                         },
                         borderRadius: '10px',
                     },
                     '& .MuiSelect-select': {
                         '&:focus': {
-                            backgroundColor: 'transparent', // Prevent weird background on focus
+                            backgroundColor: 'transparent',
                         },
                     },
                 }}>
@@ -853,20 +853,20 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
             <div className='flex lg:flex-nowrap flex-wrap gap-[20px] mt-[30px] text-md'>
                 <FormControl fullWidth size="small" sx={{
                     '& label.Mui-focused': {
-                        color: '#00A63E', // Label color when focused
+                        color: '#00A63E',
                     },
                     '& .MuiOutlinedInput-root': {
                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#00A63E', // Border on hover
+                            borderColor: '#00A63E',
                         },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            borderColor: '#00A63E', // Border on focus
+                            borderColor: '#00A63E',
                         },
                         borderRadius: '10px',
                     },
                     '& .MuiSelect-select': {
                         '&:focus': {
-                            backgroundColor: 'transparent', // Prevent weird background on focus
+                            backgroundColor: 'transparent',
                         },
                     },
                 }}>
@@ -920,14 +920,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     inputProps={{ maxLength: 60 }}
                     sx={{
                         '& label.Mui-focused': {
-                            color: '#00A63E', // Label color on focus
+                            color: '#00A63E',
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border color on hover
+                                borderColor: '#00A63E',
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border color on focus
+                                borderColor: '#00A63E',
                             },
                             borderRadius: '10px',
                         },
@@ -952,14 +952,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         variant="outlined"
                         sx={{
                             width: 'calc(100%)', mt: 2, '& label.Mui-focused': {
-                                color: '#00A63E', // Label color on focus
+                                color: '#00A63E',
                             },
                             '& .MuiOutlinedInput-root': {
                                 '&:hover .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#00A63E', // Border color on hover
+                                    borderColor: '#00A63E',
                                 },
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#00A63E', // Border color on focus
+                                    borderColor: '#00A63E',
                                 },
                                 borderRadius: '10px',
                             },
@@ -1001,7 +1001,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                     <Button
                         variant="outlined"
                         component="label"
-                        // sx={{ width: 'calc(50% - 10px)' }}
                         size="small"
                     >
                         Upload Header Image
@@ -1037,7 +1036,7 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 value={formInput.messageContent}
                 onChange={handleChange}
                 multiline
-                rows={7}
+                rows={6}
                 fullWidth
                 size="small"
                 variant="outlined"
@@ -1092,14 +1091,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
                     sx={{
                         '& label.Mui-focused': {
-                            color: '#00A63E', // Label color on focus
+                            color: '#00A63E',
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border color on hover
+                                borderColor: '#00A63E',
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border color on focus
+                                borderColor: '#00A63E',
                             },
                             borderRadius: '10px',
                         },
@@ -1158,20 +1157,20 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                 <div key={i} className="flex gap-2 items-center text-gray-700 text-sm my-2">
                     <FormControl size="small" sx={{
                         width: '150px', mr: 2, '& label.Mui-focused': {
-                            color: '#00A63E', // Label color when focused
+                            color: '#00A63E',
                         },
                         '& .MuiOutlinedInput-root': {
                             '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border on hover
+                                borderColor: '#00A63E',
                             },
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00A63E', // Border on focus
+                                borderColor: '#00A63E',
                             },
                             borderRadius: '10px',
                         },
                         '& .MuiSelect-select': {
                             '&:focus': {
-                                backgroundColor: 'transparent', // Prevent weird background on focus
+                                backgroundColor: 'transparent',
                             },
                         },
                     }} >
@@ -1222,14 +1221,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                         onChange={(e) => handleButtonChange(i, 'text', e.target.value)}
                         sx={{
                             width: 200, '& label.Mui-focused': {
-                                color: '#00A63E', // Label color on focus
+                                color: '#00A63E',
                             },
                             '& .MuiOutlinedInput-root': {
                                 '&:hover .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#00A63E', // Border color on hover
+                                    borderColor: '#00A63E',
                                 },
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#00A63E', // Border color on focus
+                                    borderColor: '#00A63E',
                                 },
                                 borderRadius: '10px',
                             },
@@ -1250,14 +1249,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             onChange={(e) => handleButtonChange(i, 'phone_number', e.target.value)}
                             sx={{
                                 width: 280, '& label.Mui-focused': {
-                                    color: '#00A63E', // Label color on focus
+                                    color: '#00A63E',
                                 },
                                 '& .MuiOutlinedInput-root': {
                                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#00A63E', // Border color on hover
+                                        borderColor: '#00A63E',
                                     },
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#00A63E', // Border color on focus
+                                        borderColor: '#00A63E',
                                     },
                                     borderRadius: '10px',
                                 },
@@ -1280,14 +1279,14 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
                             onChange={(e) => handleButtonChange(i, 'url', e.target.value)}
                             sx={{
                                 width: 200, '& label.Mui-focused': {
-                                    color: '#00A63E', // Label color on focus
+                                    color: '#00A63E',
                                 },
                                 '& .MuiOutlinedInput-root': {
                                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#00A63E', // Border color on hover
+                                        borderColor: '#00A63E',
                                     },
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#00A63E', // Border color on focus
+                                        borderColor: '#00A63E',
                                     },
                                     borderRadius: '10px',
                                 },
@@ -1313,7 +1312,6 @@ function CreateTemplate({ onSuccess, templateData, onTemplateChange }) {
 
 
 
-            {/* Submit/Reset buttons */}
             <div className='mt-[0px] flex gap-[20px] float-right'>
                 <Button
                     type="submit"

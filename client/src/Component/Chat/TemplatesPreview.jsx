@@ -2,18 +2,24 @@ import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+
+
+
+
+
+
+
 function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
 
     const [template, setTemplate] = useState(null);
     const [variableInputs, setVariableInputs] = useState({});
 
-    // Updated replaceVariables to use live variableInputs instead of example values
+
     const replaceVariables = (text, component, parameterFormat) => {
         if (!text) return text;
 
         if (parameterFormat === 'POSITIONAL') {
             return text.replace(/{{(\d+)}}/g, (match, index) => {
-                // key format HEADER-1 or BODY-1 etc
                 const key = `${component.type}-${index}`;
                 return variableInputs[key] !== undefined ? variableInputs[key] : match;
             });
@@ -28,6 +34,7 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
 
         return text;
     };
+
 
     useEffect(() => {
         const storedTemplates = localStorage.getItem('whatsappTemplates');
@@ -210,11 +217,14 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
         }
     };
 
+
+
+    
     return (
         <>
             <div ref={modalRef}>
 
-                <div className='p-2 bg-white rounded-md max-h-[500px] overflow-y-auto '>
+                <div className='p-2 bg-white rounded-md   '>
 
                     {template && (
                         <div className='flex items-center justify-between mb-8 pb-2 border-b border-gray-300'>
@@ -227,99 +237,101 @@ function TemplatesPreview({ templateId, onClose, onBack, selectedUser }) {
                         </div>
                     )}
 
-                    {/* Header */}
-                    {header && header.format === 'TEXT' && (
-                        <h2 className='font-bold text-md mb-2 break-words'>
-                            {replaceVariables(header.text, header, template.parameter_format)}
-                        </h2>
-                    )}
-                    {header && header.format === 'IMAGE' && (
-                        <div className='overflow-hidden mb-2'>
-                            <img
-                                src={header.imagePreview || header.example?.header_handle?.[0] || ''}
-                                alt="Header"
-                                className="w-full rounded-sm"
-                            />
-                        </div>
-                    )}
-
-                    {/* Body */}
-                    {body && (
-                        <p className='mb-2 text-sm text-black break-words'>
-                            {renderTextWithNewlines(
-                                replaceVariables(body.text, body, template.parameter_format)
-                            )}
-                        </p>
-                    )}
-
-                    {/* Footer */}
-                    {footer && <p className='text-gray-500 text-xs break-words'>{footer.text}</p>}
-
-                    {/* Buttons */}
-                    {buttons.length > 0 && (
-                        <div className='mt-3 flex'>
-                            {buttons.map((btn, index) => {
-                                if (btn.type === 'PHONE_NUMBER') {
-                                    return (
-                                        <div key={index} className='text-center py-2 border-t-2 border-gray-100'>
-                                            <a
-                                                href={`tel:${btn.phone_number}`}
-                                                className='text-blue-500 font-semibold text-sm py-1 px-2 mt-2 rounded text-center'
-                                            >
-                                                <i className="fa-solid fa-phone text-blue-500 text-sm mr-2 font-semibold"></i>
-                                                {btn.text}
-                                            </a>
-                                        </div>
-                                    );
-                                } else if (btn.type === 'URL') {
-                                    return (
-                                        <div key={index} className='text-center py-2 border-t-2 border-gray-100'>
-                                            <a
-                                                href={btn.url || '#'}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className='text-blue-500 font-semibold py-1 px-2 mt-2 rounded text-center text-sm'
-                                            >
-                                                <i className="fa-solid fa-arrow-up-right-from-square text-blue-500 text-sm mr-2 font-semibold"></i>
-                                                {btn.text}
-                                            </a>
-                                        </div>
-                                    );
-                                } else {
-                                    return (
-                                        <div key={index} className='text-center py-2 border-t-2 border-gray-100'>
-                                            <button className='text-blue-500 font-semibold py-1 px-2 rounded text-sm text-center cursor-pointer'>
-                                                <i className="fa-solid fa-reply text-blue-500 text-sm mr-2 font-semibold"></i>
-                                                {btn.text}
-                                            </button>
-                                        </div>
-                                    );
-                                }
-                            })}
-                        </div>
-                    )}
-
-                    {/* Inputs */}
-                    <div className='mt-4'>
-                        {Object.entries(variableInputs).map(([key, value]) => (
-                            <div key={key} className="mb-2">
-                                <label className="block text-xs text-gray-900 font-semibold mb-1">{key.replace(/^(HEADER|BODY)-/, '')}</label>
-                                <input
-                                    type="text"
-                                    className="border border-gray-300 p-1 w-full rounded focus:outline-1 focus:outline-green"
-                                    value={value}
-                                    onChange={(e) => setVariableInputs(prev => ({ ...prev, [key]: e.target.value }))}
+                    <div className='max-h-[300px] overflow-y-auto'>
+                        {/* Header */}
+                        {header && header.format === 'TEXT' && (
+                            <h2 className='font-bold text-md mb-2 break-words'>
+                                {replaceVariables(header.text, header, template.parameter_format)}
+                            </h2>
+                        )}
+                        {header && header.format === 'IMAGE' && (
+                            <div className='overflow-hidden mb-2'>
+                                <img
+                                    src={header.imagePreview || header.example?.header_handle?.[0] || ''}
+                                    alt="Header"
+                                    className="w-full rounded-sm"
                                 />
                             </div>
-                        ))}
+                        )}
+
+                        {/* Body */}
+                        {body && (
+                            <p className='mb-2 text-sm text-black break-words'>
+                                {renderTextWithNewlines(
+                                    replaceVariables(body.text, body, template.parameter_format)
+                                )}
+                            </p>
+                        )}
+
+                        {/* Footer */}
+                        {footer && <p className='text-gray-500 text-xs break-words'>{footer.text}</p>}
+
+                        {/* Buttons */}
+                        {buttons.length > 0 && (
+                            <div className='mt-3 flex'>
+                                {buttons.map((btn, index) => {
+                                    if (btn.type === 'PHONE_NUMBER') {
+                                        return (
+                                            <div key={index} className='text-center py-2 border-t-2 border-gray-100'>
+                                                <a
+                                                    href={`tel:${btn.phone_number}`}
+                                                    className='text-blue-500 font-semibold text-sm py-1 px-2 mt-2 rounded text-center'
+                                                >
+                                                    <i className="fa-solid fa-phone text-blue-500 text-sm mr-2 font-semibold"></i>
+                                                    {btn.text}
+                                                </a>
+                                            </div>
+                                        );
+                                    } else if (btn.type === 'URL') {
+                                        return (
+                                            <div key={index} className='text-center py-2 border-t-2 border-gray-100'>
+                                                <a
+                                                    href={btn.url || '#'}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className='text-blue-500 font-semibold py-1 px-2 mt-2 rounded text-center text-sm'
+                                                >
+                                                    <i className="fa-solid fa-arrow-up-right-from-square text-blue-500 text-sm mr-2 font-semibold"></i>
+                                                    {btn.text}
+                                                </a>
+                                            </div>
+                                        );
+                                    } else {
+                                        return (
+                                            <div key={index} className='text-center py-2 border-t-2 border-gray-100'>
+                                                <button className='text-blue-500 font-semibold py-1 px-2 rounded text-sm text-center cursor-pointer'>
+                                                    <i className="fa-solid fa-reply text-blue-500 text-sm mr-2 font-semibold"></i>
+                                                    {btn.text}
+                                                </button>
+                                            </div>
+                                        );
+                                    }
+                                })}
+                            </div>
+                        )}
+
+                        {/* Inputs */}
+                        <div className='mt-4'>
+                            {Object.entries(variableInputs).map(([key, value]) => (
+                                <div key={key} className="mb-2">
+                                    <label className="block text-xs text-gray-900 font-semibold mb-1">{key.replace(/^(HEADER|BODY)-/, '')}</label>
+                                    <input
+                                        type="text"
+                                        className="border border-gray-300 p-1 w-full rounded focus:outline-1 focus:outline-green"
+                                        value={value}
+                                        onChange={(e) => setVariableInputs(prev => ({ ...prev, [key]: e.target.value }))}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     <div className='mt-6 flex gap-4 items-center justify-end'>
-                        <button type='button' className='px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer font-semibold'  onClick={() => onBack()}>Back</button>
-                        <button type='submit' className='px-3 py-1 rounded-md bg-green-600 hover:bg-green-700 text-white cursor-pointer font-semibold'  onClick={handleSubmit} >Send</button>
+                        <button type='button' className='px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 cursor-pointer font-semibold' onClick={() => onBack()}>Back</button>
+                        <button type='submit' className='px-3 py-1 rounded-md bg-green-600 hover:bg-green-700 text-white cursor-pointer font-semibold' onClick={handleSubmit} >Send</button>
                     </div>
 
-                   
+
                 </div>
             </div>
         </>

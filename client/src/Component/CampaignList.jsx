@@ -78,7 +78,7 @@ function CampaignList({onEdit, broadcast}) {
 
                                             <div className='flex items-center gap-2 justify-end'>
 
-                                                <button type='button'  className='px-2 py-1 border rounded-lg text-green-600 text-sm font-medium bg-green-50 hover:bg-green-100 cursor-pointer border-green-600 ' onClick={()=> handleBroadCast(index)}>Send Boradcast</button>
+                                                <button type='button'  className='px-2 py-1 border rounded-lg text-green-600 text-sm font-medium bg-green-50 hover:bg-green-100 cursor-pointer border-green-600 text-nowrap' onClick={()=> handleBroadCast(index)}>Send Boradcast</button>
                                                 <i className="fa-solid fa-pen-to-square bg-gray-100 p-2 rounded-lg text-blue-500 hover:text-blue-600 hover:bg-blue-100 cursor-pointer" onClick={() => handleEdit(index)} ></i>
 
                                                 <i className="fa-solid fa-trash bg-gray-100 p-2 rounded-lg text-red-500 hover:text-red-600 hover:bg-red-100 cursor-pointer" onClick={() => handleCampaignDelete(index)}></i>

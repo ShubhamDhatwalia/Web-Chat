@@ -325,14 +325,14 @@ function BroadCast() {
                 variant="outlined"
                 sx={{
                   '& label.Mui-focused': {
-                    color: '#00A63E', // Label color on focus
+                    color: '#00A63E', 
                   },
                   '& .MuiOutlinedInput-root': {
                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#00A63E', // Border color on hover
+                      borderColor: '#00A63E', 
                     },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#00A63E', // Border color on focus
+                      borderColor: '#00A63E', 
                     },
                     borderRadius: '10px',
                   },
@@ -341,20 +341,20 @@ function BroadCast() {
 
               <FormControl fullWidth required size='small' sx={{
                 '& label.Mui-focused': {
-                  color: '#00A63E', // Label color when focused
+                  color: '#00A63E', 
                 },
                 '& .MuiOutlinedInput-root': {
                   '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#00A63E', // Border on hover
+                    borderColor: '#00A63E', 
                   },
                   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#00A63E', // Border on focus
+                    borderColor: '#00A63E', 
                   },
                   borderRadius: '10px',
                 },
                 '& .MuiSelect-select': {
                   '&:focus': {
-                    backgroundColor: 'transparent', // Prevent weird background on focus
+                    backgroundColor: 'transparent', 
                   },
                 },
               }}>
@@ -490,20 +490,20 @@ function BroadCast() {
                   size="small"
                   sx={{
                     '& label.Mui-focused': {
-                      color: '#00A63E', // Label color when focused
+                      color: '#00A63E', 
                     },
                     '& .MuiOutlinedInput-root': {
                       '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#00A63E', // Border on hover
+                        borderColor: '#00A63E', 
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#00A63E', // Border on focus
+                        borderColor: '#00A63E', 
                       },
                       borderRadius: '10px',
                     },
                     '& .MuiSelect-select': {
                       '&:focus': {
-                        backgroundColor: 'transparent', // Prevent weird background on focus
+                        backgroundColor: 'transparent', 
                       },
                     },
                   }}
@@ -549,7 +549,7 @@ function BroadCast() {
                             checked={formInput.contactList.length === contacts.length}
                             onChange={handleSelectAll}
                             sx={{
-                              color: '#00A63E', // Checkbox color
+                              color: '#00A63E', 
                               '&.Mui-checked': {
                                 color: '#00A63E',
                               },
@@ -566,7 +566,7 @@ function BroadCast() {
                         <Checkbox
                           checked={formInput.contactList.includes(contact.number)}
                           sx={{
-                            color: '#00A63E', // Checkbox color
+                            color: '#00A63E',
                             '&.Mui-checked': {
                               color: '#00A63E',
                             },
@@ -643,7 +643,7 @@ function BroadCast() {
 
           </form>
 
-          <div className='mt-24'>
+          <div className='mt-20'>
             <CampaignList onEdit={handleEditCampaign} broadcast={handleBroadCast} />
           </div>
 

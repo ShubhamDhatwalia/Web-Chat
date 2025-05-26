@@ -7,6 +7,9 @@ import Templates from '../Chat/Templates.jsx';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import UserProfileDetails from '../Chat/UserProfileDetails.jsx';
+import MediaModal from '../Chat/MediaModal.jsx';
+
+
 
 
 function Chat() {
@@ -15,7 +18,7 @@ function Chat() {
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [showMediaModal, setShowMediaModal] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
 
   const modalRef = useRef(null);
@@ -105,6 +108,12 @@ function Chat() {
 
 
 
+  const handleMediaUpload = () => {
+    setShowMediaModal(true);
+  }
+
+
+
 
 
   return (
@@ -182,7 +191,7 @@ function Chat() {
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6667 2.5H3.33333C2.8731 2.5 2.5 2.8731 2.5 3.33333V7.5C2.5 7.96024 2.8731 8.33333 3.33333 8.33333H16.6667C17.1269 8.33333 17.5 7.96024 17.5 7.5V3.33333C17.5 2.8731 17.1269 2.5 16.6667 2.5Z" stroke="#353735" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M7.5 11.6667H3.33333C2.8731 11.6667 2.5 12.0398 2.5 12.5V16.6667C2.5 17.1269 2.8731 17.5 3.33333 17.5H7.5C7.96024 17.5 8.33333 17.1269 8.33333 16.6667V12.5C8.33333 12.0398 7.96024 11.6667 7.5 11.6667Z" stroke="#353735" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16.6667 11.6667H12.5C12.0398 11.6667 11.6667 12.0398 11.6667 12.5V16.6667C11.6667 17.1269 12.0398 17.5 12.5 17.5H16.6667C17.1269 17.5 17.5 17.1269 17.5 16.6667V12.5C17.5 12.0398 17.1269 11.6667 16.6667 11.6667Z" stroke="#353735" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                     </div>
 
-                    <div className='bg-gray-100 rounded-full hover:bg-green-200 cursor-pointer p-2'>
+                    <div className='bg-gray-100 rounded-full hover:bg-green-200 cursor-pointer p-2' onClick={handleMediaUpload}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21 21" fill="none"><path d="M14.0116 2.18213C12.8324 2.18213 11.6533 2.62963 10.7572 3.52572L2.34978 11.9331C2.2898 11.9907 2.24191 12.0597 2.20892 12.136C2.17593 12.2123 2.1585 12.2945 2.15766 12.3776C2.15681 12.4608 2.17256 12.5433 2.20399 12.6202C2.23543 12.6972 2.2819 12.7672 2.3407 12.826C2.3995 12.8848 2.46944 12.9312 2.54642 12.9627C2.62341 12.9941 2.70589 13.0099 2.78904 13.009C2.87219 13.0082 2.95434 12.9907 3.03067 12.9578C3.107 12.9248 3.17598 12.8769 3.23357 12.8169L11.641 4.40951C12.9555 3.095 15.0677 3.095 16.3822 4.40951C17.6967 5.72401 17.6967 7.83621 16.3822 9.15072L8.4476 17.0853C7.76606 17.7668 6.67959 17.7668 5.99805 17.0853C5.31651 16.4037 5.31651 15.3173 5.99805 14.6357L12.4002 8.23356C12.4602 8.17597 12.5081 8.10699 12.5411 8.03066C12.5741 7.95433 12.5915 7.87218 12.5924 7.78904C12.5932 7.70589 12.5774 7.6234 12.546 7.54642C12.5146 7.46943 12.4681 7.39949 12.4093 7.34069C12.3505 7.2819 12.2806 7.23542 12.2036 7.20399C12.1266 7.17256 12.0441 7.15681 11.961 7.15765C11.8778 7.1585 11.7957 7.17592 11.7193 7.20891C11.643 7.2419 11.574 7.28979 11.5164 7.34977L5.11426 13.752C3.95497 14.9112 3.95497 16.8098 5.11426 17.9691C6.27356 19.1284 8.17209 19.1284 9.33139 17.9691L17.266 10.0345C19.0581 8.24234 19.0581 5.31788 17.266 3.52572C16.3699 2.62963 15.1907 2.18213 14.0116 2.18213Z" fill="#353735"></path></svg>
                     </div>
 
@@ -216,6 +225,8 @@ function Chat() {
                   )}
 
 
+
+
                   {/* Emoji Picker */}
                   {showEmojiPicker && (
                     <div ref={modalRef} className="absolute bottom-[62px] left-[0px] z-10">
@@ -237,6 +248,14 @@ function Chat() {
           <UserProfileDetails selectedUser={selectedUser} />
         </div>
       </div>
+
+
+
+
+
+      {showMediaModal && (
+        <MediaModal onClose={() => setShowMediaModal(false)} />
+      )}
     </div>
   );
 }

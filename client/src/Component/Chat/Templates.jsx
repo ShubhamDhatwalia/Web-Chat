@@ -9,6 +9,12 @@ function templates({ onClose, selectedUser }) {
 
     const [selectedTemplateId, setSelectedTemplateId] = useState(null);
     const modalRef = useRef(null);
+    const [searchTerm, setSearchTerm] = useState('');
+
+
+
+
+
 
 
     useEffect(() => {
@@ -36,6 +42,16 @@ function templates({ onClose, selectedUser }) {
     }, []);
 
 
+    const filteredTemplates = [...templates].reverse().filter((template) => {
+        const search = searchTerm.toLowerCase();
+        return (
+            template.name?.toLowerCase().includes(search) ||
+            template.category?.toLowerCase().includes(search)
+
+        );
+    });
+
+
     console.log(selectedTemplateId);
 
     return (
@@ -52,8 +68,8 @@ function templates({ onClose, selectedUser }) {
                                         type="text"
                                         placeholder="Search here..."
                                         className="w-full ml-2 max-w-md px-3 py-1 border border-gray-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-green-500"
-                                    // value={searchTerm}
-                                    // onChange={(e) => setSearchTerm(e.target.value)}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -73,7 +89,7 @@ function templates({ onClose, selectedUser }) {
                         </div>
 
 
-                        <div className='mt-4 max-h-[300px] overflow-y-auto'>
+                        <div className='mt-4 max-h-[300px] min-h-[300px] overflow-y-auto'>
 
                             <ul>
                                 {loading ? (
@@ -81,7 +97,7 @@ function templates({ onClose, selectedUser }) {
                                         <i className="fa-solid fa-spinner animate-spin text-2xl text-gray-500"></i>
                                     </div>
                                 ) : (
-                                    templates.map((template) => (
+                                    filteredTemplates.map((template) => (
                                         <li key={template.id} className='flex items-center justify-between px-2 py-3  hover:bg-green-50 cursor-pointer' onClick={() => setSelectedTemplateId(template.id)}>
                                             <div className='flex items-center gap-4'>
                                                 <h4 className='font-semibold'>{template.name}</h4>
