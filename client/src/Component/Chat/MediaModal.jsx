@@ -11,7 +11,7 @@ import FilePreview from './FilePreview';
 
 
 
-function MediaModal({ onClose }) {
+function MediaModal({ onClose, selectedUser }) {
 
     const [selectedMediaType, setSelectedMediaType] = useState('Images');
     const [isDragging, setIsDragging] = useState(false);
@@ -52,7 +52,7 @@ function MediaModal({ onClose }) {
             case 'Documents':
                 return '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt';
             case 'Audio':
-                return '.mp3,.aac, .mp3';
+                return '.mp3,.aac, .m4a,.wav';
             default:
                 return '';
         }
@@ -163,7 +163,7 @@ function MediaModal({ onClose }) {
 
 
                 {files.length > 0 && (
-                    <FilePreview files={files} setFiles={setFiles} />
+                    <FilePreview files={files} setFiles={setFiles} onClose={handleClose} selectedUser={selectedUser} />
                 )}
 
             </div>

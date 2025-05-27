@@ -5,7 +5,7 @@ import NavBar from './NavBar';
 import SideBar from './SideBar';
 
 function Layout() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -20,9 +20,7 @@ function Layout() {
     const handleResize = () => {
       if (window.innerWidth < 1300) {
         setIsOpen(false);
-      } else {
-        setIsOpen(true);
-      }
+      } 
     };
 
     // Run on mount

@@ -1,11 +1,27 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
+import EmojiPicker from 'emoji-picker-react';
 
-function FilePreview({ files, setFiles }) {
+
+
+
+
+
+function FilePreview({ files, setFiles, onClose, selectedUser }) {
     const [previewFiles, setPreviewFiles] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const fileInputRef = useRef(null);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const inputRef = useRef(null);
+    const modalRef = useRef(null);
 
 
+
+    const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
+    const businessId = import.meta.env.VITE_WHATSAPP_BUSINESS_ID;
+    const PHONE_NUMBER_ID = import.meta.env.VITE_PHONE_NUMBER_ID;
+
+    console.log(selectedUser);
 
 
 
@@ -64,16 +80,64 @@ function FilePreview({ files, setFiles }) {
         if (type?.startsWith('image/')) return 'image';
         if (type?.startsWith('video/')) return 'video';
         if (type?.startsWith('audio/')) return 'audio';
-        if (type === 'application/pdf') return 'pdf';
-        if (type?.startsWith('text/')) return 'text';
+        if (type === 'application/pdf') return 'document';
+        if (type?.startsWith('text/')) return 'document';
 
         if (name && name.includes('.')) {
             const ext = name.split('.').pop().toLowerCase();
-            if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) return 'office';
+            if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) return 'document';
         }
 
         return 'unknown';
     };
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                setShowEmojiPicker(false);
+            }
+        };
+
+        if (showEmojiPicker) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showEmojiPicker]);
+
+
+
+    const handleToggleEmojiPicker = () => {
+        setShowEmojiPicker((prev) => !prev);
+    };
+
+    const handleEmojiClick = ({ emoji }) => {
+        const input = inputRef.current;
+        if (!input) return;
+
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+
+        const currentCaption = previewFiles[selectedIndex]?.caption || '';
+        const newCaption =
+            currentCaption.slice(0, start) + emoji + currentCaption.slice(end);
+
+        const updatedPreviews = [...previewFiles];
+        updatedPreviews[selectedIndex].caption = newCaption;
+        setPreviewFiles(updatedPreviews);
+
+        // Wait for the state to update before restoring focus and cursor
+        setTimeout(() => {
+            input.focus();
+            const cursorPosition = start + emoji.length;
+            input.setSelectionRange(cursorPosition, cursorPosition);
+        }, 0);
+    };
+
+
 
     const handleClose = () => {
         setFiles([]);
@@ -83,10 +147,7 @@ function FilePreview({ files, setFiles }) {
 
     const handleCaptionChange = (e) => {
         const updatedPreviews = [...previewFiles];
-        updatedPreviews[selectedIndex] = {
-            ...updatedPreviews[selectedIndex],
-            caption: e.target.value
-        };
+        updatedPreviews[selectedIndex].caption = e.target.value;
         setPreviewFiles(updatedPreviews);
     };
 
@@ -100,7 +161,7 @@ function FilePreview({ files, setFiles }) {
         const newFiles = Array.from(e.target.files);
         const updatedFiles = [...files, ...newFiles];
         setFiles(updatedFiles);
-        e.target.value = ''; // reset input
+        e.target.value = '';
     };
 
 
@@ -124,10 +185,99 @@ function FilePreview({ files, setFiles }) {
     };
 
 
-    const handleSubmit = () => {
-        console.log('Files:', files);
-        console.log('Preview Files:', previewFiles);
-    }
+
+
+    const handleSubmit = async () => {
+        if (!files.length) return alert('No files selected.');
+
+        try {
+            for (let i = 0; i < files.length; i++) {
+                const selectedFile = files[i];
+                const caption = previewFiles[i]?.caption || '';
+
+                // Step 1: Upload media
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('messaging_product', 'whatsapp');
+
+                console.log('Uploading file:', {
+                    fileName: selectedFile.name,
+                    fileSize: selectedFile.size,
+                    fileType: selectedFile.type
+                });
+
+                const uploadRes = await fetch(`https://graph.facebook.com/v22.0/${PHONE_NUMBER_ID}/media`, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    },
+                    body: formData
+                });
+
+                const uploadData = await uploadRes.json();
+
+                if (!uploadRes.ok || !uploadData.id) {
+                    console.error(`Media upload failed for ${selectedFile.name}:`, uploadData);
+
+                    continue;
+                }
+
+                const mediaId = uploadData.id;
+                console.log('Media uploaded successfully:', mediaId);
+
+                // Step 2: Send message with uploaded media
+                const mediaType = getFileType(selectedFile.type, selectedFile.name);
+                console.log('Media type determined:', mediaType);
+                if (!['image', 'video', 'audio', 'document'].includes(mediaType)) {
+                    console.warn('Unsupported file type for sending message:', selectedFile.name);
+                    alert(`Unsupported file type for ${selectedFile.name}. Skipping.`);
+                    continue;
+                }
+
+                const messageBody = {
+                    messaging_product: 'whatsapp',
+                    to: selectedUser?.phone,
+                    type: mediaType,
+                    [mediaType]: {
+                        id: mediaId,
+                        caption: caption,
+                        ...(mediaType === 'document' ? { filename: selectedFile.name } : {})
+                    }
+                };
+
+
+                const messageRes = await fetch(`https://graph.facebook.com/v22.0/${PHONE_NUMBER_ID}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(messageBody)
+                });
+
+                const messageData = await messageRes.json();
+
+                if (!messageRes.ok) {
+                    console.error(`Message send failed for ${selectedFile.name}:`, messageData);
+                    toast.error("Failed to send " + selectedFile.name)
+                    continue;
+                }
+
+                console.log(`${selectedFile.name} sent successfully!`);
+            }
+
+            toast.success("Sent successfully!");
+            setFiles([]);
+            setPreviewFiles([]);
+            setSelectedIndex(0);
+            onClose();
+
+        } catch (error) {
+            console.error('Error during batch sending:', error);
+            toast.error("An error occurred while sending files.");
+        }
+    };
+
 
 
 
@@ -168,32 +318,66 @@ function FilePreview({ files, setFiles }) {
                         </video>
                     )}
                     {fileType === 'audio' && (
-                        <audio controls className="w-[80%]">
-                            <source src={selectedFile.url} type={selectedFile.type} />
-                            Your browser does not support the audio tag.
-                        </audio>
+                        <div className="h-[400px] w-[80%]  bg-gray-50  rounded-md flex items-center justify-center">
+                            <audio controls className="w-[80%]">
+                                <source src={selectedFile.url} type={selectedFile.type} />
+                                Your browser does not support the audio tag.
+                            </audio>
+                        </div>
                     )}
-                    {(fileType === 'pdf' || fileType === 'text') && (
-                        <iframe src={selectedFile.url} title={selectedFile.name} className="h-[400px] w-[80%]" />
+                    {(fileType === 'pdf' || fileType === 'document') && (
+                        // <iframe src={selectedFile.url} title={selectedFile.name} className="h-[400px] w-[80%]" />
+                        <div className="h-[400px] w-[80%] bg-gray-100 rounded-md flex flex-col items-center justify-center">
+
+                            <div>
+                                <svg width="70" height="70" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="preview__file"><path d="M7.5 7.5H10.8333M7.5 12.5H10M7.5 10H12.5" stroke="#666666" stroke-width="1.25" stroke-linecap="round"></path><path d="M2.79406 7.45869C3.33698 5.14417 5.14417 3.33698 7.45869 2.79406C9.13021 2.40198 10.8698 2.40198 12.5413 2.79406C14.8558 3.33698 16.663 5.14418 17.2059 7.4587C17.598 9.13021 17.598 10.8698 17.2059 12.5413C16.663 14.8558 14.8558 16.663 12.5413 17.2059C10.8698 17.598 9.13021 17.598 7.4587 17.2059C5.14418 16.663 3.33698 14.8558 2.79406 12.5413C2.40198 10.8698 2.40198 9.13021 2.79406 7.45869Z" stroke="#666666" stroke-width="1.25"></path></svg>
+                            </div>
+                            <p className='text-gray-700 font-semibold text-sm'>
+
+                                No preview available for this file type.</p>
+                        </div>
                     )}
                     {fileType === 'office' || fileType === 'unknown' ? (
-                        <a
-                            href={selectedFile.url || '#'}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 underline mt-4"
-                        >
-                            {selectedFile.name}
-                        </a>
+                        // <a
+                        //     href={selectedFile.url || '#'}
+                        //     target="_blank"
+                        //     rel="noopener noreferrer"
+                        //     className="text-blue-600 underline mt-4"
+                        // >
+                        //     {selectedFile.name}
+                        // </a>
+
+
+                        <div className="h-[400px] w-[80%]  bg-gray-100  rounded-md flex items-center justify-center">
+                            <p className='text-gray-700 font-semibold text-sm'>No preview available for this file type.</p>
+                        </div>
+
                     ) : (
-                        <input
-                            type="text"
-                            placeholder="Add Caption"
-                            value={selectedFile.caption}
-                            onChange={handleCaptionChange}
-                            className=" px-3 py-2 bg-gray-100 rounded-md text-sm focus:outline-none mt-4 w-[80%]"
-                        />
+                        <div className='relative w-[80%] '>
+                            <input
+                                type="text"
+                                ref={inputRef}
+                                placeholder="Add Caption"
+                                value={selectedFile.caption}
+                                onChange={handleCaptionChange}
+                                className=" px-3 py-2 bg-gray-100 rounded-md text-sm focus:outline-none mt-4 w-full"
+                            />
+
+                            <div className='absolute right-2  top-[50%]  cursor-pointer' onClick={handleToggleEmojiPicker}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M8.49999 16.2083C12.7572 16.2083 16.2083 12.7572 16.2083 8.49996C16.2083 4.24276 12.7572 0.791626 8.49999 0.791626C4.24279 0.791626 0.791656 4.24276 0.791656 8.49996C0.791656 12.7572 4.24279 16.2083 8.49999 16.2083Z" stroke="#353735" stroke-width="1.25" stroke-miterlimit="10"></path><path d="M6.62498 5.79163H4.95831" stroke="#353735" stroke-width="1.25" stroke-miterlimit="10" stroke-linecap="round"></path><path d="M12.0417 5.79163H10.375" stroke="#353735" stroke-width="1.25" stroke-miterlimit="10" stroke-linecap="round"></path><path d="M12.0416 9.125C12.0416 11.0808 10.4558 12.875 8.49998 12.875C6.54415 12.875 4.95831 11.0808 4.95831 9.125C6.62498 9.125 9.95831 9.125 12.0416 9.125Z" stroke="#353735" stroke-width="1.25" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                            </div>
+
+                            {showEmojiPicker && (
+                                <div ref={modalRef} className="absolute bottom-[38px] right-[0px] z-10">
+                                    <EmojiPicker onEmojiClick={handleEmojiClick} previewConfig={{ showPreview: false }} skinTonesDisabled={true} />
+                                </div>
+                            )}
+                        </div>
                     )}
+
+
+
+
                 </div>
             )}
 
@@ -223,16 +407,16 @@ function FilePreview({ files, setFiles }) {
                                             🔊 Audio
                                         </div>
                                     )}
-                                    {type === 'pdf' && (
-                                        <div className="h-12 w-12 bg-red-400 text-white text-xs flex items-center justify-center rounded">
-                                            📄 PDF
+                                    {type === 'document' && (
+                                        <div className="h-12 w-12 bg-gray-100 text-white text-[10px] flex items-center justify-center rounded">
+                                            <svg width="25" height="25" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="preview__file"><path d="M7.5 7.5H10.8333M7.5 12.5H10M7.5 10H12.5" stroke="#666666" stroke-width="1.25" stroke-linecap="round"></path><path d="M2.79406 7.45869C3.33698 5.14417 5.14417 3.33698 7.45869 2.79406C9.13021 2.40198 10.8698 2.40198 12.5413 2.79406C14.8558 3.33698 16.663 5.14418 17.2059 7.4587C17.598 9.13021 17.598 10.8698 17.2059 12.5413C16.663 14.8558 14.8558 16.663 12.5413 17.2059C10.8698 17.598 9.13021 17.598 7.4587 17.2059C5.14418 16.663 3.33698 14.8558 2.79406 12.5413C2.40198 10.8698 2.40198 9.13021 2.79406 7.45869Z" stroke="#666666" stroke-width="1.25"></path></svg>
                                         </div>
                                     )}
-                                    {type === 'text' && (
+                                    {/* {type === 'document' && (
                                         <div className="h-12 w-12 bg-green-500 text-white text-xs flex items-center justify-center rounded">
                                             📄 Text
                                         </div>
-                                    )}
+                                    )} */}
                                     {(type === 'office' || type === 'unknown') && (
                                         <div className="h-12 w-12 bg-gray-300 text-xs flex items-center justify-center rounded">
                                             📁 {file.name.split('.').pop()}
@@ -243,7 +427,7 @@ function FilePreview({ files, setFiles }) {
                         })}
 
                         <div
-                            className="h-12 w-12 bg-gray-100 text-3xl font-bold flex items-center justify-center rounded cursor-pointer"
+                            className="h-12 w-12 bg-gray-100 text-2xl font-bold flex items-center justify-center rounded cursor-pointer"
                             onClick={handleAddMoreClick}
                         >
                             <i className="fa-solid fa-plus"></i>
