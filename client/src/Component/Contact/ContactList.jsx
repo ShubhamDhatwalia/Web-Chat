@@ -1,16 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact } from '../../redux/contacts/contactSlice.js';
 import { toast } from 'react-toastify';
 
 
 
-function ContactList({ onSearch,  setSelectedContact }) {
+function ContactList({ onSearch, setSelectedContact }) {
     const dispatch = useDispatch();
     const contacts = useSelector((state) => state.contact.contacts);
     const [limit, setLimit] = useState(20);
     const [currentPage, setCurrentPage] = useState(1);
-  
+    const [data, setdata] = useState([]);
+
+
+
+    useEffect(() => {
+        const url = "https://script.google.com/macros/s/AKfycbyVTLMEeDrWpct8HRDNLig1WOFp49w_JIOzUZiw5sTJrzcycZBUqkovD_EKYHpwaJbA3A/exec";
+
+        const fetchContacts = async () => {
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("Network response was not ok");
+                const data = await res.json();
+                console.log(data);
+                setdata(data);
+                // do something with data
+            } catch (err) {
+                console.error("Failed to fetch contacts", err);
+                // Optionally use toast or alert
+                // toast.error("Failed to fetch contacts");
+            }
+        };
+
+        fetchContacts();
+    }, []);
+
+
 
 
     const handleDelete = (phone) => {
@@ -34,7 +59,7 @@ function ContactList({ onSearch,  setSelectedContact }) {
 
     const handleEdit = (contact) => {
         setSelectedContact(contact);
-        
+
     };
 
 
@@ -53,18 +78,28 @@ function ContactList({ onSearch,  setSelectedContact }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentData && currentData.length > 0 ? (
+                        {currentData && data.length > 0 ? (
                             currentData.map((contact, index) => (
                                 <tr key={index} className=" text-center font-semibold  text-gray-500">
                                     <td className=" py-4 text-left">{contact.name}</td>
                                     <td className=" py-4">{contact.phone}</td>
-                                    <td className="py-4 flex justify-center" > <div className='bg-green-50  border border-green-600 text-sm text-green-600 rounded-md px-2 py-1'>{contact.source || 'WebChat'}</div> </td>
+                                    <td className="py-4  " >
+                                        <div className='flex items-center justify-center'>
+                                            <div className='bg-green-50 w-[100px] border border-green-600 text-sm text-green-600 rounded-md px-2 py-1'>{contact.source || 'WebChat'}</div>
+                                        </div>
+                                    </td>
                                     <td className=" py-4 max-w-[200px]">
                                         {contact.attributes && contact.attributes.length > 0 ? (
                                             <ul className="text-center flex justify-center flex-wrap gap-4">
                                                 {contact.attributes.map((attr, i) => (
                                                     <li key={i} >
-                                                        <span className='border border-[FF9933] bg-[#FFFAF5] text-nowrap rounded-md inline py-1 px-2 text-[#FF9933]'>{attr.name}:  <span className='text-sm'>{attr.value}</span> </span>
+                                                        <div className="border border-[#FF9933] bg-[#FFFAF5] whitespace-nowrap rounded-md inline-flex items-center py-1 px-2 text-[#FF9933]">
+                                                            {attr.name}:
+                                                            <span className="ml-1 text-sm truncate text-ellipsis overflow-hidden inline-block max-w-[40px]">
+                                                                {attr.value}
+                                                            </span>
+                                                        </div>
+
                                                     </li>
                                                 ))}
                                             </ul>
@@ -110,7 +145,7 @@ function ContactList({ onSearch,  setSelectedContact }) {
                 </div>
             </div>
 
-            
+
 
 
         </>
