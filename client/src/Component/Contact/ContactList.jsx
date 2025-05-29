@@ -14,26 +14,26 @@ function ContactList({ onSearch, setSelectedContact }) {
 
 
 
-    useEffect(() => {
-        const url = "https://script.google.com/macros/s/AKfycbyVTLMEeDrWpct8HRDNLig1WOFp49w_JIOzUZiw5sTJrzcycZBUqkovD_EKYHpwaJbA3A/exec";
+    // useEffect(() => {
+    //     const url = "https://script.google.com/macros/s/AKfycbyVTLMEeDrWpct8HRDNLig1WOFp49w_JIOzUZiw5sTJrzcycZBUqkovD_EKYHpwaJbA3A/exec";
 
-        const fetchContacts = async () => {
-            try {
-                const res = await fetch(url);
-                if (!res.ok) throw new Error("Network response was not ok");
-                const data = await res.json();
-                console.log(data);
-                setdata(data);
-                // do something with data
-            } catch (err) {
-                console.error("Failed to fetch contacts", err);
-                // Optionally use toast or alert
-                // toast.error("Failed to fetch contacts");
-            }
-        };
+    //     const fetchContacts = async () => {
+    //         try {
+    //             const res = await fetch(url);
+    //             if (!res.ok) throw new Error("Network response was not ok");
+    //             const data = await res.json();
+    //             console.log(data);
+    //             setdata(data);
+    //             // do something with data
+    //         } catch (err) {
+    //             console.error("Failed to fetch contacts", err);
+    //             // Optionally use toast or alert
+    //             // toast.error("Failed to fetch contacts");
+    //         }
+    //     };
 
-        fetchContacts();
-    }, []);
+    //     fetchContacts();
+    // }, []);
 
 
 
@@ -78,7 +78,7 @@ function ContactList({ onSearch, setSelectedContact }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentData && data.length > 0 ? (
+                        {currentData && currentData.length > 0 ? (
                             currentData.map((contact, index) => (
                                 <tr key={index} className=" text-center font-semibold  text-gray-500">
                                     <td className=" py-4 text-left">{contact.name}</td>

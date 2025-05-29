@@ -150,7 +150,7 @@ function SideBar({ isOpen, toggleSidebar }) {
                             `flex items-center gap-2 transition-colors duration-200 ${isActive ? 'text-green-600 font-semibold' : ' hover:text-green-600'}`
                         }
                     >
-                        <i class="fa-regular fa-address-book"></i> <span>Contact</span>
+                        <i className="fa-regular fa-address-book"></i> <span>Contact</span>
                     </NavLink>
                 </li>
             </ul>

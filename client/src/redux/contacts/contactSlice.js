@@ -8,23 +8,23 @@ import { toast } from 'react-toastify';
 
 
 
-const url = "https://script.google.com/macros/s/AKfycbyVTLMEeDrWpct8HRDNLig1WOFp49w_JIOzUZiw5sTJrzcycZBUqkovD_EKYHpwaJbA3A/exec";
+// const url = "https://script.google.com/macros/s/AKfycbyVTLMEeDrWpct8HRDNLig1WOFp49w_JIOzUZiw5sTJrzcycZBUqkovD_EKYHpwaJbA3A/exec";
 
-const fetchContacts = async () => {
-    try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Network response was not ok");
-        const data = await res.json();
-        console.log(data);
-        localStorage.setItem('contacts', JSON.stringify(data));
+// const fetchContacts = async () => {
+//     try {
+//         const res = await fetch(url);
+//         if (!res.ok) throw new Error("Network response was not ok");
+//         const data = await res.json();
+//         console.log(data);
+//         localStorage.setItem('contacts', JSON.stringify(data));
 
-    } catch (err) {
-        console.error("Failed to fetch contacts", err);
+//     } catch (err) {
+//         console.error("Failed to fetch contacts", err);
 
-    }
-};
+//     }
+// };
 
-fetchContacts();
+// fetchContacts();
 
 
 
