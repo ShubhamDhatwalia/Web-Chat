@@ -43,8 +43,8 @@ const fetchContacts = async () => {
         const res = await fetch(url);
         if (!res.ok) throw new Error("Network response was not ok");
         const data = await res.json();
-        console.log(data);
-        setdata(data);
+        console.log("Full contact data:", JSON.stringify(data, null, 2));
+
         // do something with data
     } catch (err) {
         console.error("Failed to fetch contacts", err);
