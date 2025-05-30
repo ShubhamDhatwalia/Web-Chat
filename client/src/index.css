@@ -66,10 +66,10 @@ textarea {
 }
 
 .react-flow__pane {
-    pointer-events: fill !important;
+  pointer-events: fill !important;
 }
 
-.react-flow__panel.react-flow__minimap.bottom.right{
+.react-flow__panel.react-flow__minimap.bottom.right {
   background-color: #fff;
   box-shadow: rgba(0, 0, 0, 0.1) 10px 15px 25px !important;
   border-radius: 5px !important;
@@ -78,7 +78,7 @@ textarea {
 
 
 
-.react-flow__panel.react-flow__controls{
+.react-flow__panel.react-flow__controls {
   box-shadow: rgba(0, 0, 0, 0.1) 10px 15px 25px !important;
   display: flex;
   border-radius: 5px !important;
@@ -100,4 +100,10 @@ textarea {
   max-width: 23px !important;
   max-height: 23px !important;
   margin: auto !;
+}
+
+
+input,
+textarea {
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
 }

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>3D Shirt Logo Placement</title>
+    <title>3D Shirt Logo Placement & Color Change</title>
     <style>
         body {
             margin: 0;
@@ -24,18 +24,49 @@
             margin: 5px;
             padding: 8px 12px;
             font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .color-button {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: 2px solid #ccc;
+            cursor: pointer;
+        }
+
+        .color-button.active {
+            border: 3px solid #000;
+        }
+
+        #viewer-container {
+            height: 600px;
         }
     </style>
 </head>
 
 <body>
     <div id="controls">
-        <button onclick="placeLogo('topLeft')">Top Left</button>
-        <button onclick="placeLogo('topRight')">Top Right</button>
-        <button onclick="placeLogo('centerFront')">Center Front</button>
-        <button onclick="placeLogo('bottomLeft')">Bottom Left</button>
-        <button onclick="placeLogo('bottomRight')">Bottom Right</button>
-        <button onclick="placeLogo('centerBack')">Back Center</button>
+        <div>
+            <strong>Place Logo:</strong><br />
+            <button onclick="placeLogo('topLeft')">Top Left</button>
+            <button onclick="placeLogo('topRight')">Top Right</button>
+            <button onclick="placeLogo('centerFront')">Center Front</button>
+            <button onclick="placeLogo('bottomLeft')">Bottom Left</button>
+            <button onclick="placeLogo('bottomRight')">Bottom Right</button>
+            <button onclick="placeLogo('centerBack')">Back Center</button>
+        </div>
+        <br />
+        <div>
+            <strong>Shirt Color:</strong><br />
+            <button class="color-button active" style="background:rgb(90, 90, 90);" onclick="changeShirtColor('rgb(70, 69, 69)', this)"></button>
+            <button class="color-button" style="background:white;" onclick="changeShirtColor('white', this)"></button>
+            <button class="color-button" style="background:red;" onclick="changeShirtColor('red', this)"></button>
+            <button class="color-button" style="background:blue;" onclick="changeShirtColor('blue', this)"></button>
+            <button class="color-button" style="background:green;" onclick="changeShirtColor('green', this)"></button>
+        </div>
     </div>
     <div id="viewer-container"></div>
 
@@ -47,6 +78,7 @@
     <script>
         let scene, camera, renderer, controls, model;
         let currentDecal = null;
+        const originalMaterials = new Map(); // store original materials
 
         const decalMaterial = new THREE.MeshPhongMaterial({
             specular: 0x444444,
@@ -56,6 +88,7 @@
             depthWrite: false,
             polygonOffset: true,
             polygonOffsetFactor: -10,
+            color: 0xffffff
         });
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -92,12 +125,15 @@
 
                     model.traverse((child) => {
                         if (child.isMesh && child.material) {
-                            child.material.needsUpdate = true;
-                            if (!child.material.map) {
-                                child.material.color = new THREE.Color(0x555555);
-                            }
+                            originalMaterials.set(child.uuid, child.material.clone());
                         }
                     });
+
+                    // Apply default shirt color from the first button, not 'original'
+                    const firstColorBtn = document.querySelector('.color-button.active');
+                    if (firstColorBtn) {
+                        changeShirtColor('rgb(70, 69, 69)', firstColorBtn);
+                    }
 
                     controls.target.set(0, 0.8, 0);
                     controls.update();
@@ -109,13 +145,13 @@
             );
 
             window.addEventListener('resize', onWindowResize, false);
-
             animate();
         });
 
         function placeLogo(position) {
             if (!model) return;
 
+            // Get shirt mesh (assuming first mesh found)
             const shirtMesh = model.getObjectByProperty('type', 'Mesh');
             if (!shirtMesh) {
                 console.warn('No mesh found in the model.');
@@ -128,37 +164,33 @@
                 currentDecal = null;
             }
 
-            const size = new THREE.Vector3(0.3, 0.25, 0.3); // reduced height
+            const size = new THREE.Vector3(0.3, 0.25, 0.3);
             const orientation = new THREE.Euler(0, 0, 0);
             let pos = new THREE.Vector3();
-            let normalDir = new THREE.Vector3(0, 0, 1); // Facing front
+            let normalDir = new THREE.Vector3(0, 0, 1);
 
-            // Approximate manual positions
             if (position === 'topLeft') {
                 pos.set(-0.55, 0.9, 0.1);
-                rotateTofront()
+                rotateToFront();
             } else if (position === 'topRight') {
                 pos.set(0.55, 1.05, 0.1);
-                rotateTofront()
+                rotateToFront();
             } else if (position === 'centerFront') {
                 pos.set(0, 0.1, 0.1);
-                rotateTofront()
+                rotateToFront();
             } else if (position === 'bottomLeft') {
                 pos.set(-0.45, -1.08, 0.25);
-                rotateTofront()
+                rotateToFront();
             } else if (position === 'bottomRight') {
                 pos.set(0.45, -1.08, 0.25);
-                rotateTofront()
+                rotateToFront();
             } else if (position === 'centerBack') {
                 pos.set(0, 0.8, -0.15);
-                normalDir.set(0, 0, -1); // Facing backward
+                normalDir.set(0, 0, -1);
                 rotateToBack();
             }
 
-
-            pos.add(normalDir.clone().multiplyScalar(0.15)); // reduced push
-
-
+            pos.add(normalDir.clone().multiplyScalar(0.15));
 
             const decalGeometry = new THREE.DecalGeometry(shirtMesh, pos, orientation, size);
             currentDecal = new THREE.Mesh(decalGeometry, decalMaterial);
@@ -166,22 +198,38 @@
         }
 
         function rotateToBack() {
-
-
             camera.position.set(0, 1, -6);
-
-
         }
 
-        function rotateTofront() {
-
-
+        function rotateToFront() {
             camera.position.set(0, 1, 6);
-
-
         }
 
+        function changeShirtColor(color, buttonEl) {
+            if (!model) return;
 
+            model.traverse((child) => {
+                if (child.isMesh && child.material) {
+                    if (color === 'original') {
+                        const original = originalMaterials.get(child.uuid);
+                        if (original) {
+                            child.material.copy(original);
+                            child.material.needsUpdate = true;
+                        }
+                    } else {
+                        child.material.map = null;
+                        child.material.color.set(color);
+                        child.material.needsUpdate = true;
+                    }
+                }
+            });
+
+            // Update button UI
+            document.querySelectorAll('.color-button').forEach(btn => btn.classList.remove('active'));
+            if (buttonEl) {
+                buttonEl.classList.add('active');
+            }
+        }
 
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
